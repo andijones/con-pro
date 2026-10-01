@@ -50,6 +50,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import { PersonAvatar } from "./primitives";
+import { signOut } from "@/app/auth-actions";
 
 const thisWeek = decisions.filter((d) => daysUntil(d.due) <= 7).length;
 const openFoi = foiRequests.filter((f) => f.status !== "Sent").length;
@@ -257,7 +258,7 @@ function UserMenu() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => toast("Signed out (concept only)")}>
+            <DropdownMenuItem onSelect={() => signOut()}>
               <LogOut /> Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>
