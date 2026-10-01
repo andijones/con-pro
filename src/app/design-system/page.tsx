@@ -30,7 +30,7 @@ const a11y: [string, string, string][] = [
   ["2.5.7", "Anything you can drag also works with a single click.", "Upload drop zone is a button; sliders accept clicks and arrow keys"],
   ["2.2.1", "No time limits on actions. Undo toasts stay until dismissed.", "toast({ duration: Infinity }) + close button"],
   ["3.3.1 · 3.3.2", "Forms explain what’s missing in words next to the field, and submit buttons stay enabled.", "Field + FieldError, aria-invalid"],
-  ["3.2.6", "Help is in the same place on every page.", "Sidebar: Help and support"],
+  ["3.2.6", "Help is in the same place on every page.", "User menu (bottom of sidebar): Help and support"],
   ["3.3.7", "Don’t ask for the same information twice.", "Review step 2 pre-fills what step 1 read"],
   ["4.1.2", "Every control and avatar has an accessible name.", "aria-label on icon buttons; PersonAvatar role=img"],
   ["4.1.3", "Results counts, progress and loading states are announced.", "role=status on counts, progress and “Reading…”"],
