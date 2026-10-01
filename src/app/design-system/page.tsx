@@ -1,7 +1,8 @@
 import { ComponentGallery } from "@/components/contravo/component-gallery";
 import { gallerySections, slug } from "@/components/contravo/gallery-sections";
 import { TokenEditor } from "@/components/contravo/token-editor";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -21,11 +22,11 @@ const type = [
 
 const a11y: [string, string, string][] = [
   ["1.4.3", "Text contrast at least 4.5:1, including placeholders and small labels.", "Semantic tokens; checked live in Contrast below"],
-  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #86839f, --focus violet, chart tokens"],
+  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #8c88ad, --focus Midnight, chart tokens"],
   ["1.4.1", "Never use colour alone. Status has a label or icon, risk is spelled out, inline links are underlined, and chart markers differ in shape.", "StatusBadge, ToneBadge, ContractReader, Runway key"],
-  ["2.4.7 · 2.4.11", "Keyboard focus is always visible and never hidden behind the sticky header.", "globals.css :focus-visible + scroll-padding-top"],
+  ["2.4.7 · 2.4.11", "Keyboard focus is always visible, neutral (Midnight, never brand colour) and never hidden behind the sticky header.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
   ["2.4.1", "Skip link to main content on every page.", "layout.tsx"],
-  ["2.5.8", "Pointer targets at least 24 × 24px. Inline citation numbers use the inline exception.", "Button sizes xs/icon-xs are 24px minimum"],
+  ["2.5.8", "Pointer targets at least 24 × 24px. We go further: every small control grows an invisible target to 40px (44px on touch), and targets never overlap.", "--hit-min + hit-area / hit-area-y utilities in Button"],
   ["2.5.7", "Anything you can drag also works with a single click.", "Upload drop zone is a button; sliders accept clicks and arrow keys"],
   ["2.2.1", "No time limits on actions. Undo toasts stay until dismissed.", "toast({ duration: Infinity }) + close button"],
   ["3.3.1 · 3.3.2", "Forms explain what’s missing in words next to the field, and submit buttons stay enabled.", "Field + FieldError, aria-invalid"],
@@ -38,12 +39,25 @@ const a11y: [string, string, string][] = [
   ["2.3.3", "Motion respects reduced-motion settings.", "globals.css prefers-reduced-motion"],
 ];
 
+const interaction: [string, string, string][] = [
+  ["--focus", "Midnight #030139", "Keyboard focus outline (2px, 2px offset) and the field focus ring"],
+  ["--duration-fast", "150ms", "Hover, colour and border changes"],
+  ["--duration-base", "200ms", "Progress bars and larger state changes"],
+  ["--ease-out", "cubic-bezier(0.22, 1, 0.36, 1)", "All UI transitions. Named properties only, never transition: all"],
+  ["--press-scale", "0.96", "Tactile press on buttons and toggles (the press utility)"],
+  ["--hit-min", "40px (44px on touch)", "Invisible target size for small controls (hit-area, hit-area-y)"],
+  ["--control-height", "36px", "Default height of buttons, inputs and selects"],
+  ["--control-border", "--input · 3.37:1", "Field boundaries (control utility)"],
+  ["--z-sticky / --z-header / --z-overlay / --z-skip", "10 / 20 / 50 / 60", "The only z-index values allowed"],
+];
+
 const nav = [
   { id: "principles", label: "How it works" },
   { id: "accessibility", label: "Accessibility" },
   { id: "tokens", label: "Colour tokens" },
   { id: "typography", label: "Typography" },
   { id: "radius", label: "Radius and elevation" },
+  { id: "interaction", label: "Interaction tokens" },
   ...gallerySections.map((s) => ({ id: slug(s), label: s })),
 ];
 
@@ -54,7 +68,7 @@ export default function DesignSystemPage() {
         <ul className="sticky top-20 flex flex-col gap-0.5 text-sm">
           {nav.map((n, i) => (
             <li key={n.id}>
-              {i === 5 && <p className="mt-4 mb-1 px-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">Components</p>}
+              {i === 6 && <p className="mt-4 mb-1 px-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">Components</p>}
               <a href={`#${n.id}`} className="block rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
                 {n.label}
               </a>
@@ -180,10 +194,42 @@ export default function DesignSystemPage() {
               </div>
             ))}
           </div>
-          <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <Badge variant="outline">2.5.8</Badge> shadcn’s smallest controls are 24px, which meets WCAG 2.2 AA. The brand guide’s 44px
-            is the stricter AAA target (2.5.5).
+
+        </section>
+
+        <section id="interaction" className="scroll-mt-20">
+          <h2 className="heading mb-1 text-2xl">Interaction tokens</h2>
+          <p className="mb-6 max-w-[68ch] text-sm text-muted-foreground">
+            The invisible details. Change any of them in <code>globals.css</code> and every component follows.
           </p>
+          <Card className="py-0">
+            <Table scrollLabel="Interaction tokens">
+              <TableHeader>
+                <TableRow className="text-xs">
+                  <TableHead className="pl-4">Token</TableHead>
+                  <TableHead>Value</TableHead>
+                  <TableHead className="pr-4">Used for</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {interaction.map(([t, v, use]) => (
+                  <TableRow key={t}>
+                    <TableCell className="pl-4">
+                      <code className="text-xs">{t}</code>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{v}</TableCell>
+                    <TableCell className="pr-4 text-xs whitespace-normal text-muted-foreground">{use}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+          <div className="mt-6 flex flex-wrap items-center gap-4">
+            <span className="text-xs text-muted-foreground">Try them:</span>
+            <Button>Press me</Button>
+            <Button variant="outline">Hover me</Button>
+            <Input className="w-56" placeholder="Tab into me" aria-label="Focus demo" />
+          </div>
         </section>
 
         <Separator />

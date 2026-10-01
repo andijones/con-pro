@@ -64,7 +64,7 @@
   --border: var(--brand-line);
   --input: var(--brand-line-strong);
   --ring: var(--brand-iris); /* selection rings; keyboard focus uses --focus below */
-  --focus: var(--brand-violet); /* 9.06:1 on white (WCAG 2.4.7 / 1.4.11) */
+  --focus: var(--brand-midnight); /* neutral near-black, 19.7:1 on white (WCAG 2.4.7 / 1.4.11); never brand-coloured */
 
   /* Controls: inputs, selects, textareas, search fields. One recipe, used everywhere. */
   --control-bg: var(--brand-white);
@@ -73,6 +73,21 @@
   --control-shadow: 0 1px 2px rgb(3 1 57 / 0.05);
   --control-height: 2.25rem; /* 36px */
   --control-radius: var(--radius);
+
+  /* Motion: transition named properties only, never `all` */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --press-scale: 0.96; /* tactile press; never below 0.95 */
+
+  /* Hit areas: visual size can be smaller, the target can't (WCAG 2.5.8 floor is 24px; we aim higher) */
+  --hit-min: 40px;
+
+  /* Stacking: the only z-index values allowed. shadcn overlays use 50. */
+  --z-sticky: 10; /* sticky table/section headers */
+  --z-header: 20; /* app header */
+  --z-overlay: 50; /* dialogs, popovers, menus (shadcn default) */
+  --z-skip: 60; /* skip link sits above everything when focused */
 
   /* Buttons */
   --primary-hover: color-mix(in oklab, var(--primary), var(--brand-midnight) 18%);
@@ -103,6 +118,12 @@
   --sidebar-accent-foreground: var(--brand-violet);
   --sidebar-border: var(--brand-line);
   --sidebar-ring: var(--brand-iris);
+}
+
+@media (pointer: coarse) {
+  :root {
+    --hit-min: 44px;
+  }
 }
 
 /* ── Layer 3: Tailwind utilities ── */
@@ -194,7 +215,27 @@
     @apply bg-background text-foreground;
   }
   ::selection {
-    background: var(--highlight);
+    background: var(--highlight); /* subtle lilac tint, text stays Midnight */
+  }
+  /* Headings break evenly; paragraphs avoid orphans */
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p,
+  li,
+  blockquote {
+    text-wrap: pretty;
+  }
+  /* Figures that line up or change never jiggle */
+  table,
+  time,
+  kbd,
+  [data-slot="badge"],
+  [data-slot="sidebar-menu-badge"],
+  [data-slot="progress"] {
+    font-variant-numeric: tabular-nums;
   }
 }
 
@@ -209,8 +250,8 @@
   border-radius: var(--control-radius);
   box-shadow: var(--control-shadow);
   transition:
-    border-color 150ms ease-out,
-    box-shadow 150ms ease-out;
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
   &:hover:not(:has(:disabled)):not(:disabled) {
     border-color: var(--control-border-hover);
   }
@@ -228,6 +269,35 @@
     inset 0 0 0 1px var(--focus),
     0 0 0 4px color-mix(in oklab, var(--focus) 14%, transparent);
   outline: none !important;
+}
+
+/*
+ * Invisible hit area: grows the target to --hit-min without changing the visual size.
+ * `hit-area-y` only grows vertically, for icon buttons sitting edge to edge (targets must never overlap).
+ */
+@utility hit-area {
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    inset: min(0px, calc((100% - var(--hit-min)) / 2));
+  }
+}
+@utility hit-area-y {
+  position: relative;
+  /* doubled class: wins over `hit-area` regardless of source order */
+  &&::before {
+    content: "";
+    position: absolute;
+    inset: min(0px, calc((100% - var(--hit-min)) / 2)) 0;
+  }
+}
+
+/* Tactile press for buttons and toggles */
+@utility press {
+  &:active:not(:disabled):not([aria-haspopup]) {
+    transform: scale(var(--press-scale));
+  }
 }
 
 /* Type helpers from the brand guide: heading −3% tracking, tabular figures for values */

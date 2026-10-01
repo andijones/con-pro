@@ -60,9 +60,9 @@ export function AppSidebar() {
       <SidebarHeader className="h-14 justify-center px-3 group-data-[collapsible=icon]:px-2">
         <Link href="/" className="flex items-center" aria-label="Contravo home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/contravo-logo.svg" alt="Contravo" className="h-6 w-auto group-data-[collapsible=icon]:hidden" />
+          <img src="/contravo-logo.svg" alt="Contravo" width={122} height={24} className="h-6 w-auto group-data-[collapsible=icon]:hidden" />
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/contravo-mark.svg" alt="" className="hidden size-6 group-data-[collapsible=icon]:block" />
+          <img src="/contravo-mark.svg" alt="" width={24} height={24} className="hidden size-6 group-data-[collapsible=icon]:block" />
         </Link>
       </SidebarHeader>
 

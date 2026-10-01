@@ -9,7 +9,9 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Toaster } from "@/components/ui/sonner";
 import { organisation } from "@/lib/data";
+import { cookies } from "next/headers";
 import { TokenOverrides } from "@/components/contravo/theme";
+import { tokenScript } from "@/components/contravo/token-script";
 import "./globals.css";
 
 // Font family is referenced by name in globals.css (@theme inline --font-sans)
@@ -21,23 +23,28 @@ export const metadata: Metadata = {
   icons: { icon: "/contravo-mark.svg" },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Render the sidebar in its saved state on first paint (no open-then-collapse flash)
+  const sidebarOpen = (await cookies()).get("sidebar_state")?.value !== "false";
   return (
     <html lang="en-GB" className={instrument.variable}>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: tokenScript }} />
+      </head>
       <body className="min-h-dvh">
         {/* WCAG 2.4.1 Bypass blocks */}
         <a
           href="#main"
-          className="fixed top-3 left-3 z-50 -translate-y-[200%] rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-md transition-transform focus:translate-y-0"
+          className="fixed top-3 left-3 z-(--z-skip) -translate-y-[200%] rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-md transition-transform focus:translate-y-0"
         >
           Skip to main content
         </a>
         <TokenOverrides />
         <TooltipProvider>
-          <SidebarProvider>
+          <SidebarProvider defaultOpen={sidebarOpen}>
             <AppSidebar />
             <SidebarInset className="min-w-0">
-              <header role="banner" className="sticky top-0 z-20 flex h-14 shrink-0 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-sm">
+              <header role="banner" className="sticky top-0 z-(--z-header) flex h-14 shrink-0 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-sm">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="h-6!" />
                 <div className="hidden min-w-0 leading-tight sm:block">

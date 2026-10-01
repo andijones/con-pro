@@ -4,8 +4,9 @@ import { cn } from "cn"
 import { Slot } from "radix-ui"
 
 // Contravo: sizes raised to a 36px default, crafted surfaces, focus handled by the global outline (globals.css).
+// Small sizes grow their hit area to --hit-min invisibly (hit-area utilities); press uses --press-scale.
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-[background-color,border-color,color,box-shadow,transform] duration-150 ease-out outline-none select-none active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap press transition-[background-color,border-color,color,box-shadow,transform] duration-(--duration-fast) ease-(--ease-out) outline-none select-none disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -21,12 +22,12 @@ const buttonVariants = cva(
       },
       size: {
         default: "h-9 gap-2 px-3.5 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        xs: "h-7 gap-1 rounded-md px-2.5 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1.5 rounded-md px-3 text-[13px] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
+        xs: "hit-area-y h-7 gap-1 rounded-md px-2.5 text-xs in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
+        sm: "hit-area-y h-8 gap-1.5 rounded-md px-3 text-[13px] in-data-[slot=button-group]:rounded-lg has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: "h-10 gap-2 px-4 has-data-[icon=inline-end]:pr-3.5 has-data-[icon=inline-start]:pl-3.5",
-        icon: "size-9",
-        "icon-xs": "size-7 rounded-md in-data-[slot=button-group]:rounded-lg [&_svg:not([class*='size-'])]:size-3.5",
-        "icon-sm": "size-8 rounded-md in-data-[slot=button-group]:rounded-lg",
+        icon: "hit-area size-9 in-data-[slot=button-group]:hit-area-y",
+        "icon-xs": "hit-area size-7 rounded-md in-data-[slot=button-group]:rounded-lg in-data-[slot=button-group]:hit-area-y [&_svg:not([class*='size-'])]:size-3.5",
+        "icon-sm": "hit-area size-8 rounded-md in-data-[slot=button-group]:rounded-lg in-data-[slot=button-group]:hit-area-y",
         "icon-lg": "size-10",
       },
     },

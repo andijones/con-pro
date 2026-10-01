@@ -20,18 +20,18 @@ export function Runway({ items, span = 90 }: { items: Decision[]; span?: number 
       <div className="relative h-14">
         {/* week shading for the first 7 days */}
         <div
-          className="absolute inset-y-0 left-0 rounded-l-md bg-critical-muted/60"
+          className="pointer-events-none absolute inset-y-0 left-0 rounded-l-md bg-critical-muted/60"
           style={{ width: `${(7 / span) * 100}%` }}
           aria-hidden
         />
-        <div className="absolute top-1/2 right-0 left-0 h-px bg-input" aria-hidden />
+        <div className="pointer-events-none absolute top-1/2 right-0 left-0 h-px bg-input" aria-hidden />
         {months.map((m) => (
-          <div key={m.label} className="absolute inset-y-0" style={{ left: `${m.pct}%` }} aria-hidden>
+          <div key={m.label} className="pointer-events-none absolute inset-y-0 select-none" style={{ left: `${m.pct}%` }} aria-hidden>
             <div className="h-full w-px bg-border" />
             <span className="absolute -bottom-5 -translate-x-1/2 text-[11px] text-muted-foreground">{m.label}</span>
           </div>
         ))}
-        <div className="absolute inset-y-0 left-0" aria-hidden>
+        <div className="pointer-events-none absolute inset-y-0 left-0 select-none" aria-hidden>
           <div className="h-full w-0.5 bg-foreground" />
           <span className="absolute -bottom-5 text-[11px] font-medium">Today</span>
         </div>

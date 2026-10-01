@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 
 /* ---------- Live token overrides (set from /design-system) ---------- */
 
-export const OVERRIDES_KEY = "contravo.token-overrides";
+import { OVERRIDES_KEY } from "./token-keys";
+
+export { OVERRIDES_KEY };
 
 export function readOverrides(): Record<string, string> {
   try {

@@ -114,7 +114,7 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
           <div tabIndex={0} role="region" aria-label="Extracted fields" className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
             {byGroup.map(({ g, items }) => (
               <section key={g}>
-                <h2 className="sticky top-0 z-10 border-b bg-card pt-4 pb-2 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+                <h2 className="sticky top-0 z-(--z-sticky) border-b bg-card pt-4 pb-2 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
                   {g}
                 </h2>
                 <ul className="divide-y">
@@ -144,7 +144,8 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
                           ) : (
                             <ConfidenceBadge value={f.confidence} />
                           )}
-                          <div className="flex items-center">
+                          {/* edge-to-edge icon buttons: button-group slot makes hit areas grow vertically only */}
+                          <div data-slot="button-group" className="flex items-center">
                             <IconAction label="Show in document" disabled={!f.page} onClick={() => find(f)}>
                               <ScanSearch />
                             </IconAction>
