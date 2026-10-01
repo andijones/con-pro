@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { organisation } from "@/lib/data";
 import { cookies } from "next/headers";
 import { TokenOverrides } from "@/components/contravo/theme";
+import { AskDrawer } from "@/components/contravo/ask-drawer";
 import { tokenScript } from "@/components/contravo/token-script";
 import "./globals.css";
 
@@ -62,6 +63,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
               <main id="main" tabIndex={-1} className="flex-1 px-4 pt-8 pb-16 outline-none md:px-8">{children}</main>
             </SidebarInset>
           </SidebarProvider>
+          <AskDrawer />
           <Toaster position="bottom-right" closeButton />
         </TooltipProvider>
       </body>

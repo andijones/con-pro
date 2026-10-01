@@ -29,6 +29,12 @@ export function ContractReader({
 }) {
   const [active, setActive] = useState<string | undefined>(initial ?? clauses.find((c) => c.risk === "high")?.id);
   const docRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Arriving with ?clause= (from a citation): bring the reader into view
+  useEffect(() => {
+    if (initial) rootRef.current?.scrollIntoView({ block: "start" });
+  }, [initial]);
 
   useEffect(() => {
     if (!active) return;
@@ -60,7 +66,7 @@ export function ContractReader({
   const explained = clauses.filter((c) => c.plain);
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+    <div ref={rootRef} className="grid scroll-mt-20 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       <div>
         <h2 className="mb-3 text-sm font-medium">
           What the contract says <span className="font-normal text-muted-foreground">· in plain English</span>

@@ -22,6 +22,7 @@ Then open http://localhost:3000. The design system lives at http://localhost:300
 | `/chat` | "Ask a question" with citations, plus the "FOI request" tab | Chat |
 | `/foi`, `/foi/[id]` | FOI agent: 20-day clock, searches, scope, draft, officer notes | FOI (inside Chat) |
 | `/audit` | Filter by action and date range; Contravo staff actions show the reason they gave | Audit |
+| Every page | **Ask drawer**: a violet "Ask Contravo" tab on the right edge (⌘J). It's page-aware, citations open the clause, and the conversation persists across pages. See `docs/decisions/ask-entry-point.md` | (new) |
 
 ## Design system: one source of truth
 
