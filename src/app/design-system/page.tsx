@@ -1,0 +1,194 @@
+import { ComponentGallery } from "@/components/contravo/component-gallery";
+import { gallerySections, slug } from "@/components/contravo/gallery-sections";
+import { TokenEditor } from "@/components/contravo/token-editor";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+
+export const metadata = { title: "Design system" };
+
+const type = [
+  { name: "Display", spec: "48–72px · Regular · −4% tracking · campaigns and greetings", className: "text-5xl tracking-[-0.04em] leading-[1.02]", sample: "Every agreement. Clearer decisions." },
+  { name: "Page title", spec: "32px · Regular · −3% tracking · .heading", className: "heading text-[2rem]", sample: "Know what needs attention." },
+  { name: "Section", spec: "18px · Medium · −1% tracking", className: "text-lg font-medium tracking-[-0.01em]", sample: "Give notice on the imaging contract" },
+  { name: "Body", spec: "16px · Regular · 155% leading · up to 65 characters", className: "max-w-[65ch] text-base leading-[1.55]", sample: "Review contract details, track renewal dates and keep the evidence close to every decision." },
+  { name: "UI", spec: "14px · Regular · component default", className: "text-sm", sample: "Ask about any contract" },
+  { name: "Label", spec: "13–14px · Medium · tabular figures for values, dates and totals", className: "tnum text-[13px] font-medium", sample: "Contract overview £124,800.00 · 17 Oct 2026" },
+  { name: "Caption", spec: "12px · Regular · muted", className: "text-xs text-muted-foreground", sample: "Estimates. Finance confirms each one before it counts." },
+  { name: "Document", spec: "Georgia 14px · 170% leading · contract text only · font-document", className: "font-document text-[14px] leading-[1.7]", sample: "3.2 Extension. Upon expiry of the Initial Term this Agreement shall automatically extend for successive periods of twelve (12) months." },
+];
+
+const a11y: [string, string, string][] = [
+  ["1.4.3", "Text contrast at least 4.5:1, including placeholders and small labels.", "Semantic tokens; checked live in Contrast below"],
+  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #86839f, --focus violet, chart tokens"],
+  ["1.4.1", "Never use colour alone. Status has a label or icon, risk is spelled out, inline links are underlined, and chart markers differ in shape.", "StatusBadge, ToneBadge, ContractReader, Runway key"],
+  ["2.4.7 · 2.4.11", "Keyboard focus is always visible and never hidden behind the sticky header.", "globals.css :focus-visible + scroll-padding-top"],
+  ["2.4.1", "Skip link to main content on every page.", "layout.tsx"],
+  ["2.5.8", "Pointer targets at least 24 × 24px. Inline citation numbers use the inline exception.", "Button sizes xs/icon-xs are 24px minimum"],
+  ["2.5.7", "Anything you can drag also works with a single click.", "Upload drop zone is a button; sliders accept clicks and arrow keys"],
+  ["2.2.1", "No time limits on actions. Undo toasts stay until dismissed.", "toast({ duration: Infinity }) + close button"],
+  ["3.3.1 · 3.3.2", "Forms explain what’s missing in words next to the field, and submit buttons stay enabled.", "Field + FieldError, aria-invalid"],
+  ["3.2.6", "Help is in the same place on every page.", "Sidebar: Help and support"],
+  ["3.3.7", "Don’t ask for the same information twice.", "Review step 2 pre-fills what step 1 read"],
+  ["4.1.2", "Every control and avatar has an accessible name.", "aria-label on icon buttons; PersonAvatar role=img"],
+  ["4.1.3", "Results counts, progress and loading states are announced.", "role=status on counts, progress and “Reading…”"],
+  ["1.1.1", "Charts carry the same data as a table for screen readers.", "report-charts.tsx SrTable"],
+  ["1.4.10", "Reflows to 320px without horizontal scrolling, except data tables.", "Responsive grids; tables scroll in their own container"],
+  ["2.3.3", "Motion respects reduced-motion settings.", "globals.css prefers-reduced-motion"],
+];
+
+const nav = [
+  { id: "principles", label: "How it works" },
+  { id: "accessibility", label: "Accessibility" },
+  { id: "tokens", label: "Colour tokens" },
+  { id: "typography", label: "Typography" },
+  { id: "radius", label: "Radius and elevation" },
+  ...gallerySections.map((s) => ({ id: slug(s), label: s })),
+];
+
+export default function DesignSystemPage() {
+  return (
+    <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[180px_minmax(0,1fr)]">
+      <nav aria-label="Design system sections" className="hidden lg:block">
+        <ul className="sticky top-20 flex flex-col gap-0.5 text-sm">
+          {nav.map((n, i) => (
+            <li key={n.id}>
+              {i === 5 && <p className="mt-4 mb-1 px-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">Components</p>}
+              <a href={`#${n.id}`} className="block rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
+                {n.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div className="flex min-w-0 flex-col gap-14">
+        <header id="principles" className="scroll-mt-20">
+          <p className="mb-2 text-[13px] font-medium text-muted-foreground">Contravo × shadcn/ui</p>
+          <h1 className="heading text-[2.5rem]">Design system</h1>
+          <p className="mt-3 max-w-[68ch] text-base text-muted-foreground">
+            Every screen is built from stock shadcn/ui components, themed with Contravo’s brand tokens. There is one source of truth:
+            change a token and the whole platform changes with it.
+          </p>
+          <div className="mt-6 grid gap-3 md:grid-cols-3">
+            {[
+              ["1 · Brand primitives", "--brand-violet: #4025c8", "Colours from the brand guidelines. Change these to rebrand."],
+              ["2 · Semantic tokens", "--primary: var(--brand-violet)", "The shadcn contract (primary, muted, border…). Change these to re-map roles."],
+              ["3 · Components", "bg-primary text-primary-foreground", "shadcn source in components/ui reads only semantic tokens. No hex values."],
+            ].map(([t, code, d]) => (
+              <Card key={t} size="sm">
+                <CardContent className="flex flex-col gap-2">
+                  <p className="text-sm font-medium">{t}</p>
+                  <code className="w-fit rounded bg-muted px-1.5 py-0.5 text-xs">{code}</code>
+                  <p className="text-xs text-muted-foreground">{d}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-muted-foreground">
+            Source: <code>src/app/globals.css</code> (tokens) · <code>src/components/ui/*</code> (shadcn, radix-nova style) ·{" "}
+            <code>src/components/contravo/*</code> (Contravo composites).
+          </p>
+        </header>
+
+        <section id="accessibility" className="scroll-mt-20">
+          <h2 className="heading mb-1 text-2xl">Accessibility: WCAG 2.2 AA</h2>
+          <p className="mb-6 max-w-[68ch] text-sm text-muted-foreground">
+            Contravo is used by public bodies, so every screen must meet WCAG 2.2 Level AA (Public Sector Bodies Accessibility
+            Regulations 2018). These rules are built into the tokens and components. Follow them for anything new.
+          </p>
+          <Card className="py-0">
+            <Table scrollLabel="WCAG 2.2 AA rules">
+              <TableHeader>
+                <TableRow className="text-xs">
+                  <TableHead className="w-28 pl-4">Criterion</TableHead>
+                  <TableHead>Rule</TableHead>
+                  <TableHead className="pr-4">Where it’s handled</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {a11y.map(([sc, rule, where]) => (
+                  <TableRow key={sc}>
+                    <TableCell className="tnum pl-4 align-top text-xs font-medium">{sc}</TableCell>
+                    <TableCell className="align-top whitespace-normal">{rule}</TableCell>
+                    <TableCell className="pr-4 align-top text-xs whitespace-normal text-muted-foreground">{where}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
+        </section>
+
+        <section id="tokens" className="scroll-mt-20">
+          <h2 className="heading mb-6 text-2xl">Colour tokens</h2>
+          <TokenEditor />
+        </section>
+
+        <section id="typography" className="scroll-mt-20">
+          <h2 className="heading mb-1 text-2xl">Typography</h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            Instrument Sans in Regular and Medium (600 only for document headings). Sentence case, left-aligned, no artificial bold.
+          </p>
+          <Card className="py-0">
+            {type.map((t, i) => (
+              <div key={t.name}>
+                {i > 0 && <Separator />}
+                <div className="grid gap-2 px-5 py-5 md:grid-cols-[180px_1fr]">
+                  <div>
+                    <p className="text-sm font-medium">{t.name}</p>
+                    <p className="text-xs text-muted-foreground">{t.spec}</p>
+                  </div>
+                  <p className={t.className}>{t.sample}</p>
+                </div>
+              </div>
+            ))}
+          </Card>
+        </section>
+
+        <section id="radius" className="scroll-mt-20">
+          <h2 className="heading mb-1 text-2xl">Radius and elevation</h2>
+          <p className="mb-6 text-sm text-muted-foreground">
+            One base radius (<code>--radius</code>, 8px) and multiples of it. Surfaces separate with 1px lines and hairline rings before
+            shadows.
+          </p>
+          <div className="flex flex-wrap gap-4">
+            {[
+              ["rounded-sm", "sm"],
+              ["rounded-md", "md"],
+              ["rounded-lg", "lg = --radius"],
+              ["rounded-xl", "xl · cards"],
+              ["rounded-2xl", "2xl"],
+              ["rounded-full", "full · badges"],
+            ].map(([c, l]) => (
+              <div key={c} className="flex flex-col items-center gap-2">
+                <div className={`size-20 border-2 border-primary bg-secondary ${c}`} />
+                <code className="text-xs text-muted-foreground">{l}</code>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-4">
+            {[
+              ["ring-1 ring-foreground/10", "Card (ring)"],
+              ["border", "Border"],
+              ["shadow-sm border", "shadow-sm"],
+              ["shadow-md", "shadow-md · hover"],
+              ["shadow-lg", "shadow-lg · overlays"],
+            ].map(([c, l]) => (
+              <div key={l} className={`grid h-20 w-36 place-items-center rounded-xl bg-card text-xs text-muted-foreground ${c}`}>
+                {l}
+              </div>
+            ))}
+          </div>
+          <p className="mt-6 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <Badge variant="outline">2.5.8</Badge> shadcn’s smallest controls are 24px, which meets WCAG 2.2 AA. The brand guide’s 44px
+            is the stricter AAA target (2.5.5).
+          </p>
+        </section>
+
+        <Separator />
+        <ComponentGallery />
+      </div>
+    </div>
+  );
+}

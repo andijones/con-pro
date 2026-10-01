@@ -1,26 +1,265 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Light only. shadcn source ships `dark:` classes; tie them to a `.dark` class that is never set,
+ * otherwise Tailwind falls back to prefers-color-scheme and they switch on for OS dark-mode users.
+ */
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * ─────────────────────────────────────────────────────────────
+ *  Contravo design tokens
+ *
+ *  Layer 1: brand primitives (from contravo-brand-guidelines.html)
+ *  Layer 2: semantic tokens: the shadcn contract every component reads
+ *  Layer 3: Tailwind utilities (@theme inline below)
+ *
+ *  Change a primitive → every semantic token that uses it changes.
+ *  Change a semantic token → every component that uses it changes.
+ *  Preview everything at /design-system.
+ * ─────────────────────────────────────────────────────────────
+ */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* ── Layer 1: brand primitives ── */
+  --brand-midnight: #030139;
+  --brand-violet: #4025c8;
+  --brand-iris: #8975ef;
+  --brand-white: #ffffff;
+  --brand-frost: #f5f4fa;
+  --brand-lilac: #e8e3ff;
+  --brand-slate: #5c5b70;
+  --brand-mint: #cbf1e5;
+
+  --brand-line: #e3e1ee; /* decorative dividers only */
+  --brand-line-strong: #8c88ad; /* control boundaries: 3.37:1 on white, 3.08:1 on Frost (WCAG 1.4.11) */
+
+  --status-success: #17634e;
+  --status-success-bg: #e3f6ef;
+  --status-warning: #805214;
+  --status-warning-bg: #fff0d6;
+  --status-critical: #ac3446;
+  --status-critical-bg: #ffe8ec;
+
+  /* ── Layer 2: semantic tokens (shadcn contract) ── */
+  --background: var(--brand-white);
+  --foreground: var(--brand-midnight);
+  --card: var(--brand-white);
+  --card-foreground: var(--brand-midnight);
+  --popover: var(--brand-white);
+  --popover-foreground: var(--brand-midnight);
+
+  --primary: var(--brand-violet);
+  --primary-foreground: var(--brand-white);
+  --secondary: var(--brand-lilac);
+  --secondary-foreground: var(--brand-violet);
+  --muted: var(--brand-frost);
+  --muted-foreground: var(--brand-slate);
+  --accent: color-mix(in oklab, var(--brand-lilac) 55%, var(--brand-white));
+  --accent-foreground: var(--brand-midnight);
+  --destructive: var(--status-critical);
+
+  --border: var(--brand-line);
+  --input: var(--brand-line-strong);
+  --ring: var(--brand-iris); /* selection rings; keyboard focus uses --focus below */
+  --focus: var(--brand-violet); /* 9.06:1 on white (WCAG 2.4.7 / 1.4.11) */
+
+  /* Controls: inputs, selects, textareas, search fields. One recipe, used everywhere. */
+  --control-bg: var(--brand-white);
+  --control-border: var(--input);
+  --control-border-hover: var(--brand-slate);
+  --control-shadow: 0 1px 2px rgb(3 1 57 / 0.05);
+  --control-height: 2.25rem; /* 36px */
+  --control-radius: var(--radius);
+
+  /* Buttons */
+  --primary-hover: color-mix(in oklab, var(--primary), var(--brand-midnight) 18%);
+  --shadow-button: 0 1px 2px rgb(3 1 57 / 0.06);
+  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.14);
+
+  --success: var(--status-success);
+  --success-muted: var(--status-success-bg);
+  --warning: var(--status-warning);
+  --warning-muted: var(--status-warning-bg);
+  --critical: var(--status-critical);
+  --critical-muted: var(--status-critical-bg);
+  --highlight: var(--brand-lilac);
+
+  --chart-1: var(--brand-violet);
+  --chart-2: var(--brand-iris);
+  --chart-3: var(--brand-midnight);
+  --chart-4: #2f8f74;
+  --chart-5: var(--brand-slate);
+
+  --radius: 0.5rem; /* 8px panel corners */
+
+  --sidebar: var(--brand-frost);
+  --sidebar-foreground: var(--brand-midnight);
+  --sidebar-primary: var(--brand-violet);
+  --sidebar-primary-foreground: var(--brand-white);
+  --sidebar-accent: var(--brand-lilac);
+  --sidebar-accent-foreground: var(--brand-violet);
+  --sidebar-border: var(--brand-line);
+  --sidebar-ring: var(--brand-iris);
 }
 
+/* ── Layer 3: Tailwind utilities ── */
 @theme inline {
+  --font-sans: "Instrument Sans", "Instrument Sans Fallback", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-document: Georgia, "Times New Roman", serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-focus: var(--focus);
+
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+  --color-critical: var(--critical);
+  --color-critical-muted: var(--critical-muted);
+  --color-highlight: var(--highlight);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* Brand primitives, for the rare brand moment (gradient, emblem). Prefer semantic tokens. */
+  --color-brand-midnight: var(--brand-midnight);
+  --color-brand-violet: var(--brand-violet);
+  --color-brand-iris: var(--brand-iris);
+  --color-brand-lilac: var(--brand-lilac);
+  --color-brand-mint: var(--brand-mint);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  /*
+   * WCAG 2.2 AA: one solid, high-contrast keyboard focus indicator everywhere (2.4.7, 1.4.11).
+   * !important in the base layer beats shadcn's `outline-none` utilities.
+   * Text controls ([data-control]) draw their own focus ring instead (see the `control` recipe).
+   */
+  :focus-visible:not([data-control]) {
+    outline: 2px solid var(--focus) !important;
+    outline-offset: 2px !important;
+  }
+  html {
+    /* Keep focused elements clear of the 56px sticky header (2.4.11 Focus not obscured) */
+    scroll-padding-top: 4.5rem;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    @apply font-sans;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  ::selection {
+    background: var(--highlight);
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/*
+ * Control recipe. White field, 3:1 boundary, hairline shadow for depth.
+ * Focus: a 2px violet ring (the 1px border plus a 1px inset) and a soft halo.
+ * That's 9:1 against white, so it meets 2.4.7 without the global outline offset.
+ */
+@utility control {
+  background-color: var(--control-bg);
+  border: 1px solid var(--control-border);
+  border-radius: var(--control-radius);
+  box-shadow: var(--control-shadow);
+  transition:
+    border-color 150ms ease-out,
+    box-shadow 150ms ease-out;
+  &:hover:not(:has(:disabled)):not(:disabled) {
+    border-color: var(--control-border-hover);
+  }
+}
+/* Inside an input group the group draws the control; the inner field is bare. */
+@utility control-bare {
+  background-color: transparent;
+  border-color: transparent;
+  border-width: 0;
+  box-shadow: none;
+}
+@utility control-focus {
+  border-color: var(--focus);
+  box-shadow:
+    inset 0 0 0 1px var(--focus),
+    0 0 0 4px color-mix(in oklab, var(--focus) 14%, transparent);
+  outline: none !important;
+}
+
+/* Type helpers from the brand guide: heading −3% tracking, tabular figures for values */
+@utility tnum {
+  font-variant-numeric: tabular-nums;
+}
+@utility heading {
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+/* Clause highlight inside the document reader */
+.clause-mark {
+  box-shadow: inset 2px 0 0 color-mix(in oklab, var(--ring) 45%, transparent);
+  border-radius: 2px;
+  transition:
+    background-color 200ms ease-out,
+    box-shadow 200ms ease-out;
+}
+.clause-mark:hover {
+  background: color-mix(in oklab, var(--highlight) 45%, transparent);
+}
+.clause-mark[data-active="true"] {
+  background: var(--highlight);
+  box-shadow: inset 3px 0 0 var(--primary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0ms !important;
+    animation-duration: 0ms !important;
+  }
 }
