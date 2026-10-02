@@ -1,18 +1,21 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { SESSION_COOKIE } from "@/lib/session";
 
-/** Concept-only gate: no session cookie → sign in. Signed in → sign-in page bounces to the app. */
+/** Pages you can reach signed out. Signed in, they bounce to the app. */
+const PUBLIC = new Set(["/sign-in", "/forgot-password"]);
+
+/** Concept-only gate: no session cookie → sign in. */
 export function proxy(request: NextRequest) {
   const signedIn = request.cookies.has(SESSION_COOKIE);
   const { pathname, search } = request.nextUrl;
-  const onSignIn = pathname === "/sign-in";
+  const isPublic = PUBLIC.has(pathname);
 
-  if (!signedIn && !onSignIn) {
+  if (!signedIn && !isPublic) {
     const url = new URL("/sign-in", request.url);
     if (pathname !== "/") url.searchParams.set("from", pathname + search);
     return NextResponse.redirect(url);
   }
-  if (signedIn && onSignIn) return NextResponse.redirect(new URL("/", request.url));
+  if (signedIn && isPublic) return NextResponse.redirect(new URL("/", request.url));
   return NextResponse.next();
 }
 
