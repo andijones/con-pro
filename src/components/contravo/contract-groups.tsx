@@ -4,7 +4,7 @@
  * Contracts: grouped by what each contract needs, with search, filters and a preview.
  * Decision record: docs/decisions/contracts.md
  */
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Archive, ArrowRight, ChevronDown, Download, MessageSquare, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
@@ -128,6 +128,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
   const [on, setOn] = useState<string[]>([]);
   const [closed, setClosed] = useState<Group[]>(["soon", "fine", "setup", "ended"]); // only "Needs you" starts open
   const [peek, setPeek] = useState<Row | null>(null);
+  const opener = useRef<HTMLElement | null>(null); // the preview has no Radix trigger, so return focus to the row by hand
   const [statusOverride, setStatusOverride] = useState<Record<string, ContractStatus>>({});
   const [confirmDelete, setConfirmDelete] = useState<Row | null>(null);
 
@@ -273,7 +274,10 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
                     <button
                       type="button"
                       aria-haspopup="dialog"
-                      onClick={() => setPeek(r)}
+                      onClick={(e) => {
+                        opener.current = e.currentTarget;
+                        setPeek(r);
+                      }}
                       className={cn(
                         "group grid w-full gap-x-6 gap-y-1 px-5 py-4 text-left transition-colors duration-(--duration-fast) md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_9rem_8rem] md:items-center",
                         t.hover,
@@ -314,7 +318,13 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
       </div>
 
       <Sheet open={!!peek} onOpenChange={(o) => !o && setPeek(null)}>
-        <SheetContent className="w-full overflow-y-auto sm:max-w-md">
+        <SheetContent
+          className="w-full overflow-y-auto sm:max-w-md"
+          onCloseAutoFocus={(e) => {
+            e.preventDefault();
+            if (opener.current?.isConnected) opener.current.focus(); // gone if the contract was archived or deleted
+          }}
+        >
           {peek && <Preview r={peek} onArchive={() => setStatus(peek, "Archived")} onDelete={() => setConfirmDelete(peek)} />}
         </SheetContent>
       </Sheet>

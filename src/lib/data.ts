@@ -873,15 +873,12 @@ export function getFoi(id: string) {
 
 /* ---------- Audit ---------- */
 
-export const auditActions = ["Viewed", "Edited", "Uploaded", "Assigned", "Asked", "FOI", "Status change", "Flagged by Contravo", "Staff action"] as const;
-
 export type AuditEvent = {
   at: string; // ISO datetime
   who: string;
   what: string;
   target: string;
   href?: string;
-  action?: (typeof auditActions)[number];
   /** Contravo staff must give a reason for anything they do in a workspace */
   staff?: { name: string; reason: string };
 };
@@ -911,19 +908,6 @@ export const audit: AuditEvent[] = [
   { at: "2026-09-28T16:40:00Z", who: "leon", what: "corrected the end date on", target: "Domestic and cleaning services", href: "/contracts/cleaning" },
   { at: "2026-09-28T11:02:00Z", who: "priya", what: "deleted", target: "Test upload (duplicate)" },
 ];
-
-export function auditActionOf(e: AuditEvent): (typeof auditActions)[number] {
-  if (e.action) return e.action;
-  if (e.staff) return "Staff action";
-  if (e.who === "system") return "Flagged by Contravo";
-  if (e.target.startsWith("FOI-") || e.what.includes("FOI")) return "FOI";
-  if (/viewed|opened/.test(e.what)) return "Viewed";
-  if (/uploaded/.test(e.what)) return "Uploaded";
-  if (/assigned/.test(e.what)) return "Assigned";
-  if (/asked/.test(e.what)) return "Asked";
-  if (/terminated|deleted|submitted|activated/.test(e.what)) return "Status change";
-  return "Edited";
-}
 
 /* ---------- Chat history (sidebar "Recent conversations") ---------- */
 
