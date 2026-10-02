@@ -123,7 +123,7 @@ export function UploadDialog({ trigger }: { trigger?: React.ReactNode }) {
                 onChange={(e) => setFile(e.target.files?.[0] ?? null)}
               />
               {file ? (
-                <div className="flex items-center gap-3 rounded-lg border bg-muted/50 px-3 py-2.5">
+                <div className="flex items-center gap-3 rounded-lg bg-muted/60 px-3 py-2.5 shadow-xs">
                   <FileText className="size-4 shrink-0 text-primary" aria-hidden />
                   <span className="min-w-0 flex-1 truncate text-sm">{file.name}</span>
                   <span className="tnum text-xs text-muted-foreground">{Math.max(1, Math.round(file.size / 1024))} KB</span>

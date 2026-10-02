@@ -411,7 +411,7 @@ export function ComponentGallery() {
             </KbdGroup>
           </Specimen>
           <Specimen label="Command" className="block">
-            <Command className="rounded-lg border">
+            <Command className="rounded-lg shadow-xs">
               <CommandInput placeholder="Find a contract…" />
               <CommandList>
                 <CommandEmpty>Nothing found.</CommandEmpty>

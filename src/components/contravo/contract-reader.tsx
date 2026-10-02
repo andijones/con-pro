@@ -78,8 +78,8 @@ export function ContractReader({
                 onClick={() => setActive(c.id)}
                 aria-pressed={active === c.id}
                 className={cn(
-                  "w-full rounded-lg border bg-card p-4 text-left transition-[border-color,box-shadow] duration-150",
-                  active === c.id ? "border-ring ring-3 ring-ring/25" : "hover:border-input",
+                  "w-full rounded-lg bg-card p-4 text-left transition-shadow duration-(--duration-fast)",
+                  active === c.id ? "shadow-[0_0_0_2px_var(--ring),0_0_0_6px_color-mix(in_oklab,var(--ring)_18%,transparent)]" : "shadow-card hover:shadow-raised",
                 )}
               >
                 <span className="flex items-center gap-2 text-xs text-muted-foreground">

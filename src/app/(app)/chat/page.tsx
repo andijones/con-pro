@@ -10,7 +10,7 @@ export default async function ChatPage(props: PageProps<"/chat">) {
   const tab = sp.tab === "foi" ? "foi" : "ask";
   return (
     <div className="mx-auto max-w-[880px]">
-      <h1 className="heading text-[2rem]">Ask about your contracts</h1>
+      <h1 className="heading text-[2.25rem]">Ask about your contracts</h1>
       <p className="mt-2 max-w-[62ch] text-base text-muted-foreground">
         Answers come from the documents in your workspace, not from general knowledge. Every answer shows the passages it came from and
         says what it couldn’t check.

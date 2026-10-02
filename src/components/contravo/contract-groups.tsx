@@ -247,7 +247,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
           const panel = `group-${g.key}`;
           const t = groupTone[g.key];
           return (
-            <section key={g.key} aria-labelledby={`${panel}-h`} className="overflow-hidden rounded-xl bg-card shadow-[0_0_0_1px_rgb(3_1_57/0.07),0_1px_2px_rgb(3_1_57/0.04)]">
+            <section key={g.key} aria-labelledby={`${panel}-h`} className="overflow-hidden rounded-xl bg-card shadow-card">
               <h2 id={`${panel}-h`}>
                 <button
                   type="button"
@@ -304,7 +304,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
           );
         })}
         {!match.length && (
-          <div className="rounded-xl bg-card px-5 py-14 text-center shadow-[0_0_0_1px_rgb(3_1_57/0.07)]">
+          <div className="rounded-xl bg-card px-5 py-14 text-center shadow-xs">
             <p className="font-medium">Nothing matches</p>
             <p className="mt-1 text-sm text-muted-foreground">
               Remove a filter, or{" "}
@@ -397,7 +397,7 @@ function Preview({ r, onArchive, onDelete }: { r: Row; onArchive: () => void; on
             <h3 className="text-sm font-medium">Open decisions</h3>
             <ul className="mt-2 flex flex-col gap-2">
               {open.map((d) => (
-                <li key={d.id} className="rounded-lg px-3 py-2.5 text-sm shadow-[0_0_0_1px_rgb(3_1_57/0.08)]">
+                <li key={d.id} className="rounded-lg px-3 py-2.5 text-sm shadow-xs">
                   <span className="font-medium">{d.title}</span>
                   <span className={cn("tnum mt-0.5 block text-xs", tone(daysUntil(d.due)))}>
                     {d.dueLabel} {formatDate(d.due)}

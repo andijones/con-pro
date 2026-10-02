@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
@@ -8,6 +8,9 @@ import "./globals.css";
 
 // Font family is referenced by name in globals.css (@theme inline --font-sans)
 const instrument = Instrument_Sans({ subsets: ["latin"], weight: ["400", "500", "600"], variable: "--font-instrument" });
+
+// Edge to edge on notched phones; the phone bar, Ask drawer and sign-in footer pad for the safe areas
+export const viewport: Viewport = { viewportFit: "cover", themeColor: "#ffffff" };
 
 export const metadata: Metadata = {
   title: { default: "Contravo", template: "%s · Contravo" },

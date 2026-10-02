@@ -63,7 +63,7 @@ function Card({ v, quiet }: { v: FoiView; quiet: boolean }) {
       aria-label={v.subject}
       className={cn(
         "grid gap-x-8 gap-y-5 rounded-xl p-5 sm:grid-cols-[9rem_minmax(0,1fr)]",
-        quiet ? "bg-muted/60" : "bg-card shadow-[0_0_0_1px_rgb(3_1_57/0.07),0_1px_3px_rgb(3_1_57/0.06),0_8px_24px_-12px_rgb(3_1_57/0.12)]",
+        quiet ? "bg-muted/60" : "bg-card shadow-raised",
       )}
     >
       {/* Time */}

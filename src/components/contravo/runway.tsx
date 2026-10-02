@@ -20,7 +20,7 @@ export function Runway({ items, onSelect, span = 90 }: { items: Decision[]; onSe
   const inRange = items.filter((i) => daysUntil(i.due) <= span);
 
   return (
-    <section aria-labelledby="runway" className="rounded-xl bg-card px-5 pt-4 pb-3 shadow-[0_0_0_1px_rgb(3_1_57/0.06),0_1px_2px_rgb(3_1_57/0.04)]">
+    <section aria-labelledby="runway" className="rounded-xl bg-card px-5 pt-4 pb-3 shadow-card">
       <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2">
         <h2 id="runway" className="text-sm font-medium">
           Next {span} days <span className="font-normal text-muted-foreground">· select a marker to open it</span>

@@ -11,7 +11,7 @@ export const metadata = { title: "Design system" };
 
 const type = [
   { name: "Display", spec: "48–72px · Regular · −4% tracking · campaigns and greetings", className: "text-5xl tracking-[-0.04em] leading-[1.02]", sample: "Every agreement. Clearer decisions." },
-  { name: "Page title", spec: "32px · Regular · −3% tracking · .heading", className: "heading text-[2rem]", sample: "Know what needs attention." },
+  { name: "Page title", spec: "36px · Regular · −3% tracking · .heading", className: "heading text-[2.25rem]", sample: "Know what needs attention." },
   { name: "Section", spec: "18px · Medium · −1% tracking", className: "text-lg font-medium tracking-[-0.01em]", sample: "Give notice on the imaging contract" },
   { name: "Body", spec: "16px · Regular · 155% leading · up to 65 characters", className: "max-w-[65ch] text-base leading-[1.55]", sample: "Review contract details, track renewal dates and keep the evidence close to every decision." },
   { name: "UI", spec: "14px · Regular · component default", className: "text-sm", sample: "Ask about any contract" },
@@ -163,8 +163,9 @@ export default function DesignSystemPage() {
         <section id="radius" className="scroll-mt-20">
           <h2 className="heading mb-1 text-2xl">Radius and elevation</h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            One base radius (<code>--radius</code>, 8px) and multiples of it. Surfaces separate with 1px lines and hairline rings before
-            shadows.
+            One base radius (<code>--radius</code>, 8px) and multiples of it. Depth comes from five layered, Midnight-tinted shadows
+            (<code>--elevation-0</code> to <code>--elevation-4</code>), never from solid borders. Borders only divide (hairlines) or mark a
+            control’s edge (inputs and checkboxes, at 3:1).
           </p>
           <div className="flex flex-wrap gap-4">
             {[
@@ -183,14 +184,15 @@ export default function DesignSystemPage() {
           </div>
           <div className="mt-6 flex flex-wrap gap-4">
             {[
-              ["ring-1 ring-foreground/10", "Card (ring)"],
-              ["border", "Border"],
-              ["shadow-sm border", "shadow-sm"],
-              ["shadow-md", "shadow-md · hover"],
-              ["shadow-lg", "shadow-lg · overlays"],
-            ].map(([c, l]) => (
-              <div key={l} className={`grid h-20 w-36 place-items-center rounded-xl bg-card text-xs text-muted-foreground ${c}`}>
-                {l}
+              ["shadow-xs", "elevation-0", "Flat edge · tables, wells"],
+              ["shadow-card", "elevation-1", "Cards at rest"],
+              ["shadow-raised", "elevation-2", "Raised · hover lift"],
+              ["shadow-menu", "elevation-3", "Menus, popovers, tooltips"],
+              ["shadow-modal", "elevation-4", "Dialogs, sheets"],
+            ].map(([c, t, l]) => (
+              <div key={t} className={`flex h-24 w-40 flex-col justify-end rounded-xl bg-card p-3 text-xs ${c}`}>
+                <code className="font-medium text-foreground">{c}</code>
+                <span className="mt-0.5 text-muted-foreground">{l}</span>
               </div>
             ))}
           </div>

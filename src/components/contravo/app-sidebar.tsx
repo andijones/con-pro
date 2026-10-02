@@ -368,7 +368,7 @@ function SidebarTop() {
 export function MobileBar() {
   const { toggleSidebar } = useSidebar();
   return (
-    <div className="sticky top-0 z-(--z-header) flex h-12 items-center gap-1 border-b bg-background/90 px-2 backdrop-blur-sm md:hidden">
+    <div className="sticky top-0 z-(--z-header) flex h-[calc(3rem+env(safe-area-inset-top))] items-center gap-1 border-b bg-background/90 px-2 pt-[env(safe-area-inset-top)] backdrop-blur-sm md:hidden">
       <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Open menu">
         <Menu />
       </Button>

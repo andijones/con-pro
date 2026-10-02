@@ -155,8 +155,8 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
                   <li key={id}>
                     <label
                       className={clsx(
-                        "flex cursor-pointer items-center gap-3 rounded-lg border px-3 py-2.5 text-sm transition-colors",
-                        on ? "border-ring/50 bg-highlight/30" : "border-border hover:bg-muted",
+                        "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition-[background-color,box-shadow] duration-(--duration-fast)",
+                        on ? "bg-highlight/40 shadow-[0_0_0_1px_color-mix(in_oklab,var(--ring)_55%,transparent)]" : "shadow-xs hover:bg-muted/60",
                         stage === "draft" && "pointer-events-none",
                       )}
                     >
@@ -197,7 +197,7 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
 
         {/* 4. Draft */}
         {stage === "draft" && (
-          <div className="mt-4 overflow-hidden rounded-lg border border-border bg-card">
+          <div className="mt-4 overflow-hidden rounded-lg bg-card shadow-card">
             <div className="flex items-center gap-2 border-b border-warning/25 bg-warning-muted px-5 py-2.5 text-[13px] font-medium text-warning">
               <CircleAlert size={14} aria-hidden /> Draft only. Not a decision of the authority.
             </div>
@@ -339,8 +339,8 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
                   <li
                     key={i}
                     className={clsx(
-                      "rounded-lg border p-3 text-[13px] leading-relaxed transition-opacity",
-                      n.severity === "block" ? "border-critical/25 bg-critical-muted/50" : "border-border bg-muted/60",
+                      "rounded-lg p-3 text-[13px] leading-relaxed transition-opacity",
+                      n.severity === "block" ? "bg-critical-muted/60 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--critical)_22%,transparent)]" : "bg-muted/60",
                       done && "opacity-55",
                     )}
                   >

@@ -156,7 +156,7 @@ export function PageHeader({
     <header className="flex flex-wrap items-end justify-between gap-4">
       <div className="min-w-0">
         {eyebrow && <p className="mb-2 text-[13px] font-medium text-muted-foreground">{eyebrow}</p>}
-        <h1 className="heading text-[2rem] text-balance">{title}</h1>
+        <h1 className="heading text-[2.25rem] text-balance">{title}</h1>
         {children && <div className="mt-2 max-w-[65ch] text-base text-pretty text-muted-foreground">{children}</div>}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -190,9 +190,9 @@ export function Stat({
       <span className="mt-1 block text-[13px] text-muted-foreground">{label}</span>
     </>
   );
-  const cls = "block rounded-lg border bg-card px-4 py-3.5 transition-colors";
+  const cls = "block rounded-lg bg-card px-4 py-3.5 shadow-card transition-[background-color,box-shadow] duration-(--duration-fast)";
   return href ? (
-    <Link href={href} className={cn(cls, "hover:border-input hover:bg-accent/50")}>
+    <Link href={href} className={cn(cls, "hover:shadow-raised")}>
       {body}
     </Link>
   ) : (

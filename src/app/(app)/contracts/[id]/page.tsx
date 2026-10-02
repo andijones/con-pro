@@ -59,7 +59,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
             <span aria-hidden>·</span>
             <span>{c.route}</span>
           </div>
-          <h1 className="heading text-[2rem] text-balance">{c.title}</h1>
+          <h1 className="heading text-[2.25rem] text-balance">{c.title}</h1>
           <p className="mt-1 text-base text-muted-foreground">
             {c.supplier ?? <span className="text-warning">No counterparty recorded</span>}
           </p>

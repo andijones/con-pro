@@ -225,7 +225,7 @@ export function TokenEditor() {
             const r = values[fg] ? contrast(fg, bg) : null;
             const pass = r !== null && r >= min;
             return (
-              <div key={label} className="flex items-center gap-3 rounded-lg border p-3">
+              <div key={label} className="flex items-center gap-3 rounded-lg p-3 shadow-xs">
                 {min === 4.5 ? (
                   <span className="grid size-10 shrink-0 place-items-center rounded-md text-sm font-medium" style={{ background: `var(${bg})`, color: `var(${fg})` }}>
                     Aa
@@ -271,7 +271,7 @@ function Swatch({
   compact?: boolean;
 }) {
   return (
-    <div className={cn("group flex items-center gap-3 rounded-lg border bg-card p-2.5", edited && "border-ring")}>
+    <div className={cn("group flex items-center gap-3 rounded-lg bg-card p-2.5 shadow-xs", edited && "border-ring")}>
       <label className="relative block shrink-0 cursor-pointer" title={`Edit ${token}`}>
         <span className={cn("block rounded-md ring-1 ring-foreground/10", compact ? "size-9" : "size-12")} style={{ background: `var(${token})` }} />
         <input

@@ -165,7 +165,7 @@ export function AskDrawer() {
                   <li key={s}>
                     <button
                       onClick={() => ask(s)}
-                      className="w-full rounded-lg border px-3 py-2 text-left text-sm transition-colors hover:border-ring hover:bg-accent/40"
+                      className="w-full rounded-lg bg-card px-3 py-2 text-left text-sm shadow-xs transition-[background-color,box-shadow] duration-(--duration-fast) hover:bg-accent/40 hover:shadow-card"
                     >
                       {s}
                     </button>
@@ -186,7 +186,7 @@ export function AskDrawer() {
           )}
         </div>
 
-        <footer className="border-t p-3">
+        <footer className="border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -276,7 +276,7 @@ function AnswerBody({ turn }: { turn: Turn }) {
                 <Link
                   href={href(i)!}
                   scroll={false}
-                  className="flex items-start gap-2 rounded-lg border bg-card px-2.5 py-2 text-xs transition-colors hover:border-ring"
+                  className="flex items-start gap-2 rounded-lg bg-card px-2.5 py-2 text-xs shadow-xs transition-shadow duration-(--duration-fast) hover:shadow-card"
                 >
                   <span className="tnum mt-px grid size-[18px] shrink-0 place-items-center rounded bg-secondary text-[11px] font-medium text-secondary-foreground">
                     {i + 1}

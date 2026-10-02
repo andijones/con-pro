@@ -64,7 +64,7 @@ export default async function FoiCasePage(props: PageProps<"/foi/[id]">) {
       <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <p className="tnum mb-2 text-[13px] font-medium text-muted-foreground">{req.ref}</p>
-          <h1 className="heading text-[2rem] text-balance">{req.subject}</h1>
+          <h1 className="heading text-[2.25rem] text-balance">{req.subject}</h1>
         </div>
         <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
           Officer <Person id={req.assignee} />

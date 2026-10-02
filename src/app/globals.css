@@ -70,9 +70,14 @@
 
   /* Controls: inputs, selects, textareas, search fields. One recipe, used everywhere. */
   --control-bg: var(--brand-white);
-  --control-border: var(--input);
-  --control-border-hover: var(--brand-slate);
-  --control-shadow: 0 1px 2px rgb(3 1 57 / 0.05);
+  --control-border: var(--input); /* the 3:1 edge WCAG 1.4.11 needs; every side stays at or above it */
+  --control-border-bottom: color-mix(in oklab, var(--input), var(--brand-slate) 30%); /* a touch deeper underneath, as if lit from above */
+  --control-border-hover: color-mix(in oklab, var(--input), var(--brand-slate) 55%);
+  /* Recessed, not raised: a soft inner shadow at the top makes the field a well you type into, not a button */
+  --control-shadow: inset 0 1px 2px rgb(3 1 57 / 0.06);
+  --control-halo: color-mix(in oklab, var(--brand-iris) 26%, transparent); /* focus glow, around the 2px Midnight edge */
+  --control-invalid-halo: color-mix(in oklab, var(--destructive) 13%, transparent);
+  --control-autofill: color-mix(in oklab, var(--brand-lilac) 45%, var(--brand-white)); /* filled by the browser: our tint, not its blue */
   --control-height: 2.25rem; /* 36px */
   --control-radius: var(--radius);
 
@@ -91,18 +96,34 @@
   --z-overlay: 50; /* dialogs, popovers, menus (shadcn default) */
   --z-skip: 60; /* skip link sits above everything when focused */
 
+  /*
+   * Elevation: depth comes from shadows, never from solid borders.
+   * Every step stacks three layers, all tinted Midnight rather than grey so they belong to the brand:
+   * a hairline ring (stands in for the border), a tight contact shadow, and a soft ambient shadow.
+   * Rings are decoration: WCAG 1.4.11 boundaries for controls are drawn by the control recipe and checkbox borders, not these.
+   */
+  --elevation-0: 0 0 0 1px rgb(3 1 57 / 0.08); /* flat container edge: tables, wells */
+  --elevation-1: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.05), 0 2px 6px -2px rgb(3 1 57 / 0.06); /* cards at rest */
+  --elevation-2: 0 0 0 1px rgb(3 1 57 / 0.06), 0 2px 4px -1px rgb(3 1 57 / 0.06), 0 12px 28px -10px rgb(3 1 57 / 0.16); /* raised: featured cards, hover lift, sign-in */
+  --elevation-3: 0 0 0 1px rgb(3 1 57 / 0.08), 0 4px 8px -2px rgb(3 1 57 / 0.08), 0 16px 32px -8px rgb(3 1 57 / 0.18); /* popovers, menus, tooltips */
+  --elevation-4: 0 0 0 1px rgb(3 1 57 / 0.08), 0 8px 16px -4px rgb(3 1 57 / 0.1), 0 32px 64px -16px rgb(3 1 57 / 0.28); /* dialogs, sheets */
+  --edge-hairline: inset 0 0 0 1px rgb(3 1 57 / 0.12); /* outlined badges and items: an edge drawn inside, no layout cost */
+
+  /* Hairline dividers: 1px, or 0.5px on high-density screens so separators stay crisp, not heavy */
+  --hairline: 1px;
+
   /* Buttons */
   --primary-hover: color-mix(in oklab, var(--primary), var(--brand-midnight) 18%);
-  --shadow-button: 0 1px 2px rgb(3 1 57 / 0.06);
-  /* Raised surfaces (sign-in card): a hairline ring, a tight contact shadow and a soft ambient one */
-  --shadow-raised: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.04), 0 12px 32px -12px rgb(3 1 57 / 0.14);
+  --shadow-button: 0 0 0 1px rgb(3 1 57 / 0.12), 0 1px 2px rgb(3 1 57 / 0.06);
+  --shadow-button-hover: 0 0 0 1px rgb(3 1 57 / 0.18), 0 1px 3px rgb(3 1 57 / 0.08), 0 2px 6px -2px rgb(3 1 57 / 0.08);
+  /* Solid primary: a contact shadow plus a soft glow in its own colour, so it sits on the page instead of on a halo */
+  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.18), 0 2px 8px -2px color-mix(in oklab, var(--primary) 45%, transparent);
 
   /* Brand shimmer, as on the website (footer wordmark, hero band): Lilac → deep Lilac → Mint → Mint mist */
   --shimmer-1: var(--brand-lilac);
   --shimmer-2: var(--brand-lilac-deep);
   --shimmer-3: var(--brand-mint);
   --shimmer-4: var(--brand-mint-mist);
-  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.16);
 
   --success: var(--status-success);
   --success-muted: var(--status-success-bg);
@@ -133,6 +154,11 @@
 @media (pointer: coarse) {
   :root {
     --hit-min: 44px;
+  }
+}
+@media (min-resolution: 2dppx) {
+  :root {
+    --hairline: 0.5px;
   }
 }
 
@@ -192,6 +218,18 @@
   --color-brand-lilac: var(--brand-lilac);
   --color-brand-mint: var(--brand-mint);
 
+  /* Shadow scale: Tailwind's names point at the elevation tokens, so every shadcn component picks them up */
+  --shadow-xs: var(--elevation-0);
+  --shadow-sm: var(--elevation-1);
+  --shadow-card: var(--elevation-1);
+  --shadow-raised: var(--elevation-2);
+  --shadow-md: var(--elevation-3);
+  --shadow-lg: var(--elevation-3);
+  --shadow-menu: var(--elevation-3);
+  --shadow-xl: var(--elevation-4);
+  --shadow-modal: var(--elevation-4);
+  --shadow-hairline: var(--edge-hairline);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -215,11 +253,20 @@
   [tabindex="-1"]:focus {
     outline: none;
   }
+  /*
+   * One focus indicator, not two. shadcn adds a violet ring-3 glow on focus to checkboxes, radios, switches, tabs,
+   * sliders and accordions, on top of our Midnight outline, and the two clash. The outline is the indicator.
+   */
+  :focus-visible:not([data-control]) {
+    --tw-ring-shadow: 0 0 #0000 !important;
+  }
   :focus-visible:not([data-control]):not([tabindex="-1"]) {
     outline: 2px solid var(--focus) !important;
     outline-offset: 2px !important;
   }
   html {
+    /* Never fake a weight or an italic the font doesn't ship (Instrument Sans: 400, 500, 600) */
+    font-synthesis: none;
     /* Keep focused elements clear of the 48px phone menu bar (2.4.11 Focus not obscured); desktop has no top bar */
     scroll-padding-top: 4rem;
     @media (width >= 48rem) {
@@ -241,6 +288,11 @@
   h3 {
     text-wrap: balance;
   }
+  /* Tracking follows size: section and card headings sit a hair tighter than body text (.heading tightens further) */
+  h2,
+  h3 {
+    letter-spacing: -0.01em;
+  }
   p,
   li,
   blockquote {
@@ -258,19 +310,23 @@
 }
 
 /*
- * Control recipe. White field, 3:1 boundary, hairline shadow for depth.
- * Focus: a 2px violet ring (the 1px border plus a 1px inset) and a soft halo.
- * That's 9:1 against white, so it meets 2.4.7 without the global outline offset.
+ * Control recipe: inputs, selects, textareas, input groups.
+ * Rest: white field, a 1px edge at 3:1 (WCAG 1.4.11) that deepens slightly along the bottom, and an inner top shadow,
+ *   so it reads as a recessed well rather than a box drawn round some text.
+ * Hover: the edge deepens a step. Focus: a 2px Midnight edge (19:1, WCAG 2.4.7) inside a soft Iris glow.
+ * Invalid: a 1px red edge and a faint red glow. The message under the field carries the error, not colour alone (1.4.1).
  */
 @utility control {
   background-color: var(--control-bg);
   border: 1px solid var(--control-border);
+  border-bottom-color: var(--control-border-bottom);
   border-radius: var(--control-radius);
   box-shadow: var(--control-shadow);
   transition:
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
-  &:hover:not(:has(:disabled)):not(:disabled) {
+  /* Hover deepens the edge, but never over focus, an open select or an error */
+  &:hover:not(:has(:disabled)):not(:disabled):not(:focus-visible):not(:has(:focus-visible)):not([data-state="open"]):not([aria-invalid="true"]):not(:has([aria-invalid="true"])) {
     border-color: var(--control-border-hover);
   }
 }
@@ -279,14 +335,22 @@
   background-color: transparent;
   border-color: transparent;
   border-width: 0;
+  border-radius: inherit; /* nothing inside the group can paint square corners */
   box-shadow: none;
 }
 @utility control-focus {
   border-color: var(--focus);
   box-shadow:
+    var(--control-shadow),
     inset 0 0 0 1px var(--focus),
-    0 0 0 4px color-mix(in oklab, var(--focus) 14%, transparent);
+    0 0 0 3px var(--control-halo);
   outline: none !important;
+}
+@utility control-invalid {
+  border-color: var(--destructive);
+  box-shadow:
+    var(--control-shadow),
+    0 0 0 3px var(--control-invalid-halo);
 }
 
 /*
@@ -392,11 +456,61 @@
   box-shadow: inset 3px 0 0 var(--primary);
 }
 
+/*
+ * Small scrollers (drawers, sheets, menus, selects, the command list) get a quiet thin scrollbar.
+ * The page scrollbar is never touched.
+ */
+.scroll-subtle,
+[data-slot="sheet-content"],
+[data-slot="select-content"],
+[data-slot="dropdown-menu-content"],
+[data-slot="command-list"],
+[data-slot="popover-content"] {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(3 1 57 / 0.2) transparent;
+}
+
+/* Toasts sit on the same elevation as menus, with the brand's action button, not Sonner's defaults */
+[data-sonner-toast] {
+  border-color: transparent !important;
+  box-shadow: var(--elevation-3) !important;
+}
+[data-sonner-toast] [data-button] {
+  background: var(--primary) !important;
+  color: var(--primary-foreground) !important;
+  border-radius: calc(var(--radius) * 0.8) !important;
+  font-weight: 500;
+}
+
+/*
+ * Browser autofill. Chrome paints its own blue straight onto the <input>, which ignores our radius and, inside an
+ * input group, stops short of the addons. Hold the browser colour off (the long transition), then tint the whole
+ * control ourselves. background-image, because the browser's autofill background can't be overridden directly.
+ */
+input:-webkit-autofill,
+input:autofill {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
+.control:is(:autofill, :-webkit-autofill),
+.control:has(:autofill),
+.control:has(:-webkit-autofill) {
+  background-image: linear-gradient(var(--control-autofill), var(--control-autofill));
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     transition-duration: 0ms !important;
     animation-duration: 0ms !important;
+  }
+  /* Not motion: the autofill hold above must keep its duration, or the browser's blue comes back */
+  input:-webkit-autofill,
+  input:autofill {
+    transition-duration: 600000s !important;
   }
 }

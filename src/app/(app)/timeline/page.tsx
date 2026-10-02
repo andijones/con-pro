@@ -44,7 +44,7 @@ export default function TimelinePage() {
         </span>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-border bg-card">
+      <div className="mt-4 overflow-x-auto rounded-lg bg-card shadow-card">
         <div className="min-w-[920px]">
           <div className="grid grid-cols-[260px_1fr] border-b border-border">
             <div className="px-5 py-3 text-xs font-medium text-muted-foreground">Contract</div>
