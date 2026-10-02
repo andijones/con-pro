@@ -21,10 +21,11 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
         {/* Desktop: the page sits on a rounded white panel inset from the Frost frame. The panel clips; the inner
             layer scrolls, so the scrollbar stays inside the rounded corners. */}
         <SidebarInset className="min-w-0 md:my-2 md:mr-2 md:h-[calc(100svh-1rem)] md:overflow-hidden md:rounded-xl md:shadow-card">
-          <div className="flex min-h-0 flex-1 flex-col md:overflow-y-auto md:scroll-pt-10">
+          <div className="flex min-h-0 flex-1 flex-col md:overflow-y-auto md:scroll-pt-24 md:[scrollbar-gutter:stable]">
             <MobileBar />
-            <main id="main" tabIndex={-1} className="flex-1 px-4 pt-8 pb-16 outline-none md:px-10 md:pt-10">
-              {children}
+            <main id="main" tabIndex={-1} className="@container flex-1 px-(--page-gutter) pt-(--page-gutter) pb-16 outline-none md:[--page-gutter:2.5rem]">
+              {/* One content width for every page (--page-max), so titles and content never jump between pages */}
+              <div className="mx-auto w-full max-w-(--page-max)">{children}</div>
             </main>
           </div>
         </SidebarInset>

@@ -6,7 +6,7 @@ export const metadata = { title: "Contracts" };
 export default function ContractsPage() {
   const t = estateTotals();
   return (
-    <div className="mx-auto max-w-[1080px]">
+    <div>
       <ContractGroups live={t.live} annual={t.gbpAnnual} />
     </div>
   );

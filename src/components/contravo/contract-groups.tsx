@@ -27,7 +27,7 @@ import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { PersonAvatar, StatusBadge } from "./primitives";
+import { PageHeader, PersonAvatar, StatusBadge } from "./primitives";
 import { UploadDialog } from "./upload-dialog";
 
 /* ---------- Reading each contract in plain English ---------- */
@@ -178,21 +178,20 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="heading text-[2.25rem]">Contracts</h1>
-          <p className="mt-2 text-base text-muted-foreground">
-            {live} live contracts worth about <span className="tnum text-foreground">{gbp(annual, { compact: true })}</span> a year, grouped by what they need
-            from you.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" onClick={exportCsv}>
-            <Download data-icon="inline-start" /> Export
-          </Button>
-          <UploadDialog />
-        </div>
-      </div>
+      <PageHeader
+        title="Contracts"
+        actions={
+          <>
+            <Button variant="outline" onClick={exportCsv}>
+              <Download data-icon="inline-start" /> Export
+            </Button>
+            <UploadDialog />
+          </>
+        }
+      >
+        {live} live contracts worth about <span className="tnum text-foreground">{gbp(annual, { compact: true })}</span> a year, grouped by what they need
+        from you.
+      </PageHeader>
 
       <div className="mt-6">
         <label htmlFor="contract-search" className="sr-only">

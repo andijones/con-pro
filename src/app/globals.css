@@ -89,6 +89,13 @@
   --duration-base: 200ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --press-scale: 0.96; /* tactile press; never below 0.95 */
+  --page-title-size: 1.875rem; /* 30px */
+  --page-title-tracking: -0.025em; /* −0.75px at 30px */
+  /* Page bar: the sticky strip holding the page title and the page's actions (PageHeader) */
+  --page-max: 1180px; /* every page's content width, set once in the app layout so nothing jumps between pages */
+  --page-gutter: 1rem; /* main's side and top padding; 2.5rem from md */
+  --page-bar-shadow: 0 1px 0 rgb(3 1 57 / 0.05), 0 8px 16px -12px rgb(3 1 57 / 0.14);
+  --page-bar-offset: 6rem; /* where sticky side panels sit, clear of the bar */
 
   /* Hit areas: visual size can be smaller, the target can't (WCAG 2.5.8 floor is 24px; we aim higher) */
   --hit-min: 40px;
@@ -430,6 +437,40 @@
 @utility heading {
   letter-spacing: -0.03em;
   line-height: 1.1;
+}
+/* Page titles (every h1 in the app): 30px with tracking scaled to the size (−3% at 36px → −2.5% at 30px) */
+@utility page-title {
+  font-size: var(--page-title-size);
+  letter-spacing: var(--page-title-tracking);
+  line-height: 1.1;
+}
+
+/*
+ * Page bar: title and actions on one sticky strip across the top of the page panel, with a soft shadow.
+ * Full-bleed from inside any max-width page wrapper (main is the container), while its contents stay aligned
+ * with the wrapper. Sticky from md, where the panel scrolls; on phones it scrolls away under the menu bar.
+ */
+@utility page-bar {
+  position: relative;
+  z-index: var(--z-header);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  min-height: 4rem;
+  margin-top: calc(var(--page-gutter) * -1);
+  margin-bottom: 1.25rem;
+  margin-inline: calc(50% - 50cqi - var(--page-gutter));
+  padding-block: 0.75rem;
+  padding-inline: calc(50cqi - 50% + var(--page-gutter));
+  background: color-mix(in oklab, var(--background) 92%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow: var(--page-bar-shadow);
+  @media (width >= 48rem) {
+    position: sticky;
+    top: 0;
+  }
 }
 
 /*

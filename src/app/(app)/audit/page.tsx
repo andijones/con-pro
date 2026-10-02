@@ -4,7 +4,7 @@ export const metadata = { title: "Audit" };
 
 export default function AuditPage() {
   return (
-    <div className="mx-auto max-w-[860px]">
+    <div>
       <AuditFeed />
     </div>
   );

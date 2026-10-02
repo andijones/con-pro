@@ -308,7 +308,7 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
       </div>
 
       {/* Right rail: the clock, what blocks sending, outputs */}
-      <aside className="order-first flex flex-col gap-4 lg:sticky lg:top-8 lg:order-none lg:self-start">
+      <aside className="order-first flex flex-col gap-4 lg:sticky lg:top-(--page-bar-offset) lg:order-none lg:self-start">
         <Card className="gap-0 p-5">
           <p className="text-xs text-muted-foreground">Response due</p>
           <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(due)}</p>

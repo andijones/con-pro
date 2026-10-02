@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AlertTriangle, ChevronLeft, ListChecks, MessageSquare, Pencil, RefreshCw } from "lucide-react";
+import { AlertTriangle, ListChecks, MessageSquare, Pencil, RefreshCw } from "lucide-react";
 import { audit, getContract, people, workspace } from "@/lib/data";
 import { daysUntil, formatDate, gbp } from "@/lib/dates";
 import { decisionsFor, nextDeadline, noticeBy } from "@/lib/derive";
 import { ContractReader } from "@/components/contravo/contract-reader";
 import { DecisionList } from "@/components/contravo/decision-list";
-import { Countdown, ExtractionBadge, Person, StatusBadge } from "@/components/contravo/primitives";
+import { BackLink, Countdown, ExtractionBadge, PageHeader, Person, StatusBadge } from "@/components/contravo/primitives";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -37,51 +37,46 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
   const months = Math.round(c.notice / 30);
 
   return (
-    <div className="mx-auto max-w-[1180px]">
-      <Button variant="link" asChild className="mb-3 h-auto px-0 text-muted-foreground">
-        <Link href="/contracts">
-          <ChevronLeft data-icon="inline-start" /> Contracts
-        </Link>
-      </Button>
-
-      <header className="flex flex-wrap items-start justify-between gap-4">
-        <div className="min-w-0">
-          <div className="mb-2 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
-            <StatusBadge status={c.status} />
-            <ExtractionBadge state={c.extraction} />
-            <span>{c.category}</span>
-            {c.businessUnit && (
-              <>
-                <span aria-hidden>·</span>
-                <span>{c.businessUnit}</span>
-              </>
-            )}
-            <span aria-hidden>·</span>
-            <span>{c.route}</span>
-          </div>
-          <h1 className="heading text-[2.25rem] text-balance">{c.title}</h1>
-          <p className="mt-1 text-base text-muted-foreground">
-            {c.supplier ?? <span className="text-warning">No counterparty recorded</span>}
-          </p>
+    <div>
+      <PageHeader
+        title={c.title}
+        leading={<BackLink href="/contracts" label="contracts" />}
+        actions={
+          <>
+            <Button variant="outline" asChild>
+              <Link href={`/contracts/${c.id}/review`}>
+                <ListChecks data-icon="inline-start" /> Review extraction
+              </Link>
+            </Button>
+            <Button variant="outline" asChild>
+              <Link href={`/contracts/${c.id}/details`}>
+                <Pencil data-icon="inline-start" /> Edit details
+              </Link>
+            </Button>
+            <Button variant="secondary" asChild>
+              <Link href={`/chat?q=${encodeURIComponent(`Can we end the ${c.title.toLowerCase()} contract early?`)}`}>
+                <MessageSquare data-icon="inline-start" /> Ask about this contract
+              </Link>
+            </Button>
+          </>
+        }
+      />
+      <div className="flex flex-col gap-1">
+        <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
+          <StatusBadge status={c.status} />
+          <ExtractionBadge state={c.extraction} />
+          <span>{c.category}</span>
+          {c.businessUnit && (
+            <>
+              <span aria-hidden>·</span>
+              <span>{c.businessUnit}</span>
+            </>
+          )}
+          <span aria-hidden>·</span>
+          <span>{c.route}</span>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
-            <Link href={`/contracts/${c.id}/review`}>
-              <ListChecks data-icon="inline-start" /> Review extraction
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href={`/contracts/${c.id}/details`}>
-              <Pencil data-icon="inline-start" /> Edit details
-            </Link>
-          </Button>
-          <Button variant="secondary" asChild>
-            <Link href={`/chat?q=${encodeURIComponent(`Can we end the ${c.title.toLowerCase()} contract early?`)}`}>
-              <MessageSquare data-icon="inline-start" /> Ask about this contract
-            </Link>
-          </Button>
-        </div>
-      </header>
+        <p className="text-base text-muted-foreground">{c.supplier ?? <span className="text-warning">No counterparty recorded</span>}</p>
+      </div>
 
       {c.extraction === "Ready to review" && (
         <Alert className="mt-6">

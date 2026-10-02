@@ -29,8 +29,8 @@ export default function TimelinePage() {
   const today = pct(TODAY);
 
   return (
-    <div className="mx-auto max-w-[1180px]">
-      <PageHeader eyebrow="Plan" title="Timeline">
+    <div>
+      <PageHeader title="Timeline">
         Every contract from now to the end of 2028. The shaded part of each bar is the notice window: once a contract enters it,
         the trust can no longer give notice in time.
       </PageHeader>

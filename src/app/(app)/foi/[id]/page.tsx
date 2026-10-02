@@ -1,13 +1,10 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeft } from "lucide-react";
 import { foiRequests, getFoi, type FoiRequest } from "@/lib/data";
 import { foiCases } from "@/lib/foi-cases";
 import { TODAY } from "@/lib/dates";
 import { foiDue, foiElapsed } from "@/lib/derive";
 import { FoiWorkspace } from "@/components/contravo/foi-workspace";
-import { Person } from "@/components/contravo/primitives";
-import { Button } from "@/components/ui/button";
+import { BackLink, PageHeader, Person } from "@/components/contravo/primitives";
 
 export function generateStaticParams() {
   return foiRequests.map((f) => ({ id: f.id }));
@@ -55,21 +52,17 @@ export default async function FoiCasePage(props: PageProps<"/foi/[id]">) {
   if (!req || !kase) notFound();
 
   return (
-    <div className="mx-auto max-w-[1180px]">
-      <Button variant="link" asChild className="mb-3 h-auto px-0 text-muted-foreground">
-        <Link href="/foi">
-          <ChevronLeft data-icon="inline-start" /> FOI requests
-        </Link>
-      </Button>
-      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0">
-          <p className="tnum mb-2 text-[13px] font-medium text-muted-foreground">{req.ref}</p>
-          <h1 className="heading text-[2.25rem] text-balance">{req.subject}</h1>
-        </div>
-        <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
-          Officer <Person id={req.assignee} />
-        </div>
-      </header>
+    <div>
+      <PageHeader
+        title={req.subject}
+        leading={<BackLink href="/foi" label="FOI requests" />}
+        actions={
+          <span className="flex items-center gap-2 text-[13px] text-muted-foreground">
+            Officer <Person id={req.assignee} />
+          </span>
+        }
+      />
+      <p className="tnum mb-6 text-[13px] font-medium text-muted-foreground">{req.ref}</p>
       <FoiWorkspace req={req} kase={kase} due={foiDue(req)} elapsed={foiElapsed(req)} />
     </div>
   );

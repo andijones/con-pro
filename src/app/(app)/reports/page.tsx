@@ -58,7 +58,7 @@ export default function ReportsPage() {
     .slice(0, 6);
 
   return (
-    <div className="mx-auto max-w-[1180px]">
+    <div>
       <PageHeader title="Reports">
         Built from the contracts themselves and kept up to date. Every figure links back to the contracts it came from, and anything that
         couldn’t be counted is listed.

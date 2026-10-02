@@ -16,7 +16,7 @@ import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { PersonAvatar } from "./primitives";
+import { PageHeader, PersonAvatar } from "./primitives";
 
 type OpenRecord = (key: string) => void;
 
@@ -60,18 +60,17 @@ export function AuditFeed() {
 
   return (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="heading text-[2.25rem]">Audit</h1>
-          <p className="mt-2 max-w-[70ch] text-base text-muted-foreground">
-            Everything that happened in this workspace, newest first. Select any contract or request to see its whole history. Contravo’s own actions are included, and
-            anything Contravo staff do shows the reason they gave.
-          </p>
-        </div>
-        <Button variant="outline" onClick={() => toast.success(`Exported ${list.length} events`, { description: "CSV, signed with a checksum for auditors" })}>
-          <Download data-icon="inline-start" /> Export for auditors
-        </Button>
-      </div>
+      <PageHeader
+        title="Audit"
+        actions={
+          <Button variant="outline" onClick={() => toast.success(`Exported ${list.length} events`, { description: "CSV, signed with a checksum for auditors" })}>
+            <Download data-icon="inline-start" /> Export for auditors
+          </Button>
+        }
+      >
+        Everything that happened in this workspace, newest first. Select any contract or request to see its whole history. Contravo’s own actions are included, and
+        anything Contravo staff do shows the reason they gave.
+      </PageHeader>
 
       <div className="mt-6 flex flex-wrap items-center gap-3">
         <div className="min-w-60 flex-1">

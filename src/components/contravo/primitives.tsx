@@ -3,10 +3,11 @@
  * so a token change in globals.css flows through here and on to every screen.
  */
 import Link from "next/link";
-import { AlertTriangle, Check, CircleDashed, FileText, Loader2, X } from "lucide-react";
+import { AlertTriangle, Check, ChevronLeft, CircleDashed, FileText, Loader2, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { people, type ContractStatus } from "@/lib/data";
 import { daysUntil, formatDate } from "@/lib/dates";
 import { urgency } from "@/lib/derive";
@@ -141,26 +142,43 @@ export function ClauseLink({ contractId, clause, contractTitle }: { contractId: 
 
 /* ---------- Page scaffolding ---------- */
 
+/**
+ * The page's title and actions on the sticky page bar (soft shadow, full width of the panel), with the
+ * description below it, scrolling with the page. `leading` is for a back link on detail pages.
+ */
 export function PageHeader({
-  eyebrow,
   title,
   children,
   actions,
+  leading,
 }: {
-  eyebrow?: string;
   title: React.ReactNode;
   children?: React.ReactNode;
   actions?: React.ReactNode;
+  leading?: React.ReactNode;
 }) {
   return (
-    <header className="flex flex-wrap items-end justify-between gap-4">
-      <div className="min-w-0">
-        {eyebrow && <p className="mb-2 text-[13px] font-medium text-muted-foreground">{eyebrow}</p>}
-        <h1 className="heading text-[2.25rem] text-balance">{title}</h1>
-        {children && <div className="mt-2 max-w-[65ch] text-base text-pretty text-muted-foreground">{children}</div>}
-      </div>
-      {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
-    </header>
+    <>
+      <header className="page-bar">
+        <div className="flex min-w-0 items-center gap-2">
+          {leading}
+          <h1 className="page-title min-w-0 text-balance">{title}</h1>
+        </div>
+        {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
+      </header>
+      {children && <div className="max-w-[65ch] text-base text-pretty text-muted-foreground">{children}</div>}
+    </>
+  );
+}
+
+/** Back link for a detail page's bar: an icon button that names where it goes */
+export function BackLink({ href, label }: { href: string; label: string }) {
+  return (
+    <Button variant="ghost" size="icon-sm" asChild className="-ml-1.5 shrink-0 text-muted-foreground">
+      <Link href={href} aria-label={`Back to ${label}`} title={`Back to ${label}`}>
+        <ChevronLeft />
+      </Link>
+    </Button>
   );
 }
 
