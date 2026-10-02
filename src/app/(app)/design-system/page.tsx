@@ -24,7 +24,7 @@ const a11y: [string, string, string][] = [
   ["1.4.3", "Text contrast at least 4.5:1, including placeholders and small labels.", "Semantic tokens; checked live in Contrast below"],
   ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #8c88ad, --focus Midnight, chart tokens"],
   ["1.4.1", "Never use colour alone. Status has a label or icon, risk is spelled out, inline links are underlined, and chart markers differ in shape.", "StatusBadge, ToneBadge, ContractReader, Runway key"],
-  ["2.4.7 · 2.4.11", "Keyboard focus is always visible, neutral (Midnight, never brand colour) and never hidden behind the sticky header.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
+  ["2.4.7 · 2.4.11", "Keyboard focus is always visible, neutral (Midnight, never brand colour) and never hidden behind the phone menu bar.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
   ["2.4.1", "Skip link to main content on every page.", "layout.tsx"],
   ["2.5.8", "Pointer targets at least 24 × 24px. We go further: every small control grows an invisible target to 40px (44px on touch), and targets never overlap.", "--hit-min + hit-area / hit-area-y utilities in Button"],
   ["2.5.7", "Anything you can drag also works with a single click.", "Upload drop zone is a button; sliders accept clicks and arrow keys"],
@@ -65,7 +65,7 @@ export default function DesignSystemPage() {
   return (
     <div className="mx-auto grid max-w-[1280px] gap-10 lg:grid-cols-[180px_minmax(0,1fr)]">
       <nav aria-label="Design system sections" className="hidden lg:block">
-        <ul className="sticky top-20 flex flex-col gap-0.5 text-sm">
+        <ul className="sticky top-8 flex flex-col gap-0.5 text-sm">
           {nav.map((n, i) => (
             <li key={n.id}>
               {i === 6 && <p className="mt-4 mb-1 px-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">Components</p>}

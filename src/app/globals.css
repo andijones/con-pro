@@ -85,7 +85,7 @@
 
   /* Stacking: the only z-index values allowed. shadcn overlays use 50. */
   --z-sticky: 10; /* sticky table/section headers */
-  --z-header: 20; /* app header */
+  --z-header: 20; /* phone menu bar */
   --z-overlay: 50; /* dialogs, popovers, menus (shadcn default) */
   --z-skip: 60; /* skip link sits above everything when focused */
 
@@ -205,8 +205,11 @@
     outline-offset: 2px !important;
   }
   html {
-    /* Keep focused elements clear of the 56px sticky header (2.4.11 Focus not obscured) */
-    scroll-padding-top: 4.5rem;
+    /* Keep focused elements clear of the 48px phone menu bar (2.4.11 Focus not obscured); desktop has no top bar */
+    scroll-padding-top: 4rem;
+    @media (width >= 48rem) {
+      scroll-padding-top: 1.5rem;
+    }
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     @apply font-sans;

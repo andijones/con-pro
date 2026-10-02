@@ -141,7 +141,7 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
   const [day, month] = formatDate(i.due, { year: false }).split(" ");
 
   return (
-    <li id={`row-${i.id}`} className="scroll-mt-24 border-b last:border-b-0">
+    <li id={`row-${i.id}`} className="scroll-mt-16 md:scroll-mt-8 border-b last:border-b-0">
       <h3>
         <button
           type="button"

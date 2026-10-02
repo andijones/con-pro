@@ -100,7 +100,7 @@ export function ContractReader({
         </ul>
       </div>
 
-      <Card className="gap-0 py-0 lg:sticky lg:top-20 lg:self-start">
+      <Card className="gap-0 py-0 lg:sticky lg:top-8 lg:self-start">
         <div className="flex items-center justify-between gap-3 border-b px-4 py-2.5">
           <span className="flex min-w-0 items-center gap-2 text-xs text-muted-foreground">
             <FileText className="size-3.5 shrink-0" aria-hidden />

@@ -19,7 +19,11 @@ A dense, keyboard-first sidebar that doubles as a working set.
   - Design system
   - Sign out (moved out of the sidebar body)
 - **Alignment:** every icon, dot and avatar sits on one column (x = 20px), and every label on another (x = 44px). The gutter is 12px throughout.
-- **Collapse:** only the page header has a collapse control. The sidebar has no duplicate.
+- **Collapse** (updated 2 October 2026, when the app header was removed):
+  - The collapse button sits in the sidebar, beside the logo (a panel icon, with a tooltip showing ⌘B).
+  - Collapsed, the Contravo mark is the expand button. It shows the expand icon on hover or keyboard focus.
+  - On phones, a slim bar with a menu button and the logo opens the sidebar.
+  - There is no app header. Its search moved to the Ask tab (⌘J), the notifications bell did nothing, and the organisation label added no information.
 
 ## Rejected
 

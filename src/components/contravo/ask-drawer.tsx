@@ -91,7 +91,7 @@ export function AskDrawer() {
     <div
       data-open={open || undefined}
       className={cn(
-        "fixed top-14 right-0 bottom-0 z-(--z-overlay) w-[min(420px,calc(100vw-2.75rem))]",
+        "fixed top-0 right-0 bottom-0 z-(--z-overlay) w-[min(420px,calc(100vw-2.75rem))]",
         "translate-x-full transition-transform duration-180 ease-in",
         "data-open:translate-x-0 data-open:duration-250 data-open:ease-(--ease-out)",
       )}

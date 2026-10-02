@@ -1,14 +1,9 @@
 import { cookies } from "next/headers";
-import { Bell } from "lucide-react";
-import { AppSidebar } from "@/components/contravo/app-sidebar";
-import { AskBar } from "@/components/contravo/ask-bar";
+import { AppSidebar, MobileBar } from "@/components/contravo/app-sidebar";
 import { AskDrawer } from "@/components/contravo/ask-drawer";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { organisation } from "@/lib/data";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
-/** The signed-in app shell: sidebar, header, Ask drawer. */
+/** The signed-in app shell: sidebar, page, Ask drawer. No top header; phones get a slim bar to open the sidebar. */
 export default async function AppLayout({ children }: LayoutProps<"/">) {
   // Render the sidebar in its saved state on first paint (no open-then-collapse flash)
   const sidebarOpen = (await cookies()).get("sidebar_state")?.value !== "false";
@@ -24,21 +19,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       <SidebarProvider defaultOpen={sidebarOpen}>
         <AppSidebar />
         <SidebarInset className="min-w-0">
-          <header role="banner" className="sticky top-0 z-(--z-header) flex h-14 shrink-0 items-center gap-3 border-b bg-background/90 px-4 backdrop-blur-sm">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="h-6!" />
-            <div className="hidden min-w-0 leading-tight sm:block">
-              <p className="text-[11px] text-muted-foreground">Organisation</p>
-              <p className="truncate text-sm font-medium">{organisation.short}</p>
-            </div>
-            <div className="mx-auto flex w-full max-w-xl justify-center">
-              <AskBar />
-            </div>
-            <Button variant="ghost" size="icon" aria-label="Notifications: 2 new" className="relative shrink-0">
-              <Bell />
-              <span className="absolute top-1.5 right-1.5 size-2 rounded-full bg-primary ring-2 ring-background" />
-            </Button>
-          </header>
+          <MobileBar />
           <main id="main" tabIndex={-1} className="flex-1 px-4 pt-8 pb-16 outline-none md:px-8">
             {children}
           </main>

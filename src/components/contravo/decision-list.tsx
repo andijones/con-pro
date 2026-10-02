@@ -39,7 +39,7 @@ export function DecisionList({ items }: { items: Decision[] }) {
           const c = contracts.find((x) => x.id === d.contractId)!;
           const k = kindMeta[d.kind];
           return (
-            <li key={d.id} id={d.id} className="scroll-mt-24">
+            <li key={d.id} id={d.id} className="scroll-mt-16 md:scroll-mt-8">
               <Card className="grid gap-x-6 gap-y-4 p-5 transition-shadow hover:shadow-md sm:grid-cols-[132px_1fr]">
                 <div className="sm:border-r sm:pr-5">
                   <Countdown date={d.due} label={d.dueLabel} />

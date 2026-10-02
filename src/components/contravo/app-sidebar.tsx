@@ -16,7 +16,10 @@ import {
   Inbox,
   LifeBuoy,
   LogOut,
+  Menu,
   Palette,
+  PanelLeftClose,
+  PanelLeftOpen,
   ScrollText,
   Settings,
   SquarePen,
@@ -48,7 +51,9 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  useSidebar,
 } from "@/components/ui/sidebar";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { PersonAvatar } from "./primitives";
 import { signOut } from "@/app/auth-actions";
 
@@ -113,12 +118,7 @@ export function AppSidebar() {
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="h-14 justify-center px-3 py-0 group-data-[collapsible=icon]:px-2">
-        <Link href="/" className="flex h-8 items-center rounded-md px-2" aria-label="Contravo home">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/contravo-logo.svg" alt="Contravo" width={112} height={22} className="h-[22px] w-auto group-data-[collapsible=icon]:hidden" />
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/contravo-mark.svg" alt="" width={22} height={22} className="hidden size-[22px] group-data-[collapsible=icon]:block" />
-        </Link>
+        <SidebarTop />
       </SidebarHeader>
 
       <div className="px-3 pb-3 group-data-[collapsible=icon]:px-2">
@@ -292,5 +292,90 @@ function Keys({ k }: { k: string }) {
       <span className="grid h-4 min-w-4 place-items-center rounded border bg-background px-1">G</span>
       <span className="grid h-4 min-w-4 place-items-center rounded border bg-background px-1">{k}</span>
     </kbd>
+  );
+}
+
+/** Logo plus the collapse control. Collapsed, the mark itself is the expand button. */
+function SidebarTop() {
+  const { state, toggleSidebar: toggle, isMobile } = useSidebar();
+  // The button you pressed is replaced by its opposite, so carry focus across (WCAG 2.4.3)
+  const control = useRef<HTMLButtonElement>(null);
+  const moveFocus = useRef(false);
+  useEffect(() => {
+    if (moveFocus.current) control.current?.focus();
+    moveFocus.current = false;
+  }, [state]);
+  const toggleSidebar = () => {
+    moveFocus.current = true;
+    toggle();
+  };
+  if (state === "collapsed" && !isMobile)
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            ref={control}
+            type="button"
+            onClick={toggleSidebar}
+            aria-label="Expand sidebar"
+            aria-keyshortcuts="Meta+B Control+B"
+            className="group/expand relative grid size-8 place-items-center rounded-md transition-colors duration-(--duration-fast) hover:bg-sidebar-accent"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/contravo-mark.svg"
+              alt=""
+              width={22}
+              height={22}
+              className="size-[22px] transition-opacity duration-(--duration-fast) group-hover/expand:opacity-0 group-focus-visible/expand:opacity-0"
+            />
+            <PanelLeftOpen
+              className="absolute size-4 text-sidebar-accent-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover/expand:opacity-100 group-focus-visible/expand:opacity-100"
+              aria-hidden
+            />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="right">Expand sidebar · ⌘B</TooltipContent>
+      </Tooltip>
+    );
+  return (
+    <div className="flex items-center justify-between gap-2">
+      <Link href="/" className="flex h-8 items-center rounded-md px-2" aria-label="Contravo home">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/contravo-logo.svg" alt="Contravo" width={112} height={22} className="h-[22px] w-auto" />
+      </Link>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            ref={control}
+            variant="ghost"
+            size="icon-sm"
+            onClick={toggleSidebar}
+            aria-label={isMobile ? "Close menu" : "Collapse sidebar"}
+            aria-keyshortcuts={isMobile ? undefined : "Meta+B Control+B"}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            <PanelLeftClose />
+          </Button>
+        </TooltipTrigger>
+        {!isMobile && <TooltipContent side="right">Collapse sidebar · ⌘B</TooltipContent>}
+      </Tooltip>
+    </div>
+  );
+}
+
+/** Phones only: the sidebar is off-canvas there, so it needs a way in */
+export function MobileBar() {
+  const { toggleSidebar } = useSidebar();
+  return (
+    <div className="sticky top-0 z-(--z-header) flex h-12 items-center gap-1 border-b bg-background/90 px-2 backdrop-blur-sm md:hidden">
+      <Button variant="ghost" size="icon" onClick={toggleSidebar} aria-label="Open menu">
+        <Menu />
+      </Button>
+      <Link href="/" className="flex h-8 items-center rounded-md px-1" aria-label="Contravo home">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/contravo-logo.svg" alt="Contravo" width={102} height={20} className="h-5 w-auto" />
+      </Link>
+    </div>
   );
 }
