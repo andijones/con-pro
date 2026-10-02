@@ -11,11 +11,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-(--shadow-button-primary) hover:bg-(--primary-hover) aria-expanded:bg-(--primary-hover)",
+          "bg-primary bg-clip-border text-primary-foreground shadow-(--shadow-button-primary) hover:bg-(--primary-hover) aria-expanded:bg-(--primary-hover)",
         outline:
           "border-border bg-background text-foreground shadow-(--shadow-button) hover:border-[color-mix(in_oklab,var(--border),var(--foreground)_10%)] hover:bg-muted/70 aria-expanded:bg-muted",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklab,var(--secondary),var(--primary)_10%)] aria-expanded:bg-[color-mix(in_oklab,var(--secondary),var(--primary)_10%)]",
+          "bg-secondary bg-clip-border text-secondary-foreground hover:bg-[color-mix(in_oklab,var(--secondary),var(--primary)_10%)] aria-expanded:bg-[color-mix(in_oklab,var(--secondary),var(--primary)_10%)]",
         ghost: "text-foreground hover:bg-muted aria-expanded:bg-muted",
         destructive: "bg-destructive/10 text-destructive hover:bg-destructive/15",
         link: "text-primary underline-offset-4 hover:underline",

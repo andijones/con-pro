@@ -8,7 +8,7 @@ export default async function SignInPage(props: PageProps<"/sign-in">) {
   const from = typeof sp.from === "string" ? sp.from : "/";
   return (
     <>
-      <AuthHeading lede="Use your NHS or council work email.">Sign in</AuthHeading>
+      <AuthHeading>Sign in</AuthHeading>
       <SignInForm from={from} />
     </>
   );

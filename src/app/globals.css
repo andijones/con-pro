@@ -32,6 +32,8 @@
   --brand-lilac: #e8e3ff;
   --brand-slate: #5c5b70;
   --brand-mint: #cbf1e5;
+  --brand-lilac-deep: #c8bffb; /* website violet-200 */
+  --brand-mint-mist: #f2fbf8; /* website mint-50 */
 
   --brand-line: #e3e1ee; /* decorative dividers only */
   --brand-line-strong: #8c88ad; /* control boundaries: 3.37:1 on white, 3.08:1 on Frost (WCAG 1.4.11) */
@@ -92,7 +94,15 @@
   /* Buttons */
   --primary-hover: color-mix(in oklab, var(--primary), var(--brand-midnight) 18%);
   --shadow-button: 0 1px 2px rgb(3 1 57 / 0.06);
-  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.14);
+  /* Raised surfaces (sign-in card): a hairline ring, a tight contact shadow and a soft ambient one */
+  --shadow-raised: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.04), 0 12px 32px -12px rgb(3 1 57 / 0.14);
+
+  /* Brand shimmer, as on the website (footer wordmark, hero band): Lilac → deep Lilac → Mint → Mint mist */
+  --shimmer-1: var(--brand-lilac);
+  --shimmer-2: var(--brand-lilac-deep);
+  --shimmer-3: var(--brand-mint);
+  --shimmer-4: var(--brand-mint-mist);
+  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.16);
 
   --success: var(--status-success);
   --success-muted: var(--status-success-bg);
@@ -199,8 +209,13 @@
    * WCAG 2.2 AA: one solid, high-contrast keyboard focus indicator everywhere (2.4.7, 1.4.11).
    * !important in the base layer beats shadcn's `outline-none` utilities.
    * Text controls ([data-control]) draw their own focus ring instead (see the `control` recipe).
+   * tabindex="-1" targets (a page's <main>, a heading focused after a view change) aren't controls: focus moves
+   * there so screen readers announce the new view, and a ring on a heading would only read as a glitch.
    */
-  :focus-visible:not([data-control]) {
+  [tabindex="-1"]:focus {
+    outline: none;
+  }
+  :focus-visible:not([data-control]):not([tabindex="-1"]) {
     outline: 2px solid var(--focus) !important;
     outline-offset: 2px !important;
   }
@@ -310,6 +325,55 @@
 @utility heading {
   letter-spacing: -0.03em;
   line-height: 1.1;
+}
+
+/*
+ * Shimmer band, ported from the website's hero band (contravo.ai › DESIGN.md › Hero band).
+ * The --shimmer ramp across a band at the foot of a page, fading in from the top and softening at the sides.
+ * The inner strip is twice as wide and ends on its starting colour, so sliding it by half loops seamlessly
+ * on the compositor (transform only). Usage: <span class="shimmer-band" aria-hidden><i></i></span>
+ */
+.shimmer-band {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: clamp(240px, 46vh, 460px);
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  mask-image:
+    linear-gradient(to right, transparent 0%, rgb(0 0 0 / 0.7) 6%, #000 16%, #000 84%, rgb(0 0 0 / 0.7) 94%, transparent 100%),
+    linear-gradient(to bottom, transparent 0%, rgb(0 0 0 / 0.25) 30%, rgb(0 0 0 / 0.7) 62%, #000 100%);
+  mask-composite: intersect;
+}
+.shimmer-band > i {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 200%;
+  background: linear-gradient(
+    90deg in oklab,
+    var(--shimmer-1) 0%,
+    var(--shimmer-2) 12.5%,
+    var(--shimmer-3) 25%,
+    var(--shimmer-4) 34%,
+    var(--shimmer-1) 50%,
+    var(--shimmer-2) 62.5%,
+    var(--shimmer-3) 75%,
+    var(--shimmer-4) 84%,
+    var(--shimmer-1) 100%
+  );
+  animation: shimmer-drift 12s linear infinite;
+}
+@keyframes shimmer-drift {
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-band > i {
+    animation: none;
+  }
 }
 
 /* Clause highlight inside the document reader */

@@ -33,7 +33,7 @@ export function SignInForm({ from }: { from: string }) {
   }
 
   return (
-    <form ref={form} action={action} noValidate className="mt-8 flex flex-col gap-5">
+    <form ref={form} action={action} noValidate className="mt-7 flex flex-col gap-5">
       <input type="hidden" name="from" value={from} />
       <div className="flex flex-col gap-2">
         <FieldLabel htmlFor="email">Work email</FieldLabel>
