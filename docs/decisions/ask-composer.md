@@ -1,0 +1,70 @@
+# Ask composer: Prompt composer
+
+Decided 2 October 2026 by comparing two composers side by side on `/chat`.
+
+## Decision
+
+Every place you ask Contravo uses one composer: `PromptComposer` (`src/components/ui/prompt-composer.tsx`), installed from `@cult-ui/prompt-composer` and adapted to the brand.
+
+- **Where:**
+  - `/chat`, pinned to the bottom of the thread
+  - the Ask drawer, using `size="compact"`
+  - the design system, under Contravo composites
+- **Look:**
+  - a frosted surface with the brand halo moving through its rim and a soft background glow behind it
+  - an animated avatar (the Paper `Warp` shader)
+  - round Attach and Send buttons
+- **States:**
+  - At rest: a quiet glow.
+  - Focused: the glow lifts, and the box takes the 1px Violet field edge and halo.
+  - Working: the box says "Reading your contracts…", Send turns into a spinner and the avatar speeds up.
+- **Keys:** Enter sends, and Shift+Enter adds a new line. ⌘/Ctrl+Enter also sends. Nothing sends while an IME is composing text.
+- **Tokens:** every visual value is a `--composer-*` token in `globals.css`:
+  - radius
+  - shadow
+  - frost and solid surfaces
+  - divider
+  - rim gradients 1–3
+  - aurora gradients 1–2
+  - avatar colours 1–5 (read at runtime, because the shader needs plain colours)
+  - the shared `--halo-mint`
+
+  Focus uses `--control-focus-edge` and `--control-halo`, and buttons use `--shadow-button`.
+- **Accessibility:**
+  - The frost is 84–90% white with no dark Violet under it, so the muted placeholder and loading text stay above 4.5:1.
+  - The moving layers are `aria-hidden` and hold still for reduced motion.
+  - The text area has an `aria-label`, and the visual placeholder is decorative.
+  - Buttons are 40×40 with screen-reader labels.
+- **Adapted from the original:**
+  - brand gradients replace pink, orange and blue
+  - a firmer frost
+  - our focus edge replaces a faint Iris border
+  - Enter sends (the original sent only on ⌘+Enter)
+  - a `fine-hover` variant was added, because the original's hover classes relied on it
+  - the text area is marked `data-control`, so it draws no second focus outline
+
+## Kept for return
+
+**Option A**, the Halo shell (`src/components/ui/halo-input.tsx`) around an `InputGroup` with scope, attachments and a character count, is commented out in `ask-thread.tsx`. To restore it, uncomment the "Option A only" imports and state, and the `composerA` block.
+
+## Rejected
+
+- **Option A as the default:** quieter, and it kept the scope menu and character count. It felt less like talking to an agent: the box itself never said it was working.
+- **The outer blurred glow** (`ai-composer`): read as a smudge around the box and was easily mistaken for focus.
+
+## Prompt suggestions (added 2 October 2026)
+
+Suggested questions and follow-ups use `PromptSuggestion` and `PromptSuggestions` (`src/components/ui/prompt-suggestion.tsx`). They replace the outline buttons on `/chat` (Try asking and follow-ups) and the plain rows in the Ask drawer.
+
+- **Effect:** the Cult UI Halo Button, rebuilt in CSS on the composer tokens (`--composer-rim-1`, `--composer-rim-2`).
+  - Two brand gradient blobs drift along the pill's 1px rim and glow through a frosted fill.
+  - Hover and keyboard focus brighten the rim.
+  - Each chip's drift is offset by its position, so neighbours never glow in step.
+- **Not the npm component:** a page shows up to eight of these at once. One Motion animation per chip was too heavy, so they use CSS keyframes on transform only, and stop for reduced motion. The original also staggered each label in letter by letter, which is noise across eight chips, so that was dropped.
+- **Layout:** wrapped on wide pages, `stacked` (full width, 14px radius) in the drawer. Each is a `<button>` inside a list labelled "Suggested questions" or "Suggested follow-ups".
+- **Accessibility:**
+  - 40px tall
+  - Midnight label on 84%+ white
+  - the global Midnight keyboard outline for focus
+  - the rim is `aria-hidden`
+- **Tokens:** `--suggestion-radius`, `--suggestion-radius-stacked`, `--suggestion-surface(-hover)`, `--suggestion-shadow(-hover)` and `--suggestion-rim-rest/-active`.

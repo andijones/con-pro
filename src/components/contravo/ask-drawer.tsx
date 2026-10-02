@@ -7,13 +7,14 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ArrowUp, ArrowUpRight, ChevronRight, FileText, Info, Sparkles, X } from "lucide-react";
+import { ArrowUpRight, ChevronRight, FileText, Info, Sparkles, X } from "lucide-react";
 import { answer, suggestions as globalSuggestions, type Answer } from "@/lib/answers";
 import { contracts, getContract, type Contract } from "@/lib/data";
 import { decisionsFor } from "@/lib/derive";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupTextarea } from "@/components/ui/input-group";
+import { PromptComposer } from "@/components/ui/prompt-composer";
+import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
 import { Kbd } from "@/components/ui/kbd";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -166,18 +167,13 @@ export function AskDrawer() {
                   Answers come from the contract text, with the clause each one is based on. Click a citation to open the clause.
                 </p>
               </div>
-              <ul className="flex flex-col gap-1.5" aria-label="Suggested questions">
+              <PromptSuggestions stacked aria-label="Suggested questions">
                 {suggestions.map((s) => (
-                  <li key={s}>
-                    <button
-                      onClick={() => ask(s)}
-                      className="w-full rounded-lg bg-card px-3 py-2 text-left text-sm shadow-xs transition-[background-color,box-shadow] duration-(--duration-fast) hover:bg-accent/40 hover:shadow-card"
-                    >
-                      {s}
-                    </button>
-                  </li>
+                  <PromptSuggestion key={s} onClick={() => ask(s)}>
+                    {s}
+                  </PromptSuggestion>
                 ))}
-              </ul>
+              </PromptSuggestions>
             </div>
           ) : (
             <div className="flex flex-col gap-6">
@@ -193,39 +189,23 @@ export function AskDrawer() {
         </div>
 
         <footer className="border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const q = draft.trim();
-              if (q) {
-                ask(q);
-                setDraft("");
-              }
+          {/* The same composer as /chat, compact for the drawer. Enter sends. */}
+          <PromptComposer
+            ref={input}
+            size="compact"
+            aria-label={contract ? "Ask about this contract" : "Ask about any contract"}
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={contract ? "Ask about this contract…" : "Ask about any contract…"}
+            isLoading={turns.some((t) => t.a === null)}
+            loadingText="Reading your contracts…"
+            blobTranslucent
+            maxAutoGrowPx={160}
+            onSend={() => {
+              ask(draft.trim());
+              setDraft("");
             }}
-          >
-            <InputGroup className="h-auto items-end">
-              <InputGroupTextarea
-                ref={input}
-                rows={1}
-                aria-label="Ask a question"
-                value={draft}
-                onChange={(e) => setDraft(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    e.currentTarget.form?.requestSubmit();
-                  }
-                }}
-                placeholder={contract ? "Ask about this contract…" : "Ask about any contract…"}
-                className="max-h-32 min-h-9 py-2 text-base md:text-sm"
-              />
-              <InputGroupAddon align="inline-end" className="pb-1.5">
-                <InputGroupButton type="submit" variant="default" size="icon-xs" aria-label="Send" disabled={!draft.trim()}>
-                  <ArrowUp />
-                </InputGroupButton>
-              </InputGroupAddon>
-            </InputGroup>
-          </form>
+          />
           <p className="mt-2 text-[11px] text-muted-foreground">Drafted from your contracts. Check the clause before you act.</p>
         </footer>
       </aside>

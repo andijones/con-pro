@@ -50,6 +50,14 @@ const interaction: [string, string, string][] = [
   ["--control-height", "36px", "Default height of buttons, inputs and selects"],
   ["--control-border", "--input · 3.37:1", "Field boundaries (control utility)"],
   ["--z-sticky / --z-header / --z-overlay / --z-skip", "10 / 20 / 50 / 60", "The only z-index values allowed"],
+  ["--composer-radius · --composer-shadow", "16px · two Midnight layers", "Prompt composer shape and lift"],
+  ["--composer-frost / --composer-solid", "Card at 90%→84% / Card", "Composer surface; frost keeps muted text above 4.5:1"],
+  ["--composer-rim-1…3 · --composer-aurora-1…2", "Iris, deep Lilac, --halo-mint", "Moving rim and background glow (decorative, aria-hidden)"],
+  ["--composer-avatar-1…5", "deep Lilac, Violet, Mint, Iris, Lilac", "Colours for the avatar's WebGL shader, read at runtime"],
+  ["--composer-divider", "--brand-line", "Rule above the composer's actions"],
+  ["--suggestion-radius · -stacked", "pill · 14px", "Prompt suggestion shape (wrapped / stacked in the drawer)"],
+  ["--suggestion-surface · -hover", "--composer-frost · 94%→88% Card", "Suggestion fill; the label stays Midnight on 84%+ white"],
+  ["--suggestion-rim-rest / -active", "0.55 / 1", "Rim glow at rest, and on hover or keyboard focus"],
 ];
 
 const nav = [

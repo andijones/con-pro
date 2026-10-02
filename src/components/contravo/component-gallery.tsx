@@ -64,6 +64,8 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ClauseLink, ConfidenceBadge, Countdown, ExtractionBadge, PersonAvatar, Stat, StatusBadge, ToneBadge } from "./primitives";
 import { DecisionList } from "./decision-list";
+import { PromptComposer } from "@/components/ui/prompt-composer";
+import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
 import { gallerySections, slug } from "./gallery-sections";
 
 
@@ -90,6 +92,8 @@ function Specimen({ label, children, className }: { label: string; children: Rea
 
 export function ComponentGallery() {
   const [progress, setProgress] = useState(45);
+  const [prompt, setPrompt] = useState("");
+  const [promptBusy, setPromptBusy] = useState(false);
 
   return (
     <div className="flex flex-col gap-14">
@@ -629,6 +633,40 @@ export function ComponentGallery() {
         <Specimen label="Evidence: every insight links to its clause">
           <ClauseLink contractId="mes-imaging" clause="3.2" />
           <ClauseLink contractId="path-reagents" clause="11.4" contractTitle="Pathology analysers" />
+        </Specimen>
+        <Specimen label="Prompt composer: the one way to ask Contravo (/chat and the Ask drawer). Enter sends; the box says what it's doing while it works" className="grid gap-4 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start">
+          <PromptComposer
+            aria-label="Ask about your contracts (example)"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Ask about your contracts: dates, obligations, parties, values."
+            isLoading={promptBusy}
+            loadingText="Reading your contracts…"
+            blobTranslucent
+            onSend={() => {
+              setPrompt("");
+              setPromptBusy(true);
+              setTimeout(() => setPromptBusy(false), 2400);
+            }}
+            onAttach={() => toast("Attach a file (concept only)")}
+          />
+          <PromptComposer size="compact" aria-label="Ask about any contract (compact example)" placeholder="Ask about any contract…" blobTranslucent />
+        </Specimen>
+        <Specimen label="Prompt suggestions: AI-suggested questions, asked in one click. Wrap on wide pages; stacked in the drawer" className="grid gap-4 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start">
+          <PromptSuggestions aria-label="Suggested questions (example)">
+            {["Which contracts renew automatically?", "Who pays if the vaccine fridge fails?", "Are we paying for anything twice?"].map((q) => (
+              <PromptSuggestion key={q} onClick={() => toast(q)}>
+                {q}
+              </PromptSuggestion>
+            ))}
+          </PromptSuggestions>
+          <PromptSuggestions stacked aria-label="Suggested questions (stacked example)">
+            {["Can we end this contract early?", "When does it renew, and what happens if we miss the notice date?"].map((q) => (
+              <PromptSuggestion key={q} onClick={() => toast(q)}>
+                {q}
+              </PromptSuggestion>
+            ))}
+          </PromptSuggestions>
         </Specimen>
         <Specimen label="Decision card" className="block">
           <DecisionList items={decisions.filter((d) => d.id === "d-path-uplift")} />

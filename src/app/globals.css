@@ -7,6 +7,8 @@
  * otherwise Tailwind falls back to prefers-color-scheme and they switch on for OS dark-mode users.
  */
 @custom-variant dark (&:is(.dark *));
+/* Hover only on devices that really hover (used by the Cult UI components) */
+@custom-variant fine-hover (@media (hover: hover) and (pointer: fine));
 
 /*
  * ─────────────────────────────────────────────────────────────
@@ -143,6 +145,36 @@
   /* Timeline bars: status hues tuned to sit beside the brand, not more violet.
      Running is a quiet Mint, the notice window a strong amber (3.55:1 on white), a missed window red (only while the contract still runs), a finished contract quiet grey,
      and an automatic renewal a dashed slate outline. Light-vs-strong also separates them without colour. */
+  --halo-mint: #8edcc3; /* Mint a step deeper, so the halo reads on white as light, not as nothing */
+
+  /* Prompt composer (the one way to ask Contravo: /chat and the Ask drawer). components/ui/prompt-composer.tsx */
+  --composer-radius: 1rem;
+  --composer-shadow: 0 1px 2px rgb(3 1 57 / 0.04), 0 6px 18px rgb(3 1 57 / 0.05);
+  /* Frost stays 84–90% white with no dark Violet underneath, so muted text keeps 4.5:1 over the moving colour */
+  --composer-frost: linear-gradient(to bottom, color-mix(in oklch, var(--card) 90%, transparent), color-mix(in oklch, var(--card) 84%, transparent));
+  --composer-solid: var(--card);
+  --composer-divider: var(--brand-line);
+  --composer-rim-1: linear-gradient(90deg in oklab, var(--brand-iris), var(--brand-lilac-deep), var(--halo-mint), var(--brand-iris));
+  --composer-rim-2: linear-gradient(90deg in oklab, var(--halo-mint), var(--brand-iris), var(--brand-lilac-deep));
+  --composer-rim-3: linear-gradient(90deg in oklab, var(--brand-lilac-deep), var(--halo-mint), var(--brand-iris));
+  --composer-aurora-1: radial-gradient(ellipse 80% 70% at 35% 35%, color-mix(in oklab, var(--brand-iris) 30%, transparent) 0%, color-mix(in oklab, var(--brand-lilac-deep) 16%, transparent) 45%, transparent 72%);
+  --composer-aurora-2: radial-gradient(ellipse 75% 68% at 65% 40%, color-mix(in oklab, var(--halo-mint) 34%, transparent) 0%, color-mix(in oklab, var(--halo-mint) 12%, transparent) 48%, transparent 70%);
+  /* The avatar is a WebGL shader, so it reads these five as plain colours at runtime */
+  --composer-avatar-1: var(--brand-lilac-deep);
+  --composer-avatar-2: var(--brand-violet);
+  --composer-avatar-3: var(--halo-mint);
+  --composer-avatar-4: var(--brand-iris);
+  --composer-avatar-5: var(--brand-lilac);
+
+  /* Prompt suggestions (components/ui/prompt-suggestion.tsx): the composer's rim on a pill */
+  --suggestion-radius: 9999px;
+  --suggestion-radius-stacked: 0.875rem;
+  --suggestion-surface: var(--composer-frost);
+  --suggestion-surface-hover: linear-gradient(to bottom, color-mix(in oklch, var(--card) 94%, transparent), color-mix(in oklch, var(--card) 88%, transparent));
+  --suggestion-shadow: 0 1px 2px rgb(3 1 57 / 0.05), 0 4px 12px -4px rgb(3 1 57 / 0.08);
+  --suggestion-shadow-hover: 0 1px 2px rgb(3 1 57 / 0.06), 0 8px 20px -6px rgb(3 1 57 / 0.12);
+  --suggestion-rim-rest: 0.55;
+  --suggestion-rim-active: 1;
   --timeline-running: #a6dcc9;
   --timeline-notice: #b97b1f;
   --timeline-missed: var(--status-critical);
@@ -495,95 +527,83 @@
 }
 
 /*
- * AI composer: the agent's input. Two layers of the shimmer ramp, swept around the box on a conic gradient:
- * a wide ambient halo and a tight rim. It breathes with state:
- *   rest       quiet, slow sweep (14s)
- *   focus      the halo lifts: it is listening
- *   ready      a draft is typed: the halo warms a step further
- *   busy       an answer is being worked on: a rim of light appears, the sweep quickens (2.4s) and it pulses
- * Decorative only: the box keeps its own edge and focus ring, nothing here carries meaning, and the spoken
- * "working" state comes from the answer area. Reduced motion holds a still gradient.
+ * Prompt suggestion: the Halo Button rim. Two brand gradient blobs drift along the bottom of a 1px rim and glow
+ * through the frosted fill; hover and keyboard focus brighten the rim. Decorative only (aria-hidden layer);
+ * the label is Midnight on 84%+ white. Keyboard focus is the global Midnight outline. Reduced motion holds still.
  */
-@property --ai-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-.ai-composer {
-  --ai-mint: #8edcc3; /* Mint deepened a step so it reads on white as light, not as nothing */
+.prompt-suggestion {
   position: relative;
   isolation: isolate;
-  border-radius: var(--control-radius);
+  display: inline-flex;
+  max-width: 100%;
+  padding: 1px;
+  border-radius: var(--suggestion-radius);
 }
-.ai-composer::before,
-.ai-composer::after {
-  content: "";
+.prompt-suggestion-rim {
   position: absolute;
+  inset: 0;
   z-index: -1;
+  overflow: hidden;
   border-radius: inherit;
   pointer-events: none;
-  background: conic-gradient(
-    from var(--ai-angle) in oklab,
-    var(--brand-iris),
-    var(--ai-mint),
-    var(--brand-lilac-deep),
-    var(--brand-iris),
-    var(--ai-mint),
-    var(--brand-lilac-deep),
-    var(--brand-iris)
-  );
-  animation: ai-sweep 14s linear infinite;
-  transition:
-    opacity 300ms var(--ease-out),
-    filter 300ms var(--ease-out),
-    inset 300ms var(--ease-out);
+  background: var(--brand-line);
+  opacity: var(--suggestion-rim-rest);
+  transition: opacity var(--duration-base) var(--ease-out);
 }
-/* Ambient halo: wide and faint */
-.ai-composer::before {
-  inset: -4px;
-  filter: blur(18px);
-  opacity: 0.4;
+.prompt-suggestion-rim::before,
+.prompt-suggestion-rim::after {
+  content: "";
+  position: absolute;
+  bottom: -70%;
+  height: 150%;
+  border-radius: 9999px;
+  animation: suggestion-drift 6s ease-in-out infinite alternate;
+  animation-delay: calc(var(--i, 0) * -1.7s);
 }
-/* Rim: a line of light on the edge, shown only while the agent is working. At rest or on focus it would read as
-   a second, muddier focus ring, so it stays hidden then. */
-.ai-composer::after {
-  inset: -1px;
-  filter: blur(2px);
-  opacity: 0;
+.prompt-suggestion-rim::before {
+  left: -15%;
+  width: 70%;
+  background: var(--composer-rim-1);
+  filter: blur(10px);
 }
-.ai-composer:focus-within::before {
-  opacity: 0.6;
-  inset: -6px;
+.prompt-suggestion-rim::after {
+  right: -15%;
+  width: 55%;
+  background: var(--composer-rim-2);
+  filter: blur(8px);
+  animation-name: suggestion-drift-back;
+  animation-duration: 5s;
 }
-.ai-composer[data-ready]::before {
-  opacity: 0.7;
-}
-.ai-composer[data-busy]::after {
-  opacity: 0.6;
-}
-.ai-composer[data-busy]::before,
-.ai-composer[data-busy]::after {
-  animation:
-    ai-sweep 2.4s linear infinite,
-    ai-breathe 1.6s ease-in-out infinite alternate;
-}
-@keyframes ai-sweep {
+@keyframes suggestion-drift {
   to {
-    --ai-angle: 360deg;
+    transform: translateX(45%);
   }
 }
-@keyframes ai-breathe {
+@keyframes suggestion-drift-back {
   to {
-    opacity: 0.8;
+    transform: translateX(-45%);
+  }
+}
+.prompt-suggestion-surface {
+  background: var(--suggestion-surface);
+  box-shadow: var(--suggestion-shadow);
+}
+.prompt-suggestion:has(.prompt-suggestion-surface:focus-visible) .prompt-suggestion-rim {
+  opacity: var(--suggestion-rim-active);
+}
+@media (hover: hover) and (pointer: fine) {
+  .prompt-suggestion:hover .prompt-suggestion-rim {
+    opacity: var(--suggestion-rim-active);
+  }
+  .prompt-suggestion:hover .prompt-suggestion-surface {
+    background: var(--suggestion-surface-hover);
+    box-shadow: var(--suggestion-shadow-hover);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .ai-composer::before,
-  .ai-composer::after,
-  .ai-composer[data-busy]::before,
-  .ai-composer[data-busy]::after {
+  .prompt-suggestion-rim::before,
+  .prompt-suggestion-rim::after {
     animation: none;
-    transition: none;
   }
 }
 

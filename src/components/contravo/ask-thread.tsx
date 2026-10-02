@@ -3,21 +3,26 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowUp, Info, MessageSquare } from "lucide-react";
+import { Info, MessageSquare } from "lucide-react";
 import { answer, suggestions, type Answer } from "@/lib/answers";
 import { contracts, conversations, currentUser } from "@/lib/data";
 import { formatDate } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
+import { PromptComposer } from "@/components/ui/prompt-composer";
+import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
+import { toast } from "sonner";
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Spinner } from "@/components/ui/spinner";
 import { PersonAvatar } from "./primitives";
+// Option A only (retired composer, commented out below):
+// import { ArrowUp } from "lucide-react";
+// import { Checkbox } from "@/components/ui/checkbox";
+// import { HaloShell } from "@/components/ui/halo-input";
+// import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupText, InputGroupTextarea } from "@/components/ui/input-group";
+// import { Label } from "@/components/ui/label";
+// import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Turn = { id: number; q: string; a: Answer | null };
 const MAX = 8000;
@@ -58,8 +63,8 @@ export function AskThread() {
   const router = useRouter();
   const [turns, setTurns] = useState<Turn[]>([]);
   const [draft, setDraft] = useState("");
-  const [scope, setScope] = useState("all");
-  const [attachments, setAttachments] = useState(true);
+  // Option A only: const [scope, setScope] = useState("all");
+  // Option A only: const [attachments, setAttachments] = useState(true);
   const [cite, setCite] = useState<{ turn: number; n: number } | null>(null);
   const seen = useRef<string | null>(null);
   const bottom = useRef<HTMLDivElement>(null);
@@ -85,68 +90,88 @@ export function AskThread() {
 
   const busy = turns.some((t) => t.a === null);
 
+  // Option A (retired 2 October 2026, kept to return to): the Halo shell around an InputGroup, with scope, attachments
+  // and a character count. To restore, uncomment this block, the "Option A only" imports and state, and render {composerA}.
+  //
+  //   const composerA = (
+  //     <form
+  //       onSubmit={(e) => {
+  //         e.preventDefault();
+  //         if (draft.trim()) {
+  //           ask(draft.trim());
+  //           setDraft("");
+  //         }
+  //       }}
+  //     >
+  //       {/* The agent's input, in the Halo shell (@cult-ui/halo-input, brand colours): an opaque surface with the
+  //           halo moving through its 1px rim. Frosted, so the colour glows softly through the surface; it quickens while an answer is being worked on. */}
+  //       <HaloShell busy={busy} translucent>
+  //         <InputGroup className="rounded-[10px] border-0! bg-transparent! shadow-none!">
+  //         <InputGroupTextarea
+  //           aria-label="Ask about your contracts"
+  //           value={draft}
+  //           maxLength={MAX}
+  //           rows={turns.length ? 1 : 3}
+  //           onChange={(e) => setDraft(e.target.value)}
+  //           onKeyDown={(e) => {
+  //             if (e.key === "Enter" && !e.shiftKey) {
+  //               e.preventDefault();
+  //               e.currentTarget.form?.requestSubmit();
+  //             }
+  //           }}
+  //           placeholder={turns.length ? "Ask a follow-up" : "Ask about your contracts: dates, obligations, parties, values."}
+  //           className="text-base md:text-sm"
+  //         />
+  //         <InputGroupAddon align="block-end" className="flex-wrap gap-x-3">
+  //           <InputGroupText className="hidden text-xs sm:inline">Enter to send. Shift + Enter for a new line.</InputGroupText>
+  //           <div className="ml-auto flex items-center gap-3">
+  //             <Select value={scope} onValueChange={setScope}>
+  //               <SelectTrigger size="sm" className="h-7 border-0 bg-transparent text-xs shadow-none" aria-label="Which contracts">
+  //                 <SelectValue />
+  //               </SelectTrigger>
+  //               <SelectContent align="end">
+  //                 <SelectItem value="all">All contracts</SelectItem>
+  //                 <SelectItem value="active">Active only</SelectItem>
+  //                 <SelectItem value="clinical">Clinical</SelectItem>
+  //                 <SelectItem value="estates">Estates & Facilities</SelectItem>
+  //               </SelectContent>
+  //             </Select>
+  //             <Label className="gap-1.5 text-xs font-normal text-muted-foreground">
+  //               <Checkbox checked={attachments} onCheckedChange={(v) => setAttachments(!!v)} /> Include attachments
+  //             </Label>
+  //             <InputGroupText className="tnum text-xs">
+  //               {draft.length} / {MAX}
+  //             </InputGroupText>
+  //             <InputGroupButton type="submit" variant="default" size="sm" disabled={!draft.trim()}>
+  //               <ArrowUp /> Send
+  //             </InputGroupButton>
+  //           </div>
+  //         </InputGroupAddon>
+  //         </InputGroup>
+  //       </HaloShell>
+  //     </form>
+  //   );
+
+  /* The composer: Cult UI's Prompt Composer in brand tokens (components/ui/prompt-composer.tsx). Enter sends. */
   const composer = (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (draft.trim()) {
+    <div>
+      <PromptComposer
+        aria-label="Ask about your contracts"
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        placeholder={turns.length ? "Ask a follow-up" : "Ask about your contracts: dates, obligations, parties, values."}
+        isLoading={busy}
+        loadingText="Reading your contracts…"
+        blobTranslucent
+        rows={turns.length ? 2 : 4}
+        maxLength={MAX}
+        onSend={() => {
           ask(draft.trim());
           setDraft("");
-        }
-      }}
-    >
-      {/* The agent's input: a conic shimmer halo that listens on focus, warms when there's a draft and quickens
-          while an answer is being worked on. The halo outlines the box, so its edge is a soft hairline at rest;
-          hover restores the control edge and focus keeps the Violet ring. */}
-      <div
-        className="ai-composer [--control-border-bottom:var(--brand-line)] [--control-border-hover:var(--brand-line-strong)] [--control-border:var(--brand-line)]"
-        data-ready={draft.trim() ? "" : undefined}
-        data-busy={busy ? "" : undefined}
-      >
-        <InputGroup>
-        <InputGroupTextarea
-          aria-label="Ask about your contracts"
-          value={draft}
-          maxLength={MAX}
-          rows={turns.length ? 1 : 3}
-          onChange={(e) => setDraft(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              e.currentTarget.form?.requestSubmit();
-            }
-          }}
-          placeholder={turns.length ? "Ask a follow-up" : "Ask about your contracts: dates, obligations, parties, values."}
-          className="text-base md:text-sm"
-        />
-        <InputGroupAddon align="block-end" className="flex-wrap gap-x-3">
-          <InputGroupText className="hidden text-xs sm:inline">Enter to send. Shift + Enter for a new line.</InputGroupText>
-          <div className="ml-auto flex items-center gap-3">
-            <Select value={scope} onValueChange={setScope}>
-              <SelectTrigger size="sm" className="h-7 border-0 bg-transparent text-xs shadow-none" aria-label="Which contracts">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent align="end">
-                <SelectItem value="all">All contracts</SelectItem>
-                <SelectItem value="active">Active only</SelectItem>
-                <SelectItem value="clinical">Clinical</SelectItem>
-                <SelectItem value="estates">Estates & Facilities</SelectItem>
-              </SelectContent>
-            </Select>
-            <Label className="gap-1.5 text-xs font-normal text-muted-foreground">
-              <Checkbox checked={attachments} onCheckedChange={(v) => setAttachments(!!v)} /> Include attachments
-            </Label>
-            <InputGroupText className="tnum text-xs">
-              {draft.length} / {MAX}
-            </InputGroupText>
-            <InputGroupButton type="submit" variant="default" size="sm" disabled={!draft.trim()}>
-              <ArrowUp /> Send
-            </InputGroupButton>
-          </div>
-        </InputGroupAddon>
-        </InputGroup>
-      </div>
-    </form>
+        }}
+        onAttach={() => toast("Attach a file (concept only)")}
+      />
+    </div>
   );
 
   if (!turns.length) {
@@ -155,13 +180,13 @@ export function AskThread() {
         {composer}
         <section>
           <h2 className="mb-3 text-sm font-medium">Try asking</h2>
-          <div className="flex flex-wrap gap-2">
+          <PromptSuggestions aria-label="Suggested questions">
             {suggestions.map((s) => (
-              <Button key={s} variant="outline" size="sm" className="h-auto py-1.5 font-normal whitespace-normal" onClick={() => ask(s)}>
+              <PromptSuggestion key={s} onClick={() => ask(s)}>
                 {s}
-              </Button>
+              </PromptSuggestion>
             ))}
-          </div>
+          </PromptSuggestions>
         </section>
         <section>
           <h2 className="mb-3 text-sm font-medium">Previous conversations</h2>
@@ -227,13 +252,13 @@ export function AskThread() {
                   ) : null}
 
                   {t.a.followUps?.length ? (
-                    <div className="mt-5 flex flex-wrap gap-2">
+                    <PromptSuggestions aria-label="Suggested follow-ups" className="mt-5">
                       {t.a.followUps.map((f) => (
-                        <Button key={f} variant="outline" size="sm" className="rounded-full font-normal" onClick={() => ask(f)}>
+                        <PromptSuggestion key={f} onClick={() => ask(f)}>
                           {f}
-                        </Button>
+                        </PromptSuggestion>
                       ))}
-                    </div>
+                    </PromptSuggestions>
                   ) : null}
                 </div>
 
