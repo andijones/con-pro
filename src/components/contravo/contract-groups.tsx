@@ -56,12 +56,13 @@ const groups: { key: Group; label: string; hint: string }[] = [
  * One tonal ramp from the brand base colours, quieter as urgency drops:
  * Lilac → light Lilac → Frost → Frost → White. Text stays Midnight on every step (AA).
  */
-const groupTone: Record<Group, { head: string; badge: "default" | "secondary" | "outline"; hover: string }> = {
-  needs: { head: "bg-highlight", badge: "default", hover: "hover:bg-highlight/40" },
-  soon: { head: "bg-accent", badge: "secondary", hover: "hover:bg-accent/60" },
-  fine: { head: "bg-muted", badge: "outline", hover: "hover:bg-muted/60" },
-  setup: { head: "bg-muted", badge: "outline", hover: "hover:bg-muted/60" },
-  ended: { head: "bg-background", badge: "outline", hover: "hover:bg-muted/60" },
+/* Base tones throughout; urgency is carried by the count badge alone (red for Needs you, amber for coming up) */
+const groupTone: Record<Group, { head: string; badge: "critical" | "warning" | "outline"; hover: string }> = {
+  needs: { head: "bg-card hover:bg-muted/60", badge: "critical", hover: "hover:bg-muted/60" },
+  soon: { head: "bg-card hover:bg-muted/60", badge: "warning", hover: "hover:bg-muted/60" },
+  fine: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
+  setup: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
+  ended: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
 };
 
 const SIX_MONTHS = 183;
@@ -254,7 +255,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
                   aria-expanded={isOpen}
                   aria-controls={panel}
                   onClick={() => setClosed((c) => (c.includes(g.key) ? c.filter((x) => x !== g.key) : [...c, g.key]))}
-                  className={cn("flex w-full items-center gap-3 px-5 py-4 text-left", t.head)}
+                  className={cn("flex w-full items-center gap-3 px-5 py-4 text-left transition-colors duration-(--duration-fast)", t.head)}
                 >
                   <span className="flex-1">
                     <span className="flex items-center gap-2 text-base font-medium">

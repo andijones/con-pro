@@ -36,9 +36,11 @@ export default function TimelinePage() {
       </PageHeader>
 
       <div className="mt-6 flex flex-wrap gap-5 text-xs text-muted-foreground">
-        <Legend className="bg-ring/35">Running</Legend>
-        <Legend className="bg-primary">Notice window</Legend>
-        <Legend className="border border-dashed border-primary bg-transparent">Renews if no notice</Legend>
+        <Legend className="bg-(--timeline-running)">Running</Legend>
+        <Legend className="bg-(--timeline-notice)">Notice window</Legend>
+        <Legend className="bg-(--timeline-missed)">Notice window missed</Legend>
+        <Legend className="border border-dashed border-(--timeline-renewal) bg-transparent">Renews if no notice</Legend>
+        <Legend className="bg-(--timeline-ended)">Ended</Legend>
         <span className="inline-flex items-center gap-1.5">
           <span className="size-2.5 rotate-45 bg-critical" /> Notice deadline
         </span>
@@ -75,24 +77,28 @@ export default function TimelinePage() {
                 : null;
               const dn = daysUntil(nb);
               const missed = dn < 0;
+              const ended = parse(c.end) < TODAY;
               return (
                 <li key={c.id} className="group grid grid-cols-[260px_1fr] border-b border-border last:border-0 hover:bg-muted/50">
                   <Link href={`/contracts/${c.id}`} className="min-w-0 px-5 py-3">
-                    <span className="block truncate text-[13px] font-medium group-hover:text-primary">{c.title}</span>
+                    <span className="block truncate text-[13px] font-medium group-hover:underline">{c.title}</span>
                     <span className="tnum block truncate text-xs text-muted-foreground">
-                      {missed ? `Notice window passed · ends ${formatDate(c.end)}` : `Notice by ${formatDate(nb)}`}
+                      {ended ? `Ended ${formatDate(c.end)}` : missed ? `Notice window missed · ends ${formatDate(c.end)}` : `Notice by ${formatDate(nb)}`}
                     </span>
                   </Link>
                   <div className="relative h-full min-h-14">
-                    <div className="absolute top-1/2 h-3 -translate-y-1/2 rounded-l-sm bg-ring/35" style={{ left: `${s}%`, width: `${n - s}%` }} />
+                    <div className={clsx("absolute top-1/2 h-3 -translate-y-1/2 rounded-l-sm", ended ? "bg-(--timeline-ended)" : "bg-(--timeline-running)")} style={{ left: `${s}%`, width: `${n - s}%` }} />
                     <div
-                      className="absolute top-1/2 h-3 -translate-y-1/2 rounded-r-sm bg-primary"
+                      className={clsx(
+                        "absolute top-1/2 h-3 -translate-y-1/2 rounded-r-sm",
+                        ended ? "bg-(--timeline-ended)" : missed ? "bg-(--timeline-missed)" : "bg-(--timeline-notice)",
+                      )}
                       style={{ left: `${n}%`, width: `${Math.max(e - n, 0.4)}%` }}
-                      title={`Notice window: ${formatDate(nb)} – ${formatDate(c.end)}`}
+                      title={`${ended ? "Ended" : missed ? "Notice window missed" : "Notice window"}: ${formatDate(nb)} – ${formatDate(c.end)}`}
                     />
                     {renewEnd !== null && (
                       <div
-                        className="absolute top-1/2 h-3 -translate-y-1/2 rounded-r-sm border border-l-0 border-dashed border-primary"
+                        className="absolute top-1/2 h-3 -translate-y-1/2 rounded-r-sm border border-l-0 border-dashed border-(--timeline-renewal)"
                         style={{ left: `${e}%`, width: `${renewEnd - e}%` }}
                         title={`Renews for ${c.autoRenew!.months} months if no notice`}
                       />

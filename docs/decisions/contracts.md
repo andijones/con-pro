@@ -25,17 +25,15 @@ Sections sorted by what each contract needs, with search and filters on top and 
   - Finished
 
   Each section header holds a title, a count `Badge` and a one-line explanation. **Only Needs you starts open.** Searching or filtering opens every section that has matches and hides empty ones.
-- **Section colour:** one tonal ramp from the brand base colours, getting quieter as urgency drops. There's no edge stripe.
+- **Section colour** (updated 2 October 2026): every section header is white, the base tone, with a Frost tint on hover. Urgency is carried by the count `Badge` alone:
 
-  | Section | Header | Count badge |
-  |---|---|---|
-  | Needs you | Lilac (`bg-highlight`) | `default` (violet) |
-  | Ending or renewing within 6 months | Light lilac (`bg-accent`) | `secondary` |
-  | Running smoothly | Frost (`bg-muted`) | `outline` |
-  | Being set up | Frost | `outline` |
-  | Finished | White | `outline` |
+  | Section | Count badge |
+  |---|---|
+  | Needs you | `critical` (red) |
+  | Ending or renewing within 6 months | `warning` (amber) |
+  | Running smoothly, Being set up, Finished | `outline` |
 
-  Rows are white, and row hover takes the section's tint.
+  Rows are white, with a Frost tint on hover.
 - **Rows** show four facts:
   - contract and supplier
   - **what happens next**, as one plain sentence with a countdown (for example "Renews for 12 months unless notice is given by 17 Oct 2026, in 16 days")
@@ -76,4 +74,5 @@ Deleted contracts are hidden.
 - **Finder on its own:** the most familiar, but it didn't say what was urgent until you picked a filter.
 - **Lifecycle** (each contract as a bar in time, with notice windows and renewals): the best planning view, but the least precise at a glance. Worth reviving as a view on Timeline or Reports.
 - **Semantic section colours** (amber for coming up, green for running smoothly, plus a coloured edge stripe): too colourful. Replaced by the brand tonal ramp.
+- **Brand tonal ramp** (Lilac, light Lilac, Frost, Frost, White headers with a violet count badge): still too purple, and violet said "brand" rather than "urgent". Replaced by white headers with red and amber badges.
 - **Custom filter pills:** replaced by the design system `ToggleGroup`, and the count pills by `Badge`.

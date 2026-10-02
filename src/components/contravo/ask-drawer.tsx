@@ -96,27 +96,33 @@ export function AskDrawer() {
         "data-open:translate-x-0 data-open:duration-250 data-open:ease-(--ease-out)",
       )}
     >
-      {/* The tab rides on the drawer's leading edge */}
-      <button
-        ref={tab}
-        aria-expanded={open}
-        aria-controls="ask-drawer"
-        aria-label={open ? "Close Ask Contravo" : "Open Ask Contravo"}
-        onClick={() => setOpen((o) => !o)}
-        className={cn(
-          "absolute top-1/2 right-full flex w-10 -translate-y-1/2 flex-col items-center gap-2.5 rounded-l-xl bg-primary py-4 text-primary-foreground",
-          "shadow-[-4px_0_16px_rgb(3_1_57/0.12),0_1px_2px_rgb(3_1_57/0.2)] transition-[background-color,translate] duration-(--duration-fast) ease-(--ease-out)",
-          "hover:-translate-x-0.5 hover:bg-(--primary-hover)",
-        )}
-      >
-        {open ? <ChevronRight className="size-4" aria-hidden /> : <Sparkles className="size-4" aria-hidden />}
-        <span className="rotate-180 text-[13px] font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
-          Ask Contravo
-        </span>
-        <Kbd className="h-auto min-w-0 rotate-180 border-0 bg-white/15 px-1 py-1 text-[10px] text-primary-foreground [writing-mode:vertical-rl]" aria-hidden>
-          ⌘J
-        </Kbd>
-      </button>
+      {/* The tab rides on the drawer's leading edge. Same treatment as New chat: white, crisp edge, AI glow. */}
+      <div className="ai-glow absolute top-1/2 right-full -translate-y-1/2 rounded-l-xl transition-[translate] duration-(--duration-fast) ease-(--ease-out) has-[button:hover]:-translate-x-0.5">
+        <button
+          ref={tab}
+          aria-expanded={open}
+          aria-controls="ask-drawer"
+          aria-label={open ? "Close Ask Contravo" : "Open Ask Contravo"}
+          onClick={() => setOpen((o) => !o)}
+          className={cn(
+            "flex w-10 flex-col items-center gap-2.5 rounded-l-xl bg-background bg-clip-border py-4 text-foreground",
+            "shadow-(--shadow-button) transition-[background-color,box-shadow] duration-(--duration-fast) ease-(--ease-out)",
+            "hover:bg-[color-mix(in_oklab,var(--muted)_60%,var(--background))] hover:shadow-(--shadow-button-hover)",
+          )}
+        >
+          {open ? (
+            <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+          ) : (
+            <Sparkles className="size-4 text-muted-foreground" aria-hidden />
+          )}
+          <span className="rotate-180 text-[13px] font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
+            Ask Contravo
+          </span>
+          <Kbd className="h-auto min-w-0 rotate-180 px-1 py-1 text-[10px] [writing-mode:vertical-rl]" aria-hidden>
+            ⌘J
+          </Kbd>
+        </button>
+      </div>
 
       <aside
         id="ask-drawer"
@@ -128,7 +134,7 @@ export function AskDrawer() {
         )}
       >
         <header className="flex items-center gap-2 border-b px-4 py-3">
-          <Sparkles className="size-4 shrink-0 text-primary" aria-hidden />
+          <Sparkles className="size-4 shrink-0 text-muted-foreground" aria-hidden />
           <div className="min-w-0 flex-1">
             <h2 className="text-sm font-medium">{contract ? "Ask about this contract" : "Ask Contravo"}</h2>
             <p className="truncate text-xs text-muted-foreground">

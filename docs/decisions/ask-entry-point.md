@@ -27,3 +27,12 @@ Ask Contravo is a drawer that slides out from the right edge of every page.
 - **Inline (composer and highlight-to-ask on the page):** only works where there's a contract on the page, and highlighting is a pointer gesture. Dropped for now; highlight-to-ask could sit on top of the drawer later.
 - **Peek rail (always-visible 56px rail):** strong for discovery, but it costs 56px on every page and needs page-aware prompts to earn its space.
 - **Pull handle (drag to resize, page reflows):** most flexible, but the most complex, and reflowing a long contract while dragging feels heavy. The resize idea could be added to the Edge tab later if people want wider answers.
+
+## Update (2 October 2026): matches New chat
+
+The tab on the drawer's edge now uses the same treatment as the sidebar's New chat button, so the two ways into the AI read as one family:
+
+- white surface with the outline button's edge (`--shadow-button`), Midnight text, and a solid Frost tint on hover, so the glow never shows through
+- icons (sparkles, chevron, and the drawer header's sparkles) in muted grey instead of violet
+- the `ai-glow` halo: the shimmer ramp, 1px outside the edge, 2px blur at 70%, drifting slowly and stopping for reduced motion
+- the ⌘J hint uses the design system `Kbd`

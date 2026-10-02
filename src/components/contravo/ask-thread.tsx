@@ -93,7 +93,7 @@ export function AskThread() {
         }
       }}
     >
-      <InputGroup className="bg-card shadow-sm">
+      <InputGroup>
         <InputGroupTextarea
           aria-label="Ask about your contracts"
           value={draft}

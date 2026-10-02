@@ -129,7 +129,7 @@ export function AppSidebar() {
             className="h-9 w-full justify-start gap-2 bg-background hover:bg-[color-mix(in_oklab,var(--muted)_60%,var(--background))] pr-2 pl-[7px] group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
           >
             <Link href={NEW_CHAT.href} aria-keyshortcuts="g n">
-              <SquarePen className="text-primary" />
+              <SquarePen className="text-muted-foreground" />
               <span className="flex-1 group-data-[collapsible=icon]:sr-only">New chat</span>
             </Link>
           </Button>

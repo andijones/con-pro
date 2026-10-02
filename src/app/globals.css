@@ -116,8 +116,8 @@
   --primary-hover: color-mix(in oklab, var(--primary), var(--brand-midnight) 18%);
   --shadow-button: 0 0 0 1px rgb(3 1 57 / 0.12), 0 1px 2px rgb(3 1 57 / 0.06);
   --shadow-button-hover: 0 0 0 1px rgb(3 1 57 / 0.18), 0 1px 3px rgb(3 1 57 / 0.08), 0 2px 6px -2px rgb(3 1 57 / 0.08);
-  /* Solid primary: a contact shadow plus a soft glow in its own colour, so it sits on the page instead of on a halo */
-  --shadow-button-primary: 0 1px 2px rgb(3 1 57 / 0.18), 0 2px 8px -2px color-mix(in oklab, var(--primary) 45%, transparent);
+  /* Solid primary: a tight contact shadow only, no blurred glow, so it stays crisp */
+  --shadow-button-primary: 0 1px 1px rgb(3 1 57 / 0.16);
 
   /* Brand shimmer, as on the website (footer wordmark, hero band): Lilac → deep Lilac → Mint → Mint mist */
   --shimmer-1: var(--brand-lilac);
@@ -138,6 +138,15 @@
   --chart-3: var(--brand-midnight);
   --chart-4: #2f8f74;
   --chart-5: var(--brand-slate);
+
+  /* Timeline bars: status hues tuned to sit beside the brand, not more violet.
+     Running is a quiet Mint, the notice window a strong amber (3.55:1 on white), a missed window red (only while the contract still runs), a finished contract quiet grey,
+     and an automatic renewal a dashed slate outline. Light-vs-strong also separates them without colour. */
+  --timeline-running: #a6dcc9;
+  --timeline-notice: #b97b1f;
+  --timeline-missed: var(--status-critical);
+  --timeline-renewal: var(--brand-line-strong);
+  --timeline-ended: #cfcde0; /* finished contracts: quiet, out of the way */
 
   --radius: 0.5rem; /* 8px panel corners */
 
@@ -445,9 +454,12 @@
  * The halo is a blurred layer under the control, so the control keeps its own edge and contrast.
  * It drifts slowly, stops for reduced motion, and never takes clicks.
  */
-.ai-glow {
-  position: relative;
-  isolation: isolate;
+@layer components {
+  /* In the components layer so a positioning utility (absolute, fixed) on the same element wins */
+  .ai-glow {
+    position: relative;
+    isolation: isolate;
+  }
 }
 .ai-glow::before {
   content: "";
@@ -465,8 +477,8 @@
     var(--shimmer-1)
   );
   background-size: 300% 100%;
-  filter: blur(3px);
-  opacity: 1;
+  filter: blur(2px);
+  opacity: 0.7;
   pointer-events: none;
   animation: ai-glow-drift 8s linear infinite;
 }
