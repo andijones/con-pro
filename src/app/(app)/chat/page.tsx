@@ -20,12 +20,12 @@ export default async function ChatPage(props: PageProps<"/chat">) {
           <TabsTrigger value="ask">Ask a question</TabsTrigger>
           <TabsTrigger value="foi">FOI request</TabsTrigger>
         </TabsList>
-        <TabsContent value="ask" className="mt-4">
+        <TabsContent value="ask" tabIndex={-1} className="mt-4">
           <Suspense>
             <AskThread />
           </Suspense>
         </TabsContent>
-        <TabsContent value="foi" className="mt-4">
+        <TabsContent value="foi" tabIndex={-1} className="mt-4">
           <FoiIntake />
         </TabsContent>
       </Tabs>

@@ -54,7 +54,7 @@ export function DetailsForm({ contract, pages, counterpartyRead }: { contract: C
   }
 
   return (
-    <div className="flex flex-col gap-4 lg:h-[calc(100dvh-4rem)]">
+    <div className="flex flex-col gap-4 lg:h-[calc(100dvh-6rem)]">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div className="min-w-0">
           <Button variant="link" asChild className="mb-1 h-auto px-0 text-muted-foreground">

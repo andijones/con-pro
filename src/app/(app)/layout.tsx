@@ -16,13 +16,17 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
       >
         Skip to main content
       </a>
-      <SidebarProvider defaultOpen={sidebarOpen}>
+      <SidebarProvider defaultOpen={sidebarOpen} className="bg-sidebar">
         <AppSidebar />
-        <SidebarInset className="min-w-0">
-          <MobileBar />
-          <main id="main" tabIndex={-1} className="flex-1 px-4 pt-8 pb-16 outline-none md:px-8">
-            {children}
-          </main>
+        {/* Desktop: the page sits on a rounded white panel inset from the Frost frame. The panel clips; the inner
+            layer scrolls, so the scrollbar stays inside the rounded corners. */}
+        <SidebarInset className="min-w-0 md:my-2 md:mr-2 md:h-[calc(100svh-1rem)] md:overflow-hidden md:rounded-xl md:shadow-card">
+          <div className="flex min-h-0 flex-1 flex-col md:overflow-y-auto md:scroll-pt-10">
+            <MobileBar />
+            <main id="main" tabIndex={-1} className="flex-1 px-4 pt-8 pb-16 outline-none md:px-10 md:pt-10">
+              {children}
+            </main>
+          </div>
         </SidebarInset>
       </SidebarProvider>
       <AskDrawer />

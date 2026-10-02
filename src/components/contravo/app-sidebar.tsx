@@ -116,7 +116,7 @@ export function AppSidebar() {
   }, [router]);
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="group-data-[side=left]:border-r-0 md:*:data-[slot=sidebar-inner]:bg-transparent">
       <SidebarHeader className="h-16 justify-center px-3 py-0 group-data-[collapsible=icon]:px-2">
         <SidebarTop />
       </SidebarHeader>

@@ -83,6 +83,8 @@ export function AskThread() {
     if (turns.length) bottom.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [turns]);
 
+  const busy = turns.some((t) => t.a === null);
+
   const composer = (
     <form
       onSubmit={(e) => {
@@ -93,7 +95,15 @@ export function AskThread() {
         }
       }}
     >
-      <InputGroup>
+      {/* The agent's input: a conic shimmer halo that listens on focus, warms when there's a draft and quickens
+          while an answer is being worked on. The halo outlines the box, so its edge is a soft hairline at rest;
+          hover restores the control edge and focus keeps the Violet ring. */}
+      <div
+        className="ai-composer [--control-border-bottom:var(--brand-line)] [--control-border-hover:var(--brand-line-strong)] [--control-border:var(--brand-line)]"
+        data-ready={draft.trim() ? "" : undefined}
+        data-busy={busy ? "" : undefined}
+      >
+        <InputGroup>
         <InputGroupTextarea
           aria-label="Ask about your contracts"
           value={draft}
@@ -134,7 +144,8 @@ export function AskThread() {
             </InputGroupButton>
           </div>
         </InputGroupAddon>
-      </InputGroup>
+        </InputGroup>
+      </div>
     </form>
   );
 
@@ -156,17 +167,19 @@ export function AskThread() {
           <h2 className="mb-3 text-sm font-medium">Previous conversations</h2>
           <ItemGroup className="gap-2">
             {conversations.map((c) => (
-              <Item key={c.id} variant="outline" asChild>
-                <button onClick={() => ask(c.q)} className="text-left">
-                  <ItemMedia variant="icon">
-                    <MessageSquare />
-                  </ItemMedia>
-                  <ItemContent>
-                    <ItemTitle>{c.title}</ItemTitle>
-                    <ItemDescription>{formatDate(c.at)}</ItemDescription>
-                  </ItemContent>
-                </button>
-              </Item>
+              <div key={c.id} role="listitem">
+                <Item variant="outline" asChild>
+                  <button type="button" onClick={() => ask(c.q)} className="text-left">
+                    <ItemMedia variant="icon" className="text-muted-foreground">
+                      <MessageSquare />
+                    </ItemMedia>
+                    <ItemContent>
+                      <ItemTitle>{c.title}</ItemTitle>
+                      <ItemDescription className="tnum">{formatDate(c.at)}</ItemDescription>
+                    </ItemContent>
+                  </button>
+                </Item>
+              </div>
             ))}
           </ItemGroup>
         </section>

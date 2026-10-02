@@ -51,7 +51,7 @@ function Slider({
           key={index}
           // Contravo (WCAG 4.1.2): the focusable thumb carries the slider's name
           aria-label={ariaLabel}
-          className="relative block size-3 shrink-0 rounded-full border border-ring bg-white ring-ring/50 transition-[color,box-shadow] select-none after:absolute after:-inset-2 hover:ring-3 focus-visible:ring-3 focus-visible:outline-hidden active:ring-3 disabled:pointer-events-none disabled:opacity-50"
+          className="relative block size-4 shrink-0 rounded-full border border-primary bg-white shadow-[0_1px_2px_rgb(3_1_57/0.18),0_2px_4px_-1px_rgb(3_1_57/0.12)] ring-ring/30 transition-[color,box-shadow] duration-(--duration-fast) ease-(--ease-out) select-none after:absolute after:-inset-1 hover:ring-4 active:ring-4 disabled:pointer-events-none disabled:opacity-50"
         />
       ))}
     </SliderPrimitive.Root>

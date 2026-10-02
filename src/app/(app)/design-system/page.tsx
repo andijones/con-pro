@@ -22,9 +22,9 @@ const type = [
 
 const a11y: [string, string, string][] = [
   ["1.4.3", "Text contrast at least 4.5:1, including placeholders and small labels.", "Semantic tokens; checked live in Contrast below"],
-  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #8c88ad, --focus Midnight, chart tokens"],
+  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #8c88ad, --focus Midnight, --control-focus-edge Violet, chart tokens"],
   ["1.4.1", "Never use colour alone. Status has a label or icon, risk is spelled out, inline links are underlined, and chart markers differ in shape.", "StatusBadge, ToneBadge, ContractReader, Runway key"],
-  ["2.4.7 · 2.4.11", "Keyboard focus is always visible, neutral (Midnight, never brand colour) and never hidden behind the phone menu bar.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
+  ["2.4.7 · 2.4.11", "Keyboard focus is always visible and never hidden behind the phone menu bar. Outlines are Midnight; fields take a single 1px Violet edge (9:1) with a soft glow.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
   ["2.4.1", "Skip link to main content on every page.", "layout.tsx"],
   ["2.5.8", "Pointer targets at least 24 × 24px. We go further: every small control grows an invisible target to 40px (44px on touch), and targets never overlap.", "--hit-min + hit-area / hit-area-y utilities in Button"],
   ["2.5.7", "Anything you can drag also works with a single click.", "Upload drop zone is a button; sliders accept clicks and arrow keys"],
@@ -40,7 +40,8 @@ const a11y: [string, string, string][] = [
 ];
 
 const interaction: [string, string, string][] = [
-  ["--focus", "Midnight #030139", "Keyboard focus outline (2px, 2px offset) and the field focus ring"],
+  ["--focus", "Midnight #030139", "Keyboard focus outline (2px, 2px offset)"],
+  ["--control-focus-edge", "Violet #4025c8", "Field focus edge (1px, 9:1 on white) inside an 18% Iris glow"],
   ["--duration-fast", "150ms", "Hover, colour and border changes"],
   ["--duration-base", "200ms", "Progress bars and larger state changes"],
   ["--ease-out", "cubic-bezier(0.22, 1, 0.36, 1)", "All UI transitions. Named properties only, never transition: all"],

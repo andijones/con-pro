@@ -75,7 +75,8 @@
   --control-border-hover: color-mix(in oklab, var(--input), var(--brand-slate) 55%);
   /* Recessed, not raised: a soft inner shadow at the top makes the field a well you type into, not a button */
   --control-shadow: inset 0 1px 2px rgb(3 1 57 / 0.06);
-  --control-halo: color-mix(in oklab, var(--brand-iris) 26%, transparent); /* focus glow, around the 2px Midnight edge */
+  --control-focus-edge: var(--brand-violet); /* fields only: one 1px Violet edge, 9:1 on white (WCAG 1.4.11; 2.4.13's 2px is AAA) */
+  --control-halo: color-mix(in oklab, var(--brand-iris) 18%, transparent); /* soft focus glow; decoration, not the indicator */
   --control-invalid-halo: color-mix(in oklab, var(--destructive) 13%, transparent);
   --control-autofill: color-mix(in oklab, var(--brand-lilac) 45%, var(--brand-white)); /* filled by the browser: our tint, not its blue */
   --control-height: 2.25rem; /* 36px */
@@ -322,7 +323,7 @@
  * Control recipe: inputs, selects, textareas, input groups.
  * Rest: white field, a 1px edge at 3:1 (WCAG 1.4.11) that deepens slightly along the bottom, and an inner top shadow,
  *   so it reads as a recessed well rather than a box drawn round some text.
- * Hover: the edge deepens a step. Focus: a 2px Midnight edge (19:1, WCAG 2.4.7) inside a soft Iris glow.
+ * Hover: the edge deepens a step. Focus: one 1px Violet edge (9:1, WCAG 2.4.7 / 1.4.11 at AA) inside a soft Iris glow.
  * Invalid: a 1px red edge and a faint red glow. The message under the field carries the error, not colour alone (1.4.1).
  */
 @utility control {
@@ -348,10 +349,9 @@
   box-shadow: none;
 }
 @utility control-focus {
-  border-color: var(--focus);
+  border-color: var(--control-focus-edge);
   box-shadow:
     var(--control-shadow),
-    inset 0 0 0 1px var(--focus),
     0 0 0 3px var(--control-halo);
   outline: none !important;
 }
@@ -453,6 +453,7 @@
  * AI glow: the --shimmer ramp as a soft halo behind an AI entry point (New chat).
  * The halo is a blurred layer under the control, so the control keeps its own edge and contrast.
  * It drifts slowly, stops for reduced motion, and never takes clicks.
+ * Larger surfaces can widen it: --ai-glow-blur (default 2px) and --ai-glow-inset (default -1px).
  */
 @layer components {
   /* In the components layer so a positioning utility (absolute, fixed) on the same element wins */
@@ -464,7 +465,7 @@
 .ai-glow::before {
   content: "";
   position: absolute;
-  inset: -1px;
+  inset: var(--ai-glow-inset, -1px);
   z-index: -1;
   border-radius: inherit;
   background: linear-gradient(
@@ -477,7 +478,7 @@
     var(--shimmer-1)
   );
   background-size: 300% 100%;
-  filter: blur(2px);
+  filter: blur(var(--ai-glow-blur, 2px));
   opacity: 0.7;
   pointer-events: none;
   animation: ai-glow-drift 8s linear infinite;
@@ -490,6 +491,99 @@
 @media (prefers-reduced-motion: reduce) {
   .ai-glow::before {
     animation: none;
+  }
+}
+
+/*
+ * AI composer: the agent's input. Two layers of the shimmer ramp, swept around the box on a conic gradient:
+ * a wide ambient halo and a tight rim. It breathes with state:
+ *   rest       quiet, slow sweep (14s)
+ *   focus      the halo lifts: it is listening
+ *   ready      a draft is typed: the halo warms a step further
+ *   busy       an answer is being worked on: a rim of light appears, the sweep quickens (2.4s) and it pulses
+ * Decorative only: the box keeps its own edge and focus ring, nothing here carries meaning, and the spoken
+ * "working" state comes from the answer area. Reduced motion holds a still gradient.
+ */
+@property --ai-angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+.ai-composer {
+  --ai-mint: #8edcc3; /* Mint deepened a step so it reads on white as light, not as nothing */
+  position: relative;
+  isolation: isolate;
+  border-radius: var(--control-radius);
+}
+.ai-composer::before,
+.ai-composer::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(
+    from var(--ai-angle) in oklab,
+    var(--brand-iris),
+    var(--ai-mint),
+    var(--brand-lilac-deep),
+    var(--brand-iris),
+    var(--ai-mint),
+    var(--brand-lilac-deep),
+    var(--brand-iris)
+  );
+  animation: ai-sweep 14s linear infinite;
+  transition:
+    opacity 300ms var(--ease-out),
+    filter 300ms var(--ease-out),
+    inset 300ms var(--ease-out);
+}
+/* Ambient halo: wide and faint */
+.ai-composer::before {
+  inset: -4px;
+  filter: blur(18px);
+  opacity: 0.4;
+}
+/* Rim: a line of light on the edge, shown only while the agent is working. At rest or on focus it would read as
+   a second, muddier focus ring, so it stays hidden then. */
+.ai-composer::after {
+  inset: -1px;
+  filter: blur(2px);
+  opacity: 0;
+}
+.ai-composer:focus-within::before {
+  opacity: 0.6;
+  inset: -6px;
+}
+.ai-composer[data-ready]::before {
+  opacity: 0.7;
+}
+.ai-composer[data-busy]::after {
+  opacity: 0.6;
+}
+.ai-composer[data-busy]::before,
+.ai-composer[data-busy]::after {
+  animation:
+    ai-sweep 2.4s linear infinite,
+    ai-breathe 1.6s ease-in-out infinite alternate;
+}
+@keyframes ai-sweep {
+  to {
+    --ai-angle: 360deg;
+  }
+}
+@keyframes ai-breathe {
+  to {
+    opacity: 0.8;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-composer::before,
+  .ai-composer::after,
+  .ai-composer[data-busy]::before,
+  .ai-composer[data-busy]::after {
+    animation: none;
+    transition: none;
   }
 }
 
