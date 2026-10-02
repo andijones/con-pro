@@ -6,7 +6,7 @@ Decided 1 October 2026 from the in-place sidebar prototype (`src/proto/sidebar`,
 
 A dense, keyboard-first sidebar that doubles as a working set.
 
-- **No section label above the nav.** Home, Contracts, Timeline, FOI requests, Reports and Audit sit in compact 32px rows. Chat is no longer a nav item.
+- **No section label above the nav.** Home, Contracts, Timeline, FOI requests, Reports and Audit sit in 36px rows with 2px between them (spaced out on 2 October 2026; 32px rows felt crammed). Chat is no longer a nav item.
 - **New chat** is an outline button under the logo (pen icon). It opens `/chat`, and the shortcut is G then N. When the sidebar is collapsed it shrinks to an icon.
 - **Shortcuts:** G then a letter (H, C, T, F, R, A, N), in the style of Linear. Pressing G reveals every hint for one second, then they hide again. Counts never swap out on hover. Only New chat shows its hint all the time.
 - **Needs you:** the three contracts with the nearest decisions. A red dot means within 7 days, amber otherwise. Days left trail on the right, in the same column as the nav counts, with spoken text for screen readers.
@@ -18,6 +18,7 @@ A dense, keyboard-first sidebar that doubles as a working set.
   - Help and support
   - Design system
   - Sign out (moved out of the sidebar body)
+- **Spacing** (2 October 2026): 17rem wide (was 16rem) so fewer titles truncate; 64px header with the logo at 18px tall (was 22px); 24px under New chat; 28px between groups; section labels sit 4px above their rows.
 - **Alignment:** every icon, dot and avatar sits on one column (x = 20px), and every label on another (x = 44px). The gutter is 12px throughout.
 - **Collapse** (updated 2 October 2026, when the app header was removed):
   - The collapse button sits in the sidebar, beside the logo (a panel icon, with a tooltip showing ⌘B).

@@ -117,31 +117,32 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarHeader className="h-14 justify-center px-3 py-0 group-data-[collapsible=icon]:px-2">
+      <SidebarHeader className="h-16 justify-center px-3 py-0 group-data-[collapsible=icon]:px-2">
         <SidebarTop />
       </SidebarHeader>
 
-      <div className="px-3 pb-3 group-data-[collapsible=icon]:px-2">
-        <Button
-          asChild
-          variant="outline"
-          className="w-full justify-start gap-2 bg-background pr-2 pl-[7px] group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
-        >
-          <Link href={NEW_CHAT.href} aria-keyshortcuts="g n" title="New chat (G then N)">
-            <SquarePen className="text-primary" />
-            <span className="flex-1 group-data-[collapsible=icon]:sr-only">New chat</span>
-            <Keys k={NEW_CHAT.key} />
-          </Link>
-        </Button>
+      <div className="px-3 pb-6 group-data-[collapsible=icon]:px-2">
+        <div className="ai-glow rounded-lg group-data-[collapsible=icon]:w-fit">
+          <Button
+            asChild
+            variant="outline"
+            className="h-9 w-full justify-start gap-2 bg-background hover:bg-[color-mix(in_oklab,var(--muted)_60%,var(--background))] pr-2 pl-[7px] group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-0"
+          >
+            <Link href={NEW_CHAT.href} aria-keyshortcuts="g n">
+              <SquarePen className="text-primary" />
+              <span className="flex-1 group-data-[collapsible=icon]:sr-only">New chat</span>
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <SidebarContent className="gap-4 px-1">
+      <SidebarContent className="gap-7 px-1">
         <nav aria-label="Main">
           <SidebarGroup className="py-0">
-            <SidebarMenu className="gap-px">
+            <SidebarMenu className="gap-0.5">
               {nav.map((n) => (
                 <SidebarMenuItem key={n.href}>
-                  <SidebarMenuButton asChild isActive={isActive(n.href)} tooltip={`${n.label} (G then ${n.key})`} className="h-8 text-[13px]">
+                  <SidebarMenuButton asChild isActive={isActive(n.href)} tooltip={`${n.label} (G then ${n.key})`} className="h-9 text-[13px]">
                     <Link href={n.href} aria-keyshortcuts={`g ${n.key.toLowerCase()}`}>
                       <n.icon />
                       <span className="flex-1">{n.label}</span>
@@ -163,10 +164,10 @@ export function AppSidebar() {
 
         <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
           <SectionLabel>Needs you</SectionLabel>
-          <SidebarMenu className="gap-px">
+          <SidebarMenu className="gap-0.5">
             {needsYou.map(({ c, days }) => (
               <SidebarMenuItem key={c.id}>
-                <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-8 text-[13px]">
+                <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-9 text-[13px]">
                   <Link href={`/contracts/${c.id}`} title={c.title}>
                     <span className="grid size-4 shrink-0 place-items-center" aria-hidden>
                       <span className={cn("size-1.5 rounded-full", days <= 7 ? "bg-critical" : "bg-warning")} />
@@ -192,10 +193,10 @@ export function AppSidebar() {
               View all
             </Link>
           </SidebarGroupAction>
-          <SidebarMenu className="gap-px">
+          <SidebarMenu className="gap-0.5">
             {conversations.map((c) => (
               <SidebarMenuItem key={c.id}>
-                <SidebarMenuButton asChild className="h-8 pl-8 text-[13px] text-muted-foreground hover:text-foreground">
+                <SidebarMenuButton asChild className="h-9 pl-8 text-[13px] text-muted-foreground hover:text-foreground">
                   <Link href={`/chat?q=${encodeURIComponent(c.q)}`} title={c.title}>
                     <span className="truncate">{c.title}</span>
                   </Link>
@@ -206,7 +207,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="mx-3 border-t border-sidebar-border px-0 py-2 group-data-[collapsible=icon]:mx-2">
+      <SidebarFooter className="mx-3 border-t border-sidebar-border px-0 py-3 group-data-[collapsible=icon]:mx-2">
         <UserMenu />
       </SidebarFooter>
       <SidebarRail />
@@ -272,7 +273,7 @@ function UserMenu() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarGroupLabel className="h-7 px-2 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+    <SidebarGroupLabel className="mb-1 h-7 px-2 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
       {children}
     </SidebarGroupLabel>
   );
@@ -342,7 +343,7 @@ function SidebarTop() {
     <div className="flex items-center justify-between gap-2">
       <Link href="/" className="flex h-8 items-center rounded-md px-2" aria-label="Contravo home">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/contravo-logo.svg" alt="Contravo" width={112} height={22} className="h-[22px] w-auto" />
+        <img src="/contravo-logo.svg" alt="Contravo" width={92} height={18} className="h-[18px] w-auto" />
       </Link>
       <Tooltip>
         <TooltipTrigger asChild>

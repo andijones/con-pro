@@ -104,7 +104,7 @@
    */
   --elevation-0: 0 0 0 1px rgb(3 1 57 / 0.08); /* flat container edge: tables, wells */
   --elevation-1: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.05), 0 2px 6px -2px rgb(3 1 57 / 0.06); /* cards at rest */
-  --elevation-2: 0 0 0 1px rgb(3 1 57 / 0.06), 0 2px 4px -1px rgb(3 1 57 / 0.06), 0 12px 28px -10px rgb(3 1 57 / 0.16); /* raised: featured cards, hover lift, sign-in */
+  --elevation-2: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.05), 0 4px 12px -4px rgb(3 1 57 / 0.09); /* raised: featured cards, hover lift, sign-in */
   --elevation-3: 0 0 0 1px rgb(3 1 57 / 0.08), 0 4px 8px -2px rgb(3 1 57 / 0.08), 0 16px 32px -8px rgb(3 1 57 / 0.18); /* popovers, menus, tooltips */
   --elevation-4: 0 0 0 1px rgb(3 1 57 / 0.08), 0 8px 16px -4px rgb(3 1 57 / 0.1), 0 32px 64px -16px rgb(3 1 57 / 0.28); /* dialogs, sheets */
   --edge-hairline: inset 0 0 0 1px rgb(3 1 57 / 0.12); /* outlined badges and items: an edge drawn inside, no layout cost */
@@ -436,6 +436,47 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .shimmer-band > i {
+    animation: none;
+  }
+}
+
+/*
+ * AI glow: the --shimmer ramp as a soft halo behind an AI entry point (New chat).
+ * The halo is a blurred layer under the control, so the control keeps its own edge and contrast.
+ * It drifts slowly, stops for reduced motion, and never takes clicks.
+ */
+.ai-glow {
+  position: relative;
+  isolation: isolate;
+}
+.ai-glow::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg in oklab,
+    var(--shimmer-1),
+    var(--shimmer-3),
+    var(--brand-iris),
+    var(--shimmer-2),
+    var(--shimmer-3),
+    var(--shimmer-1)
+  );
+  background-size: 300% 100%;
+  filter: blur(3px);
+  opacity: 1;
+  pointer-events: none;
+  animation: ai-glow-drift 8s linear infinite;
+}
+@keyframes ai-glow-drift {
+  to {
+    background-position: 150% 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-glow::before {
     animation: none;
   }
 }
