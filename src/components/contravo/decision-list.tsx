@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ClauseLink, Countdown, PersonAvatar } from "./primitives";
 
-const kindMeta: Record<DecisionKind, { label: string; icon: typeof CalendarClock }> = {
+export const kindMeta: Record<DecisionKind, { label: string; icon: typeof CalendarClock }> = {
   notice: { label: "Notice deadline", icon: CalendarClock },
   price: { label: "Price rise", icon: TrendingUp },
   money: { label: "Money to recover", icon: BadgePoundSterling },

@@ -60,3 +60,11 @@ export function gbp(n: number, opts: { compact?: boolean } = {}) {
   }
   return n.toLocaleString("en-GB", { style: "currency", currency: "GBP", maximumFractionDigits: 0 });
 }
+
+/** "7 days left", "Tomorrow", "Due today", "3 days late" */
+export function daysLeft(days: number) {
+  if (days < 0) return `${-days} days late`;
+  if (days === 0) return "Due today";
+  if (days === 1) return "Tomorrow";
+  return `${days} days left`;
+}
