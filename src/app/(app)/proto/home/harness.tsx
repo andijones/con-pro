@@ -7,6 +7,7 @@ import { Picker } from "./picker";
 import { Queue } from "./queue";
 import { Ask } from "./ask";
 import { Estate } from "./estate";
+import { Value } from "./value";
 
 function Current() {
   return (
@@ -18,10 +19,10 @@ function Current() {
 }
 
 const QueueHealth = () => <Queue withHealth />;
-const variants = [Current, Queue, Ask, Estate, QueueHealth];
+const variants = [Current, Queue, Ask, Estate, QueueHealth, Value];
 
 export function Harness() {
-  return <Picker names={["Current", "Queue", "Ask", "Estate", "Queue + health"]} render={(i) => {
+  return <Picker names={["Current", "Queue", "Ask", "Estate", "Queue + health", "Value"]} render={(i) => {
     const V = variants[i];
     return <V />;
   }} />;

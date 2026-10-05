@@ -44,7 +44,8 @@ export function AskDrawer() {
   const end = useRef<HTMLDivElement>(null);
   const n = useRef(0);
 
-  const hidden = path.startsWith("/chat"); // /chat is already the full conversation
+  // /chat is already the full conversation; Home sells starting one instead
+  const hidden = path === "/" || path.startsWith("/chat");
 
   function ask(q: string) {
     const id = ++n.current;
