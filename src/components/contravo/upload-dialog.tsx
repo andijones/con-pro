@@ -150,7 +150,7 @@ export function UploadDialog({ trigger }: { trigger?: React.ReactNode }) {
                   }}
                   className={cn(
                     "flex flex-col items-center gap-2 rounded-lg border border-dashed border-input px-4 py-8 text-sm text-muted-foreground transition-colors hover:border-ring hover:bg-accent/40",
-                    drag && "border-ring bg-accent/60",
+                    drag && "border-ring bg-highlight/50",
                   )}
                 >
                   <Upload className="size-5" aria-hidden />

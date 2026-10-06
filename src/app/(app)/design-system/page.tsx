@@ -22,7 +22,7 @@ const type = [
 
 const a11y: [string, string, string][] = [
   ["1.4.3", "Text contrast at least 4.5:1, including placeholders and small labels.", "Semantic tokens; checked live in Contrast below"],
-  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #8c88ad, --focus Midnight, --control-focus-edge Violet, chart tokens"],
+  ["1.4.11", "Control borders, focus indicators, selected states and chart marks at least 3:1.", "--input #7e8b9f (3.45:1 on white, 3.15:1 on slate-100), --focus Midnight, --control-focus-edge Violet, chart tokens"],
   ["1.4.1", "Never use colour alone. Status has a label or icon, risk is spelled out, inline links are underlined, and chart markers differ in shape.", "StatusBadge, ToneBadge, ContractReader, Runway key"],
   ["2.4.7 · 2.4.11", "Keyboard focus is always visible and never hidden behind the phone menu bar. Outlines are Midnight; fields take a single 1px Violet edge (9:1) with a soft glow.", "--focus, :focus-visible, control-focus, scroll-padding-top"],
   ["2.4.1", "Skip link to main content on every page.", "layout.tsx"],
@@ -48,14 +48,14 @@ const interaction: [string, string, string][] = [
   ["--press-scale", "0.96", "Tactile press on buttons and toggles (the press utility)"],
   ["--hit-min", "40px (44px on touch)", "Invisible target size for small controls (hit-area, hit-area-y)"],
   ["--control-height", "36px", "Default height of buttons, inputs and selects"],
-  ["--control-border", "--input · 3.37:1", "Field boundaries (control utility)"],
+  ["--control-border", "--input · 3.45:1", "Field boundaries (control utility)"],
   ["--z-sticky / --z-header / --z-overlay / --z-skip", "10 / 20 / 50 / 60", "The only z-index values allowed"],
-  ["--composer-radius · --composer-shadow", "16px · two Midnight layers", "Prompt composer shape and lift"],
+  ["--composer-radius · --composer-shadow", "rounded-xl (11px, like cards) · two Midnight layers", "Prompt composer shape and lift"],
   ["--composer-frost / --composer-solid", "Card at 90%→84% / Card", "Composer surface; frost keeps muted text above 4.5:1"],
   ["--composer-rim-1…3 · --composer-aurora-1…2", "Iris, deep Lilac, --halo-mint", "Moving rim and background glow (decorative, aria-hidden)"],
   ["--composer-avatar-1…5", "deep Lilac, Violet, Mint, Iris, Lilac", "Colours for the avatar's WebGL shader, read at runtime"],
   ["--composer-divider", "--brand-line", "Rule above the composer's actions"],
-  ["--suggestion-radius · -stacked", "pill · 14px", "Prompt suggestion shape (wrapped / stacked in the drawer)"],
+  ["--suggestion-radius · -stacked", "rounded-lg (8px, like buttons)", "Prompt suggestion shape (wrapped / stacked in the drawer)"],
   ["--suggestion-surface · -hover", "--composer-frost · 94%→88% Card", "Suggestion fill; the label stays Midnight on 84%+ white"],
   ["--suggestion-rim-rest / -active", "0.55 / 1", "Rim glow at rest, and on hover or keyboard focus"],
 ];

@@ -68,3 +68,25 @@ Suggested questions and follow-ups use `PromptSuggestion` and `PromptSuggestions
   - the global Midnight keyboard outline for focus
   - the rim is `aria-hidden`
 - **Tokens:** `--suggestion-radius`, `--suggestion-radius-stacked`, `--suggestion-surface(-hover)`, `--suggestion-shadow(-hover)` and `--suggestion-rim-rest/-active`.
+
+## Update, 6 October 2026: "Focus" chat page, app radii
+
+Decided from `/proto/chat` (kept, with Aurora stage and Midnight). On a white page the frosted composer and the suggestion rims had nothing to glow through, so they washed out.
+
+- **Focus layout:** one centred column, max 48rem.
+  - A greeting as the page heading: "What do you need to know, Priya?"
+  - The intro, then the Ask / FOI switch, then the composer.
+  - The FOI tab has its own heading: "Answer an FOI request".
+- **Once a conversation starts,** the greeting and intro step aside: only the switch stays, and the thread gets the full width. The heading changes to "Ask about your contracts" and stays for screen readers. This is `components/contravo/chat-view.tsx`, and `AskThread` takes `onThreadChange`.
+- **The glow is turned up, not given a backdrop.** `.ai-underglow` in `globals.css` pools the composer's rim colours beneath it: Iris, Mint and Lilac at 28px blur, opacity 0.6. It sits under the empty-state composer and, at 0.45, under the composer pinned at the bottom of a conversation.
+- **Suggestions:** a two-column grid of cards. Each card has a topic icon (Lilac tile, Violet icon), the question and an arrow, and the rim rests at 0.9. An odd last card spans both columns.
+- **Previous conversations** became a compact "Recent chats" list with the date on the right.
+- **Radii follow the app's scale:**
+  - The composer is a card: `--composer-radius` is rounded-xl, 11px, the same corner as every card.
+  - Suggestions are buttons: `--suggestion-radius` and `-stacked` are rounded-lg, 8px.
+  - The composer's attach and send buttons are rounded-lg, like every icon button.
+  - Avatars stay round.
+
+**Rejected, still in `/proto/chat`:**
+- **Aurora stage:** a slate-50 panel with Iris, Mint and Lilac colour pools behind the composer. Beautiful, but it adds a decorative layer that the rest of the calm app doesn't have.
+- **Midnight:** a dark brand panel with deep-glass suggestions. The glow looks its best there, but it's a heavy dark block in a light-only app.

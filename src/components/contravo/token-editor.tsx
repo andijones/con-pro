@@ -15,11 +15,14 @@ export const primitives = [
   { name: "--brand-violet", label: "Signal violet", note: "Primary action and emphasis" },
   { name: "--brand-iris", label: "Iris", note: "Gradient light, focus ring" },
   { name: "--brand-white", label: "White", note: "Primary canvas" },
-  { name: "--brand-frost", label: "Frost", note: "Secondary canvas, sidebar" },
+  { name: "--brand-frost", label: "Frost", note: "Brand moments; surfaces use the neutral scale" },
   { name: "--brand-lilac", label: "Lilac", note: "Quiet brand surfaces, highlight" },
-  { name: "--brand-slate", label: "Slate", note: "Secondary text" },
+  { name: "--brand-slate", label: "Slate", note: "Brand; charts" },
   { name: "--brand-mint", label: "Mint", note: "Positive insight accent" },
-  { name: "--brand-line", label: "Line", note: "Hairlines and dividers" },
+  { name: "--neutral-100", label: "Neutral 100", note: "Slate-100: app background, sidebar, muted, hovers" },
+  { name: "--neutral-200", label: "Neutral 200", note: "Slate-200: dividers, sidebar hover" },
+  { name: "--neutral-600", label: "Neutral 600", note: "Slate-600: secondary text" },
+  { name: "--brand-line", label: "Line", note: "Hairlines and dividers (neutral 200)" },
   { name: "--brand-line-strong", label: "Line strong", note: "Input borders" },
   { name: "--status-success", label: "Success", note: "With --status-success-bg" },
   { name: "--status-warning", label: "Warning", note: "With --status-warning-bg" },
@@ -32,7 +35,7 @@ export const semanticGroups: { title: string; tokens: string[] }[] = [
   { title: "Lines and focus", tokens: ["--border", "--input", "--ring", "--focus", "--highlight"] },
   { title: "Status", tokens: ["--success", "--success-muted", "--warning", "--warning-muted", "--critical", "--critical-muted"] },
   { title: "Charts", tokens: ["--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"] },
-  { title: "Sidebar", tokens: ["--sidebar", "--sidebar-foreground", "--sidebar-primary", "--sidebar-accent", "--sidebar-accent-foreground", "--sidebar-border"] },
+  { title: "Sidebar", tokens: ["--sidebar", "--sidebar-foreground", "--sidebar-primary", "--sidebar-accent", "--sidebar-accent-foreground", "--sidebar-hover", "--sidebar-border"] },
 ];
 
 /** [foreground, background, label, minimum ratio]. 4.5 = text (1.4.3), 3 = UI parts and graphics (1.4.11). */

@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Info, MessageSquare } from "lucide-react";
+import { ArrowRight, CalendarX2, Copy, Info, MessageSquare, RefreshCw, Thermometer, TrendingUp, type LucideIcon } from "lucide-react";
 import { answer, suggestions, type Answer } from "@/lib/answers";
 import { contracts, conversations, currentUser } from "@/lib/data";
 import { formatDate } from "@/lib/dates";
@@ -13,7 +13,6 @@ import { Badge } from "@/components/ui/badge";
 import { PromptComposer } from "@/components/ui/prompt-composer";
 import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
 import { toast } from "sonner";
-import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { Spinner } from "@/components/ui/spinner";
 import { PersonAvatar } from "./primitives";
 // Option A only (retired composer, commented out below):
@@ -25,6 +24,15 @@ import { PersonAvatar } from "./primitives";
 // import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type Turn = { id: number; q: string; a: Answer | null };
+
+/** An icon per suggested question, so the grid scans by topic; anything new falls back to a speech bubble */
+const suggestionIcon: Record<string, LucideIcon> = {
+  "Which contracts let us end early without a penalty?": CalendarX2,
+  "Who pays if the vaccine fridge fails?": Thermometer,
+  "Which contracts renew automatically?": RefreshCw,
+  "How do prices rise across our contracts?": TrendingUp,
+  "Are we paying for anything twice?": Copy,
+};
 const MAX = 8000;
 
 function clauseOf(contractId: string, clauseId: string) {
@@ -58,7 +66,8 @@ function Cited({ text, onCite, active }: { text: string; onCite: (n: number) => 
   );
 }
 
-export function AskThread() {
+/** `onThreadChange` tells the page when a conversation starts, so the greeting can step aside. */
+export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: boolean) => void } = {}) {
   const params = useSearchParams();
   const router = useRouter();
   const [turns, setTurns] = useState<Turn[]>([]);
@@ -89,6 +98,7 @@ export function AskThread() {
   }, [turns]);
 
   const busy = turns.some((t) => t.a === null);
+  useEffect(() => onThreadChange?.(turns.length > 0), [turns.length, onThreadChange]);
 
   // Option A (retired 2 October 2026, kept to return to): the Halo shell around an InputGroup, with scope, attachments
   // and a character count. To restore, uncomment this block, the "Option A only" imports and state, and render {composerA}.
@@ -174,39 +184,53 @@ export function AskThread() {
     </div>
   );
 
+  // Empty state ("Focus", docs/decisions/ask-composer.md): one centred column on white. The composer's rim colours
+  // pool beneath it (.ai-underglow), so the AI moment reads without a coloured backdrop.
   if (!turns.length) {
     return (
-      <div className="flex flex-col gap-8">
-        {composer}
-        <section>
-          <h2 className="mb-3 text-sm font-medium">Try asking</h2>
-          <PromptSuggestions aria-label="Suggested questions">
-            {suggestions.map((s) => (
-              <PromptSuggestion key={s} onClick={() => ask(s)}>
-                {s}
-              </PromptSuggestion>
-            ))}
-          </PromptSuggestions>
+      <div className="mx-auto flex max-w-3xl flex-col">
+        <div className="relative isolate">
+          <div aria-hidden className="ai-underglow" />
+          {composer}
+        </div>
+
+        <section className="mt-10">
+          <h2 className="mb-3 text-center text-sm font-medium">Try asking</h2>
+          <ul aria-label="Suggested questions" className="grid gap-2.5 [--suggestion-rim-rest:0.9] sm:grid-cols-2">
+            {suggestions.map((s, i) => {
+              const I = suggestionIcon[s] ?? MessageSquare;
+              return (
+                <li key={s} className={cn(i === suggestions.length - 1 && suggestions.length % 2 === 1 && "sm:col-span-2")}>
+                  <PromptSuggestion index={i} stacked onClick={() => ask(s)} className="min-h-14 gap-3 px-4 py-3">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-md bg-highlight text-primary">
+                      <I className="size-4" aria-hidden />
+                    </span>
+                    <span className="flex-1 text-pretty">{s}</span>
+                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  </PromptSuggestion>
+                </li>
+              );
+            })}
+          </ul>
         </section>
-        <section>
-          <h2 className="mb-3 text-sm font-medium">Previous conversations</h2>
-          <ItemGroup className="gap-2">
+
+        <section className="mt-12">
+          <h2 className="mb-2 text-sm font-medium">Recent chats</h2>
+          <ul className="divide-y divide-(--brand-line)">
             {conversations.map((c) => (
-              <div key={c.id} role="listitem">
-                <Item variant="outline" asChild>
-                  <button type="button" onClick={() => ask(c.q)} className="text-left">
-                    <ItemMedia variant="icon" className="text-muted-foreground">
-                      <MessageSquare />
-                    </ItemMedia>
-                    <ItemContent>
-                      <ItemTitle>{c.title}</ItemTitle>
-                      <ItemDescription className="tnum">{formatDate(c.at)}</ItemDescription>
-                    </ItemContent>
-                  </button>
-                </Item>
-              </div>
+              <li key={c.id}>
+                <button
+                  type="button"
+                  onClick={() => ask(c.q)}
+                  className="group flex w-full items-center gap-3 rounded-md px-2 py-2.5 text-left text-sm transition-colors duration-(--duration-fast) hover:bg-muted"
+                >
+                  <MessageSquare className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+                  <span className="min-w-0 flex-1 truncate group-hover:text-primary">{c.title}</span>
+                  <span className="tnum shrink-0 text-xs text-muted-foreground">{formatDate(c.at, { year: false })}</span>
+                </button>
+              </li>
             ))}
-          </ItemGroup>
+          </ul>
         </section>
       </div>
     );
@@ -304,7 +328,10 @@ export function AskThread() {
         ))}
       </div>
       <div ref={bottom} className="h-4" />
-      <div className="sticky bottom-4 mt-6">{composer}</div>
+      <div className="sticky bottom-4 isolate mt-6">
+        <div aria-hidden className="ai-underglow [--ai-underglow-opacity:0.45]" />
+        {composer}
+      </div>
       <p className="mt-2 text-center text-xs text-muted-foreground">Answers are drafted from your contracts. Check the clause before you act on one.</p>
     </div>
   );

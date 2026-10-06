@@ -128,7 +128,7 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
                         key={f.key}
                         className={cn(
                           "-mx-2 rounded-md px-2 py-3 transition-colors",
-                          focus?.key === f.key && "bg-accent/60",
+                          focus?.key === f.key && "bg-highlight/60",
                           low && "border-l-2 border-l-warning",
                         )}
                       >

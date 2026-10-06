@@ -148,7 +148,7 @@ export function AppSidebar() {
               {nav.map((n) => (
                 <SidebarMenuItem key={n.href}>
                   <SidebarMenuButton asChild isActive={isActive(n.href)} tooltip={`${n.label} (G then ${n.key})`} className="h-9 text-[13px]">
-                    <Link href={n.href} aria-keyshortcuts={`g ${n.key.toLowerCase()}`}>
+                    <Link href={n.href} aria-keyshortcuts={`g ${n.key.toLowerCase()}`} aria-current={path === n.href ? "page" : undefined}>
                       <n.icon />
                       <span className="flex-1">{n.label}</span>
                       {showKeys ? (
@@ -184,7 +184,7 @@ export function AppSidebar() {
             {needsYou.map(({ c, days }) => (
               <SidebarMenuItem key={c.id}>
                 <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-9 text-[13px]">
-                  <Link href={`/contracts/${c.id}`} title={c.title}>
+                  <Link href={`/contracts/${c.id}`} title={c.title} aria-current={path === `/contracts/${c.id}` ? "page" : undefined}>
                     <span className="grid size-4 shrink-0 place-items-center" aria-hidden>
                       <span className="size-1.5 rounded-full bg-critical" />
                     </span>
@@ -248,7 +248,7 @@ function UserMenu() {
       <SidebarMenuItem>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <SidebarMenuButton size="lg" tooltip={currentUser.name} className="h-10 data-[state=open]:bg-sidebar-accent">
+            <SidebarMenuButton size="lg" tooltip={currentUser.name} className="h-10 data-[state=open]:bg-sidebar-hover">
               <PersonAvatar id={currentUser.id} className="size-7" decorative />
               <span className="min-w-0 flex-1 truncate text-sm font-medium">{currentUser.name}</span>
               <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" aria-hidden />
@@ -311,7 +311,7 @@ function FoldLabel({ children }: { children: React.ReactNode }) {
 
 function Count({ children }: { children: React.ReactNode }) {
   return (
-    <span className="tnum min-w-5 shrink-0 rounded-md bg-sidebar-accent px-1 text-center text-[11px] font-medium text-sidebar-accent-foreground group-data-[collapsible=icon]:hidden">
+    <span className="tnum min-w-5 shrink-0 rounded-md bg-sidebar-hover px-1 text-center text-[11px] font-medium text-sidebar-foreground group-hover/menu-button:bg-card group-data-[active=true]/menu-button:bg-card group-data-[collapsible=icon]:hidden">
       {children}
     </span>
   );
@@ -350,7 +350,7 @@ function SidebarTop() {
             onClick={toggleSidebar}
             aria-label="Expand sidebar"
             aria-keyshortcuts="Meta+B Control+B"
-            className="group/expand relative grid size-8 place-items-center rounded-md transition-colors duration-(--duration-fast) hover:bg-sidebar-accent"
+            className="group/expand relative grid size-8 place-items-center rounded-md transition-colors duration-(--duration-fast) hover:bg-sidebar-hover"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -361,7 +361,7 @@ function SidebarTop() {
               className="size-[22px] transition-opacity duration-(--duration-fast) group-hover/expand:opacity-0 group-focus-visible/expand:opacity-0"
             />
             <PanelLeftOpen
-              className="absolute size-4 text-sidebar-accent-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover/expand:opacity-100 group-focus-visible/expand:opacity-100"
+              className="absolute size-4 text-sidebar-foreground opacity-0 transition-opacity duration-(--duration-fast) group-hover/expand:opacity-100 group-focus-visible/expand:opacity-100"
               aria-hidden
             />
           </button>

@@ -407,7 +407,7 @@ function TrailingLoadingSlot({ reduceMotion }: { reduceMotion: boolean }) {
       animate={{ opacity: 1, scale: 1 }}
       aria-hidden
       className={cn(
-        "absolute inset-0 flex items-center justify-center rounded-full",
+        "absolute inset-0 flex items-center justify-center rounded-lg",
         "pointer-events-none bg-muted text-muted-foreground shadow-(--shadow-button)"
       )}
       exit={cross.exit}
@@ -443,7 +443,7 @@ function TrailingSendSlot({
     >
       <ButtonPrimitive
         className={cn(
-          "flex size-full min-h-10 min-w-10 select-none items-center justify-center rounded-full outline-none",
+          "flex size-full min-h-10 min-w-10 select-none items-center justify-center rounded-lg outline-none",
           "shadow-(--shadow-button) transition-[background-color,color,transform] duration-(--duration-fast) ease-(--ease-out)",
                     "fine-hover:enabled:hover:bg-accent fine-hover:enabled:hover:text-accent-foreground",
           "enabled:active:scale-(--press-scale) motion-reduce:enabled:active:scale-100",
@@ -781,7 +781,7 @@ export const PromptComposer = forwardRef<
               {showAttachControl ? (
                 <ButtonPrimitive
                   className={cn(
-                    "flex min-h-10 min-w-10 shrink-0 select-none items-center justify-center rounded-full outline-none",
+                    "flex min-h-10 min-w-10 shrink-0 select-none items-center justify-center rounded-lg outline-none",
                     "bg-muted text-muted-foreground shadow-(--shadow-button)",
                     "transition-[background-color,color,transform] duration-(--duration-fast) ease-(--ease-out)",
                     "fine-hover:hover:bg-accent fine-hover:hover:text-accent-foreground",

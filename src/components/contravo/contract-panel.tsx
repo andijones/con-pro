@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * The contract page's left panel: a Frost panel with three tabs, Needs you, Details and Activity, each made of small
+ * The contract page's left panel: a muted (slate-100) panel with three tabs, Needs you, Details and Activity, each made of small
  * white cards. Sits beside the contract (ContractReader) from xl, sticky, scrolling on its own if it's taller than
  * the screen; the panel's padding keeps card edges and shadows from being clipped.
  * Decision record: docs/decisions/contract-page.md
