@@ -89,8 +89,8 @@
   --duration-base: 200ms;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --press-scale: 0.96; /* tactile press; never below 0.95 */
-  --page-title-size: 1.875rem; /* 30px */
-  --page-title-tracking: -0.025em; /* −0.75px at 30px */
+  --page-title-size: 1.5rem; /* 24px: the h2 step, so the page bar stays compact */
+  --page-title-tracking: -0.02em; /* −0.48px at 24px, scaled with size */
   /* Page bar: the sticky strip holding the page title and the page's actions (PageHeader) */
   --page-max: 1180px; /* every page's content width, set once in the app layout so nothing jumps between pages */
   --page-gutter: 1rem; /* main's side and top padding; 2.5rem from md */
@@ -438,7 +438,7 @@
   letter-spacing: -0.03em;
   line-height: 1.1;
 }
-/* Page titles (every h1 in the app): 30px with tracking scaled to the size (−3% at 36px → −2.5% at 30px) */
+/* Page titles (every h1 in the app): 24px with tracking scaled to the size (−2%) */
 @utility page-title {
   font-size: var(--page-title-size);
   letter-spacing: var(--page-title-tracking);

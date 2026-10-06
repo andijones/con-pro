@@ -1,4 +1,5 @@
 "use client";
+// Throwaway: /proto/contract-page "Merged". The live reader, with each decision living inside the clause that drives it.
 
 /**
  * The contract, read for you ("Risk map"). One scroll through the whole agreement: every flagged clause is tinted by
@@ -7,11 +8,11 @@
  * Decision record: docs/decisions/contract-reader.md
  */
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { ArrowRight, FileText, Upload } from "lucide-react";
 import type { Clause } from "@/lib/data";
 import { decisions } from "@/lib/data";
 import { cn } from "@/lib/utils";
+import { daysLeft, daysUntil, formatDate, gbp } from "@/lib/dates";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -28,18 +29,22 @@ const mark: Record<Risk, string> = { high: "bg-critical", medium: "bg-(--timelin
 
 const reduced = () => typeof window !== "undefined" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-export function ContractReader({
+export function MergedReader({
   contractId,
   clauses,
   initial,
   title,
   pages,
+  handled,
+  onHandled,
 }: {
   contractId: string;
   clauses: Clause[];
   initial?: string;
   title: string;
   pages: { held: number; total: number | null };
+  handled: string[];
+  onHandled: (d: (typeof decisions)[number]) => void;
 }) {
   // Highlights, not a filter: the whole contract is always on screen
   const [show, setShow] = useState<"all" | Risk>("all");
@@ -50,7 +55,7 @@ export function ContractReader({
   const count = (r: Risk) => flagged.filter((c) => c.risk === r).length;
   const lit = (c: Clause) => show === "all" || c.risk === show;
   const partial = pages.total != null && pages.held < pages.total;
-  const decisionFor = (clauseId: string) => decisions.find((d) => d.contractId === contractId && d.clauseId === clauseId);
+  const decisionFor = (clauseId: string) => decisions.find((d) => d.contractId === contractId && d.clauseId === clauseId && !handled.includes(d.id));
 
   function jump(id: string) {
     setActive(id);
@@ -167,9 +172,33 @@ export function ContractReader({
                     <p className="mt-2 text-base font-medium text-pretty">{c.plain}</p>
                     <p className="mt-3 font-document text-[14px] leading-[1.7] text-foreground/80">{c.text}</p>
                     {d && (
-                      <Link href={`#${d.id}`} className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline">
-                        Needs a decision: {d.title} <ArrowRight className="size-3.5" aria-hidden />
-                      </Link>
+                      <div id={d.id} className="mt-4 scroll-mt-28 rounded-lg bg-background p-4 shadow-xs">
+                        <p className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                          <span className="font-medium text-muted-foreground">Needs a decision</span>
+                          <span className={cn("tnum font-medium", daysUntil(d.due) <= 7 ? "text-critical" : daysUntil(d.due) <= 31 ? "text-warning" : "text-muted-foreground")}>
+                            {daysLeft(daysUntil(d.due))} · {formatDate(d.due, { year: false })}
+                          </span>
+                        </p>
+                        <p className="mt-1 font-medium text-pretty">{d.title}</p>
+                        {d.impact && (
+                          <p className="mt-0.5 text-sm text-muted-foreground">
+                            <span className="tnum font-medium text-foreground">{gbp(d.impact.amount)}</span> {d.impact.label}
+                          </p>
+                        )}
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <Button size="sm">
+                            {d.actions.primary} <ArrowRight data-icon="inline-end" />
+                          </Button>
+                          {d.actions.secondary && (
+                            <Button size="sm" variant="outline">
+                              {d.actions.secondary}
+                            </Button>
+                          )}
+                          <Button size="sm" variant="ghost" onClick={() => onHandled(d)}>
+                            Mark handled
+                          </Button>
+                        </div>
+                      </div>
                     )}
                   </div>
                 );

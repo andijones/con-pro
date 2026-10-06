@@ -11,7 +11,7 @@ export const metadata = { title: "Design system" };
 
 const type = [
   { name: "Display", spec: "48–72px · Regular · −4% tracking · campaigns and greetings", className: "text-5xl tracking-[-0.04em] leading-[1.02]", sample: "Every agreement. Clearer decisions." },
-  { name: "Page title", spec: "30px · Regular · −2.5% tracking · .page-title", className: "page-title", sample: "Know what needs attention." },
+  { name: "Page title", spec: "24px · Regular · −2% tracking · .page-title (in the page bar)", className: "page-title", sample: "Know what needs attention." },
   { name: "Section", spec: "18px · Medium · −1% tracking", className: "text-lg font-medium tracking-[-0.01em]", sample: "Give notice on the imaging contract" },
   { name: "Body", spec: "16px · Regular · 155% leading · up to 65 characters", className: "max-w-[65ch] text-base leading-[1.55]", sample: "Review contract details, track renewal dates and keep the evidence close to every decision." },
   { name: "UI", spec: "14px · Regular · component default", className: "text-sm", sample: "Ask about any contract" },
