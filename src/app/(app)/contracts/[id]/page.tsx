@@ -61,7 +61,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
         )}
         <span aria-hidden>·</span>
         <span>{c.route}</span>
-        <Link href={`/contracts/${c.id}/review`} className="ml-auto inline-flex items-center gap-1 underline-offset-4 hover:text-foreground hover:underline">
+        <Link href={`/contracts/${c.id}/review`} className="hit-area-y ml-auto inline-flex items-center gap-1 underline-offset-4 hover:text-foreground hover:underline">
           <ListChecks className="size-3.5" aria-hidden /> Review extraction
         </Link>
       </div>

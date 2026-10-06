@@ -127,7 +127,7 @@ export function DocumentViewer({
 
   return (
     <div className="flex h-full min-h-0 flex-col">
-      <div className="flex items-center justify-between gap-3 border-b px-3 py-2">
+      <div className="flex items-center justify-between gap-3 border-b p-3">
         <div className="flex items-center gap-2">
           <Button variant="ghost" size="icon-sm" aria-label="Previous page" disabled={page <= 1} onClick={() => jump(page - 1)}>
             <ChevronLeft />

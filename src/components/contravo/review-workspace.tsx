@@ -1,9 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Check, History, Lightbulb, Pencil, ScanSearch, Undo2 } from "lucide-react";
+import { Check, History, Lightbulb, Pencil, ScanSearch, Undo2 } from "lucide-react";
 import { toast } from "sonner";
 import type { Contract } from "@/lib/data";
 import { people } from "@/lib/data";
@@ -26,7 +25,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ConfidenceBadge } from "./primitives";
+import { BackLink, ConfidenceBadge, PageHeader } from "./primitives";
 import { DocumentViewer } from "./document-viewer";
 
 type FieldState = { value: string | null; status: "pending" | "accepted" | "edited" };
@@ -69,31 +68,28 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
 
   return (
     <div className="flex flex-col gap-4 lg:h-[calc(100dvh-6rem)]">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0">
-          <Button variant="link" asChild className="mb-1 h-auto px-0 text-muted-foreground">
-            <Link href="/contracts">
-              <ArrowLeft data-icon="inline-start" /> Back to contracts
-            </Link>
+      <PageHeader
+        title="Review what the AI read"
+        leading={<BackLink href="/contracts" label="contracts" />}
+        actions={
+          <>
+          <Button
+            onClick={() => {
+              if (requiredMissing.length) {
+                toast.error("Check the contract name first", { description: "It’s required before you can continue." });
+                find(requiredMissing[0]);
+                return;
+              }
+              router.push(`/contracts/${contract.id}/details`);
+            }}
+          >
+            Continue to details
           </Button>
-          <h1 className="heading text-2xl">Review what the AI read</h1>
-          <p className="mt-1 truncate text-sm text-muted-foreground">
-            Step 1 of 2 · {contract.fileName ?? contract.title}
-          </p>
-        </div>
-        <Button
-          onClick={() => {
-            if (requiredMissing.length) {
-              toast.error("Check the contract name first", { description: "It’s required before you can continue." });
-              find(requiredMissing[0]);
-              return;
-            }
-            router.push(`/contracts/${contract.id}/details`);
-          }}
-        >
-          Continue to details
-        </Button>
-      </div>
+          </>
+        }
+      >
+        Step 1 of 2 · {contract.fileName ?? contract.title}
+      </PageHeader>
 
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         {/* Fields */}

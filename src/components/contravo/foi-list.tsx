@@ -37,7 +37,7 @@ export function FoiList({ requests }: { requests: FoiView[] }) {
         return (
           <section key={s.title} aria-labelledby={id} className="mt-10">
             <div className="flex items-baseline gap-2">
-              <h2 id={id} className="text-lg font-medium">
+              <h2 id={id} className="section-title">
                 {s.title}
               </h2>
               <span className="tnum text-sm text-muted-foreground">{items.length}</span>

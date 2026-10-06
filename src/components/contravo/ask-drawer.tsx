@@ -15,7 +15,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { PromptComposer } from "@/components/ui/prompt-composer";
 import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
-import { Kbd } from "@/components/ui/kbd";
 import { Spinner } from "@/components/ui/spinner";
 
 type Turn = { id: number; q: string; a: Answer | null };
@@ -58,7 +57,7 @@ export function AskDrawer() {
     requestAnimationFrame(() => tab.current?.focus());
   }
 
-  // ⌘J toggles; Escape closes
+  // ⌘J toggles (not shown on the tab; announced through aria-keyshortcuts); Escape closes
   useEffect(() => {
     if (hidden) return;
     function onKey(e: KeyboardEvent) {
@@ -72,6 +71,14 @@ export function AskDrawer() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [open, hidden]);
+
+  // Modal like every other sheet: while open, the app behind is inert (no tabbing or clicking into it)
+  useEffect(() => {
+    if (!open) return;
+    const app = document.querySelector<HTMLElement>('[data-slot="sidebar-wrapper"]');
+    app?.setAttribute("inert", "");
+    return () => app?.removeAttribute("inert");
+  }, [open]);
 
   // Focus the composer once the drawer has arrived
   useEffect(() => {
@@ -90,127 +97,139 @@ export function AskDrawer() {
   const open_decisions = contract ? decisionsFor(contract.id).length : 0;
 
   return (
-    <div
-      data-open={open || undefined}
-      className={cn(
-        "fixed top-0 right-0 bottom-0 z-(--z-overlay) w-[min(420px,calc(100vw-2.75rem))]",
-        "translate-x-full transition-transform duration-180 ease-in",
-        "data-open:translate-x-0 data-open:duration-250 data-open:ease-(--ease-out)",
-      )}
-    >
-      {/* The tab rides on the drawer's leading edge. Same treatment as New chat: white, crisp edge, AI glow. */}
-      <div className="ai-glow absolute top-1/2 right-full -translate-y-1/2 rounded-l-xl transition-[translate] duration-(--duration-fast) ease-(--ease-out) has-[button:hover]:-translate-x-0.5">
-        <button
-          ref={tab}
-          aria-expanded={open}
-          aria-controls="ask-drawer"
-          aria-label={open ? "Close Ask Contravo" : "Open Ask Contravo"}
-          onClick={() => setOpen((o) => !o)}
-          className={cn(
-            "flex w-10 flex-col items-center gap-2.5 rounded-l-xl bg-background bg-clip-border py-4 text-foreground",
-            "shadow-(--shadow-button) transition-[background-color,box-shadow] duration-(--duration-fast) ease-(--ease-out)",
-            "hover:bg-[color-mix(in_oklab,var(--muted)_60%,var(--background))] hover:shadow-(--shadow-button-hover)",
-          )}
-        >
-          {open ? (
-            <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
-          ) : (
-            <Sparkles className="size-4 text-muted-foreground" aria-hidden />
-          )}
-          <span className="rotate-180 text-[13px] font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
-            Ask Contravo
-          </span>
-          <Kbd className="h-auto min-w-0 rotate-180 px-1 py-1 text-[10px] [writing-mode:vertical-rl]" aria-hidden>
-            ⌘J
-          </Kbd>
-        </button>
-      </div>
-
-      <aside
-        id="ask-drawer"
-        aria-label="Ask Contravo"
-        inert={!open}
+    <>
+      {/* The same scrim as dialogs and sheets (--scrim); clicking it closes the drawer */}
+      <div
+        aria-hidden
+        data-open={open || undefined}
+        onClick={close}
         className={cn(
-          "flex h-full flex-col border-l bg-background transition-shadow duration-250",
-          open && "shadow-[-8px_0_24px_rgb(3_1_57/0.08),-24px_0_64px_rgb(3_1_57/0.08)]",
+          "pointer-events-none fixed inset-0 z-(--z-overlay) bg-(--scrim) opacity-0 supports-backdrop-filter:backdrop-blur-xs",
+          "transition-opacity duration-180 ease-in data-open:pointer-events-auto data-open:opacity-100 data-open:duration-250 data-open:ease-(--ease-out)",
+        )}
+      />
+      <div
+        data-open={open || undefined}
+        className={cn(
+          "fixed top-0 right-0 bottom-0 z-(--z-overlay) w-[min(420px,calc(100vw-2.75rem))]",
+          "translate-x-full transition-transform duration-180 ease-in",
+          "data-open:translate-x-0 data-open:duration-250 data-open:ease-(--ease-out)",
         )}
       >
-        <header className="flex items-center gap-2 border-b px-4 py-3">
-          <Sparkles className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-          <div className="min-w-0 flex-1">
-            <h2 className="text-sm font-medium">{contract ? "Ask about this contract" : "Ask Contravo"}</h2>
-            <p className="truncate text-xs text-muted-foreground">
-              {contract ? `${contract.title} · ${contract.pages.held} pages read` : `Searches all ${contracts.length} contracts`}
-            </p>
-          </div>
-          <Button variant="ghost" size="icon-sm" asChild>
-            <Link href="/chat" aria-label="Open in Chat">
-              <ArrowUpRight />
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon-sm" aria-label="Close" onClick={close}>
-            <X />
-          </Button>
-        </header>
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
-          {turns.length === 0 ? (
-            <div className="flex flex-col gap-4">
-              <div className="rounded-xl bg-muted/70 p-4">
-                {contract && open_decisions > 0 ? (
-                  <p className="text-sm font-medium">
-                    {open_decisions === 1 ? "One thing" : `${open_decisions} things`} on this contract need a decision
-                  </p>
-                ) : (
-                  <p className="text-sm font-medium">Ask in plain English</p>
-                )}
-                <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                  Answers come from the contract text, with the clause each one is based on. Click a citation to open the clause.
-                </p>
-              </div>
-              <PromptSuggestions stacked aria-label="Suggested questions">
-                {suggestions.map((s) => (
-                  <PromptSuggestion key={s} onClick={() => ask(s)}>
-                    {s}
-                  </PromptSuggestion>
-                ))}
-              </PromptSuggestions>
-            </div>
-          ) : (
-            <div className="flex flex-col gap-6">
-              {turns.map((t) => (
-                <div key={t.id} className="flex flex-col gap-3">
-                  <p className="text-sm font-medium">{t.q}</p>
-                  <AnswerBody turn={t} />
-                </div>
-              ))}
-              <div ref={end} />
-            </div>
-          )}
+        {/* The tab rides on the drawer's leading edge. Same treatment as New chat: white, crisp edge, AI glow. */}
+        <div className="ai-glow absolute top-1/2 right-full -translate-y-1/2 rounded-l-xl transition-[translate] duration-(--duration-fast) ease-(--ease-out) has-[button:hover]:-translate-x-0.5">
+          <button
+            ref={tab}
+            aria-expanded={open}
+            aria-controls="ask-drawer"
+            aria-keyshortcuts="Meta+J Control+J"
+            aria-label={open ? "Close Ask Contravo" : "Open Ask Contravo"}
+            onClick={() => setOpen((o) => !o)}
+            className={cn(
+              "flex w-10 flex-col items-center gap-2.5 rounded-l-xl bg-background bg-clip-border py-4 text-foreground",
+              "shadow-(--shadow-button) transition-[background-color,box-shadow] duration-(--duration-fast) ease-(--ease-out)",
+              "hover:bg-[color-mix(in_oklab,var(--muted)_60%,var(--background))] hover:shadow-(--shadow-button-hover)",
+            )}
+          >
+            {open ? (
+              <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+            ) : (
+              <Sparkles className="size-4 text-muted-foreground" aria-hidden />
+            )}
+            <span className="rotate-180 text-[13px] font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
+              Ask Contravo
+            </span>
+          </button>
         </div>
 
-        <footer className="border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-          {/* The same composer as /chat, compact for the drawer. Enter sends. */}
-          <PromptComposer
-            ref={input}
-            size="compact"
-            aria-label={contract ? "Ask about this contract" : "Ask about any contract"}
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={contract ? "Ask about this contract…" : "Ask about any contract…"}
-            isLoading={turns.some((t) => t.a === null)}
-            loadingText="Reading your contracts…"
-            blobTranslucent
-            maxAutoGrowPx={160}
-            onSend={() => {
-              ask(draft.trim());
-              setDraft("");
-            }}
-          />
-          <p className="mt-2 text-[11px] text-muted-foreground">Drafted from your contracts. Check the clause before you act.</p>
-        </footer>
-      </aside>
-    </div>
+        <aside
+          id="ask-drawer"
+          aria-label="Ask Contravo"
+          role="dialog"
+          aria-modal={open || undefined}
+          inert={!open}
+          className={cn(
+            "flex h-full flex-col border-l bg-background transition-shadow duration-250",
+            open && "shadow-[-8px_0_24px_rgb(3_1_57/0.08),-24px_0_64px_rgb(3_1_57/0.08)]",
+          )}
+        >
+          <header className="flex items-center gap-2 border-b px-4 py-3">
+            <Sparkles className="size-4 shrink-0 text-muted-foreground" aria-hidden />
+            <div className="min-w-0 flex-1">
+              <h2 className="text-sm font-medium">{contract ? "Ask about this contract" : "Ask Contravo"}</h2>
+              <p className="truncate text-xs text-muted-foreground">
+                {contract ? `${contract.title} · ${contract.pages.held} pages read` : `Searches all ${contracts.length} contracts`}
+              </p>
+            </div>
+            <Button variant="ghost" size="icon-sm" asChild>
+              <Link href="/chat" aria-label="Open in Chat">
+                <ArrowUpRight />
+              </Link>
+            </Button>
+            <Button variant="ghost" size="icon-sm" aria-label="Close" onClick={close}>
+              <X />
+            </Button>
+          </header>
+
+          <div className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
+            {turns.length === 0 ? (
+              <div className="flex flex-col gap-4">
+                <div className="rounded-xl bg-muted/70 p-4">
+                  {contract && open_decisions > 0 ? (
+                    <p className="text-sm font-medium">
+                      {open_decisions === 1 ? "One thing" : `${open_decisions} things`} on this contract need a decision
+                    </p>
+                  ) : (
+                    <p className="text-sm font-medium">Ask in plain English</p>
+                  )}
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                    Answers come from the contract text, with the clause each one is based on. Click a citation to open the clause.
+                  </p>
+                </div>
+                <PromptSuggestions stacked aria-label="Suggested questions">
+                  {suggestions.map((s) => (
+                    <PromptSuggestion key={s} onClick={() => ask(s)}>
+                      {s}
+                    </PromptSuggestion>
+                  ))}
+                </PromptSuggestions>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-6">
+                {turns.map((t) => (
+                  <div key={t.id} className="flex flex-col gap-3">
+                    <p className="text-sm font-medium">{t.q}</p>
+                    <AnswerBody turn={t} />
+                  </div>
+                ))}
+                <div ref={end} />
+              </div>
+            )}
+          </div>
+
+          <footer className="border-t p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+            {/* The same composer as /chat, compact for the drawer. Enter sends. */}
+            <PromptComposer
+              ref={input}
+              size="compact"
+              aria-label={contract ? "Ask about this contract" : "Ask about any contract"}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder={contract ? "Ask about this contract…" : "Ask about any contract…"}
+              isLoading={turns.some((t) => t.a === null)}
+              loadingText="Reading your contracts…"
+              blobTranslucent
+              maxAutoGrowPx={160}
+              onSend={() => {
+                ask(draft.trim());
+                setDraft("");
+              }}
+            />
+            <p className="mt-2 text-[11px] text-muted-foreground">Drafted from your contracts. Check the clause before you act.</p>
+          </footer>
+        </aside>
+      </div>
+    </>
   );
 }
 

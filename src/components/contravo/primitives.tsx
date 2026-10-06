@@ -166,7 +166,7 @@ export function PageHeader({
         </div>
         {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
       </header>
-      {children && <div className="max-w-[65ch] text-base text-pretty text-muted-foreground">{children}</div>}
+      {children && <div className="page-intro max-w-[65ch] text-base text-pretty text-muted-foreground">{children}</div>}
     </>
   );
 }

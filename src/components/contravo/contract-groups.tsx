@@ -254,7 +254,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
             <TabsContent key={g.key} value={g.key} tabIndex={-1}>
               <section aria-labelledby={`group-${g.key}-h`} className="overflow-hidden rounded-xl bg-card shadow-card">
                 <div className="border-b px-5 py-4">
-                  <h2 id={`group-${g.key}-h`} className="text-lg font-medium">
+                  <h2 id={`group-${g.key}-h`} className="section-title">
                     {g.label}
                   </h2>
                   <p className="mt-0.5 text-sm text-muted-foreground">{g.hint}</p>

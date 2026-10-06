@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CalendarIcon, Send } from "lucide-react";
+import { CalendarIcon, Send } from "lucide-react";
 import { toast } from "sonner";
 import type { Contract } from "@/lib/data";
 import { businessUnits, people, workspace } from "@/lib/data";
@@ -26,6 +26,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { DocumentViewer } from "./document-viewer";
+import { BackLink, PageHeader } from "./primitives";
 
 const NONE = "__none";
 
@@ -55,81 +56,78 @@ export function DetailsForm({ contract, pages, counterpartyRead }: { contract: C
 
   return (
     <div className="flex flex-col gap-4 lg:h-[calc(100dvh-6rem)]">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div className="min-w-0">
-          <Button variant="link" asChild className="mb-1 h-auto px-0 text-muted-foreground">
-            <Link href="/contracts">
-              <ArrowLeft data-icon="inline-start" /> Back to contracts
-            </Link>
-          </Button>
-          <h1 className="heading text-2xl">Add what the AI couldn’t</h1>
-          <p className="mt-1 truncate text-sm text-muted-foreground">Step 2 of 2 · {contract.fileName ?? contract.title}</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" asChild>
-            <Link href={`/contracts/${contract.id}/review`}>Back</Link>
-          </Button>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">
-                <Send data-icon="inline-start" /> Submit for review
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Submit for review</DialogTitle>
-                <DialogDescription>A named person checks the details before the contract goes live.</DialogDescription>
-              </DialogHeader>
-              <FieldGroup>
-                <Field data-invalid={triedSubmit && !reviewer ? true : undefined}>
-                  <FieldLabel htmlFor="reviewer">Reviewer</FieldLabel>
-                  <Select value={reviewer} onValueChange={setReviewer}>
-                    <SelectTrigger id="reviewer" className="w-full" aria-invalid={triedSubmit && !reviewer ? true : undefined}>
-                      <SelectValue placeholder="Choose a person" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(people).map((p) => (
-                        <SelectItem key={p.id} value={p.id}>
-                          {p.name} · {p.role}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {triedSubmit && !reviewer && <FieldError>Choose who should review it.</FieldError>}
-                </Field>
-                <Field>
-                  <FieldLabel htmlFor="note">Note (optional)</FieldLabel>
-                  <Textarea id="note" placeholder="Anything they should look at, e.g. the start date is blank on page 1" />
-                </Field>
-              </FieldGroup>
-              <DialogFooter>
-                <Button
-                  onClick={() => {
-                    if (!reviewer) {
-                      setTriedSubmit(true);
-                      document.getElementById("reviewer")?.focus();
-                      return;
-                    }
-                    toast.success(`Sent to ${people[reviewer].name} for review`, { description: "Status: Under review" });
-                    router.push("/contracts");
-                  }}
-                >
-                  Submit
+      <PageHeader
+        title="Add what the AI couldn’t"
+        leading={<BackLink href="/contracts" label="contracts" />}
+        actions={
+          <>
+            <Button variant="outline" asChild>
+              <Link href={`/contracts/${contract.id}/review`}>Back</Link>
+            </Button>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">
+                  <Send data-icon="inline-start" /> Submit for review
                 </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-          <Button
-            onClick={() => {
-              if (dirty) save();
-              toast.success("Contract saved as Draft");
-              router.push(`/contracts/${contract.id}`);
-            }}
-          >
-            Finish
-          </Button>
-        </div>
-      </div>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Submit for review</DialogTitle>
+                  <DialogDescription>A named person checks the details before the contract goes live.</DialogDescription>
+                </DialogHeader>
+                <FieldGroup>
+                  <Field data-invalid={triedSubmit && !reviewer ? true : undefined}>
+                    <FieldLabel htmlFor="reviewer">Reviewer</FieldLabel>
+                    <Select value={reviewer} onValueChange={setReviewer}>
+                      <SelectTrigger id="reviewer" className="w-full" aria-invalid={triedSubmit && !reviewer ? true : undefined}>
+                        <SelectValue placeholder="Choose a person" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(people).map((p) => (
+                          <SelectItem key={p.id} value={p.id}>
+                            {p.name} · {p.role}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {triedSubmit && !reviewer && <FieldError>Choose who should review it.</FieldError>}
+                  </Field>
+                  <Field>
+                    <FieldLabel htmlFor="note">Note (optional)</FieldLabel>
+                    <Textarea id="note" placeholder="Anything they should look at, e.g. the start date is blank on page 1" />
+                  </Field>
+                </FieldGroup>
+                <DialogFooter>
+                  <Button
+                    onClick={() => {
+                      if (!reviewer) {
+                        setTriedSubmit(true);
+                        document.getElementById("reviewer")?.focus();
+                        return;
+                      }
+                      toast.success(`Sent to ${people[reviewer].name} for review`, { description: "Status: Under review" });
+                      router.push("/contracts");
+                    }}
+                  >
+                    Submit
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+            <Button
+              onClick={() => {
+                if (dirty) save();
+                toast.success("Contract saved as Draft");
+                router.push(`/contracts/${contract.id}`);
+              }}
+            >
+              Finish
+            </Button>
+          </>
+        }
+      >
+        Step 2 of 2 · {contract.fileName ?? contract.title}
+      </PageHeader>
 
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <Card className="min-h-0 overflow-y-auto">

@@ -94,7 +94,7 @@ export function ContractReader({
 
   return (
     <div ref={rootRef} className="scroll-mt-24">
-      <h2 className="mb-3 text-base font-medium">
+      <h2 className="section-title mb-3">
         What the contract says <span className="font-normal text-muted-foreground">· in plain English</span>
       </h2>
 
@@ -167,7 +167,7 @@ export function ContractReader({
                     <p className="mt-2 text-base font-medium text-pretty">{c.plain}</p>
                     <p className="mt-3 font-document text-[14px] leading-[1.7] text-foreground/80">{c.text}</p>
                     {d && (
-                      <Link href={`#${d.id}`} className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline">
+                      <Link href={`#${d.id}`} className="hit-area-y mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline">
                         Needs a decision: {d.title} <ArrowRight className="size-3.5" aria-hidden />
                       </Link>
                     )}

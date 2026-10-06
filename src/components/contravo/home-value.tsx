@@ -204,7 +204,7 @@ function Main({ s }: { s: ReturnType<typeof useSavings> }) {
           const items = s.of(sec.stage);
           return (
             <section key={sec.stage} aria-labelledby={`sec-${sec.stage}`}>
-              <h2 id={`sec-${sec.stage}`} className="flex items-center gap-2 text-base font-medium">
+              <h2 id={`sec-${sec.stage}`} className="section-title flex items-center gap-2">
                 <span className={cn("size-2.5 rounded-full", stageMeta[sec.stage].bar)} aria-hidden />
                 {sec.title}
                 <span className="tnum text-sm font-normal text-muted-foreground">{items.length}</span>

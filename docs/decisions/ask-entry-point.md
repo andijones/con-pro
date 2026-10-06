@@ -8,7 +8,7 @@ Ask Contravo is a drawer that slides out from the right edge of every page.
 
 - A violet tab ("Ask Contravo", plus a ⌘J hint) sticks out of the right edge, centred vertically. It rides on the drawer's leading edge, so it always marks where the drawer is, and it becomes the close control when the drawer is open.
 - The drawer overlays the page. It doesn't push content. Width is `min(420px, 100vw − 2.75rem)`, so the tab stays visible on a phone.
-- Non-modal: the page behind stays usable. ⌘J toggles it, Escape closes it, and focus goes to the composer on open and back to the tab on close.
+- Modal (changed 6 October 2026; it was non-modal): the same `--scrim` as dialogs and sheets sits behind it. Clicking the scrim or pressing Escape closes it, and ⌘J toggles it. While it is open the app behind is `inert`. Focus goes to the composer on open and back to the tab on close. The trade-off: you can no longer scroll or click the page while the drawer is open. Opening a cited clause takes you to the contract.
 - It's page-aware. On a contract page it asks about that contract and suggests questions for it. Elsewhere it searches all contracts.
 - Citations open the clause on the contract page (`?clause=`).
 - The conversation persists across navigation (it's mounted in the root layout). "Open in Chat" goes to the full page.
