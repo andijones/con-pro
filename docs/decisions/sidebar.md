@@ -32,3 +32,12 @@ A dense, keyboard-first sidebar that doubles as a working set.
 - **Grouped** (workspace switcher plus three unlabelled groups): calm and conventional, but it duplicated the organisation already shown in the header, and the groupings were a guess.
 - **Status** ("This week" card plus a spacious nav without badges): made urgency visible everywhere, but it repeated Home and cost a lot of vertical space. Removing the badges hid counts.
 - **Hover-revealed shortcut hints** (first cut of Workbench): the count disappeared exactly when you pointed at it. Replaced by the G-reveal.
+
+## Update, 6 October 2026: Needs you and Chats fold away
+
+- Both sections **start collapsed** to keep the sidebar tidy. The whole section label is the button, with a chevron that turns when the section opens.
+- **Needs you** shows a red (`critical`) count `Badge` with the number of contracts inside it. Screen readers hear "3 contracts".
+- **Chats** keeps "View all" visible when folded.
+- The open or closed state lasts while you move between pages. It isn't saved between visits, so each visit starts calm.
+- **Needs you shows urgent contracts only**: a decision due within 7 days, or overdue. Everything else waits on Contracts and Home. The badge counts these contracts, and every row is red. When nothing is urgent, the section is hidden.
+- **Chats is now "Recent chats"**, with a chat icon (`MessageSquare`) before the label. Needs you has an alert icon (`CircleAlert`) to match.

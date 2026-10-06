@@ -10,6 +10,8 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
   CalendarRange,
+  ChevronRight,
+  CircleAlert,
   ChevronsUpDown,
   FileText,
   Home,
@@ -17,6 +19,7 @@ import {
   LifeBuoy,
   LogOut,
   Menu,
+  MessageSquare,
   Palette,
   PanelLeftClose,
   PanelLeftOpen,
@@ -28,8 +31,9 @@ import {
 import { toast } from "sonner";
 import { contracts, conversations, currentUser, decisions, foiRequests } from "@/lib/data";
 import { daysUntil } from "@/lib/dates";
-import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -71,13 +75,14 @@ const nav = [
 
 const NEW_CHAT = { href: "/chat", key: "N" };
 
-/** Working set: the contracts with the nearest decisions */
+/** Urgent only: contracts with a decision due within a week (or overdue), soonest first. The rest wait on Contracts and Home. */
+const URGENT_DAYS = 7;
 const needsYou = Array.from(new Set([...decisions].sort((a, b) => a.due.localeCompare(b.due)).map((d) => d.contractId)))
-  .slice(0, 3)
   .map((id) => {
     const due = decisions.filter((d) => d.contractId === id).sort((a, b) => a.due.localeCompare(b.due))[0].due;
     return { c: contracts.find((x) => x.id === id)!, days: daysUntil(due) };
-  });
+  })
+  .filter((n) => n.days <= URGENT_DAYS);
 
 export function AppSidebar() {
   const path = usePathname();
@@ -162,18 +167,29 @@ export function AppSidebar() {
           </SidebarGroup>
         </nav>
 
+        {/* Needs you and Chats start folded, to keep the sidebar calm; the red count says when to look */}
+        {needsYou.length > 0 && (
+        <Collapsible asChild>
         <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
-          <SectionLabel>Needs you</SectionLabel>
+          <FoldLabel>
+            <CircleAlert aria-hidden className="size-3.5" />
+            Needs you
+            <Badge variant="critical" className="tnum h-4.5 px-1.5 text-[11px] tracking-normal normal-case">
+              {needsYou.length}
+              <span className="sr-only"> urgent {needsYou.length === 1 ? "contract" : "contracts"}</span>
+            </Badge>
+          </FoldLabel>
+          <CollapsibleContent>
           <SidebarMenu className="gap-0.5">
             {needsYou.map(({ c, days }) => (
               <SidebarMenuItem key={c.id}>
                 <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-9 text-[13px]">
                   <Link href={`/contracts/${c.id}`} title={c.title}>
                     <span className="grid size-4 shrink-0 place-items-center" aria-hidden>
-                      <span className={cn("size-1.5 rounded-full", days <= 7 ? "bg-critical" : "bg-warning")} />
+                      <span className="size-1.5 rounded-full bg-critical" />
                     </span>
                     <span className="flex-1 truncate">{c.title}</span>
-                    <span className={cn("tnum shrink-0 text-[11px] font-medium", days <= 7 ? "text-critical" : "text-warning")}>
+                    <span className="tnum shrink-0 text-[11px] font-medium text-critical">
                       {days}d<span className="sr-only"> to the next deadline</span>
                     </span>
                   </Link>
@@ -181,10 +197,17 @@ export function AppSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
+          </CollapsibleContent>
         </SidebarGroup>
+        </Collapsible>
+        )}
 
+        <Collapsible asChild>
         <SidebarGroup className="py-0 group-data-[collapsible=icon]:hidden">
-          <SectionLabel>Chats</SectionLabel>
+          <FoldLabel>
+            <MessageSquare aria-hidden className="size-3.5" />
+            Recent chats
+          </FoldLabel>
           <SidebarGroupAction asChild title="View all chats">
             <Link
               href="/chat"
@@ -193,6 +216,7 @@ export function AppSidebar() {
               View all
             </Link>
           </SidebarGroupAction>
+          <CollapsibleContent>
           <SidebarMenu className="gap-0.5">
             {conversations.map((c) => (
               <SidebarMenuItem key={c.id}>
@@ -204,7 +228,9 @@ export function AppSidebar() {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
+          </CollapsibleContent>
         </SidebarGroup>
+        </Collapsible>
       </SidebarContent>
 
       <SidebarFooter className="mx-3 border-t border-sidebar-border px-0 py-3 group-data-[collapsible=icon]:mx-2">
@@ -271,10 +297,14 @@ function UserMenu() {
 
 /* Shared measurements, so every row lines up */
 
-function SectionLabel({ children }: { children: React.ReactNode }) {
+/** A section label that folds its section: the whole label is the button, with a chevron that turns when open */
+function FoldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarGroupLabel className="mb-1 h-7 px-2 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
-      {children}
+    <SidebarGroupLabel asChild className="mb-1 h-7 px-2 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+      <CollapsibleTrigger className="group/fold w-full gap-2 text-left transition-colors duration-(--duration-fast) hover:text-foreground [&>svg]:size-3.5">
+        <span className="flex items-center gap-2">{children}</span>
+        <ChevronRight aria-hidden className="transition-transform duration-(--duration-fast) ease-(--ease-out) group-data-[state=open]/fold:rotate-90" />
+      </CollapsibleTrigger>
     </SidebarGroupLabel>
   );
 }

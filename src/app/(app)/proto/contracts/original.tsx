@@ -1,13 +1,13 @@
 "use client";
+// Throwaway: /proto/contracts. A snapshot of the contracts page before Tabs (accordion sections), kept for comparison.
 
 /**
- * Contracts: one tab per group (what each contract needs), Needs you first, with search, filters and a preview.
- * Every row carries a "when" badge, so the date is never just coloured text.
+ * Contracts: grouped by what each contract needs, with search, filters and a preview.
  * Decision record: docs/decisions/contracts.md
  */
 import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { Archive, ArrowRight, Download, MessageSquare, Search, Trash2, X } from "lucide-react";
+import { Archive, ArrowRight, ChevronDown, Download, MessageSquare, Search, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { people, workspace, type Contract, type ContractStatus } from "@/lib/data";
 import { daysUntil, formatDate, gbp } from "@/lib/dates";
@@ -27,10 +27,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { PageHeader, PersonAvatar, StatusBadge } from "./primitives";
-import { UploadDialog } from "./upload-dialog";
+import { PageHeader, PersonAvatar, StatusBadge } from "@/components/contravo/primitives";
+import { UploadDialog } from "@/components/contravo/upload-dialog";
 
 /* ---------- Reading each contract in plain English ---------- */
 
@@ -46,16 +45,26 @@ type Row = Contract & {
   noticeBy: string;
 };
 
-const groups: { key: Group; label: string; short: string; hint: string }[] = [
-  { key: "needs", label: "Needs you", short: "Needs you", hint: "A decision is waiting, or the AI needs a person to check what it read." },
-  { key: "soon", label: "Ending or renewing within 6 months", short: "Coming up", hint: "Nothing to do yet. These are the next to come up." },
-  { key: "fine", label: "Running smoothly", short: "Running", hint: "Nothing due for at least six months." },
-  { key: "setup", label: "Being set up", short: "Being set up", hint: "Drafts, uploads still being read, and contracts in review." },
-  { key: "ended", label: "Finished", short: "Finished", hint: "Expired, terminated or archived. Kept for the record." },
+const groups: { key: Group; label: string; hint: string }[] = [
+  { key: "needs", label: "Needs you", hint: "A decision is waiting, or the AI needs a person to check what it read." },
+  { key: "soon", label: "Ending or renewing within 6 months", hint: "Nothing to do yet. These are the next to come up." },
+  { key: "fine", label: "Running smoothly", hint: "Nothing due for at least six months." },
+  { key: "setup", label: "Being set up", hint: "Drafts, uploads still being read, and contracts in review." },
+  { key: "ended", label: "Finished", hint: "Expired, terminated or archived. Kept for the record." },
 ];
 
-/* Base tones throughout; urgency is carried by the tab count badge (red for Needs you, amber for Coming up) */
-const countBadge = (g: Group) => (g === "needs" ? "critical" : g === "soon" ? "warning" : "outline");
+/**
+ * One tonal ramp from the brand base colours, quieter as urgency drops:
+ * Lilac → light Lilac → Frost → Frost → White. Text stays Midnight on every step (AA).
+ */
+/* Base tones throughout; urgency is carried by the count badge alone (red for Needs you, amber for coming up) */
+const groupTone: Record<Group, { head: string; badge: "critical" | "warning" | "outline"; hover: string }> = {
+  needs: { head: "bg-card hover:bg-muted/60", badge: "critical", hover: "hover:bg-muted/60" },
+  soon: { head: "bg-card hover:bg-muted/60", badge: "warning", hover: "hover:bg-muted/60" },
+  fine: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
+  setup: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
+  ended: { head: "bg-card hover:bg-muted/60", badge: "outline", hover: "hover:bg-muted/60" },
+};
 
 const SIX_MONTHS = 183;
 const SETUP: ContractStatus[] = ["Draft", "Awaiting upload", "Under review", "Legal review"];
@@ -85,9 +94,11 @@ function read(c: Contract): Pick<Row, "group" | "next" | "nextDate" | "nextDays"
   return { group: end <= SIX_MONTHS ? "soon" : "fine", next: `Ends ${formatDate(c.end)}. The notice date has passed.`, nextDate: c.end, nextDays: end };
 }
 
-/** Filters that cut across the tabs. ("Needs a decision" and "Ending within 6 months" repeated a tab, with different counts.) */
 const filters: { key: string; label: string; test: (r: Row) => boolean }[] = [
   { key: "mine", label: "Mine", test: (r) => r.owner === "priya" },
+  { key: "decision", label: "Needs a decision", test: (r) => r.decisions.length > 0 && r.status === "Active" },
+  { key: "check", label: "Details to check", test: (r) => r.extraction === "Ready to review" },
+  { key: "ending", label: "Ending within 6 months", test: (r) => r.status === "Active" && r.nextDays !== null && r.nextDays <= SIX_MONTHS },
   { key: "renews", label: "Renews automatically", test: (r) => !!r.autoRenew && r.status === "Active" },
   { key: "big", label: "Over £1m a year", test: (r) => (r.annualValue ?? 0) >= 1_000_000 },
 ];
@@ -101,27 +112,23 @@ function money(r: Contract, compact = true) {
   return "Value not recorded";
 }
 
-/** When the next thing happens, as a badge: red within a week (or overdue), amber within a month, outline after that */
-const dueBadge = (days: number) => (days <= 7 ? "critical" : days <= 31 ? "warning" : "outline");
-const tone = (days: number) => (days <= 7 ? "text-critical" : days <= 31 ? "text-warning" : "text-muted-foreground");
+/** Urgency as text colour, always alongside words (WCAG 1.4.1) */
+const tone = (days: number | null) => (days === null ? "text-muted-foreground" : days <= 7 ? "text-critical" : days <= 31 ? "text-warning" : "text-muted-foreground");
 
-function when(days: number) {
-  if (days < 0) return `${-days} ${days === -1 ? "day" : "days"} ago`;
-  if (days === 0) return "Today";
-  if (days === 1) return "Tomorrow";
-  if (days < 60) return `In ${days} days`;
-  return `In ${Math.round(days / 30)} months`;
+function when(days: number | null) {
+  if (days === null) return "";
+  if (days < 0) return `${-days} days ago`;
+  if (days === 0) return "today";
+  if (days < 60) return `in ${days} days`;
+  return `in ${Math.round(days / 30)} months`;
 }
-
-/** Five columns once the page panel (the main @container) is wide enough; stacked below that, whatever the screen size */
-const cols = "@4xl:grid-cols-[minmax(0,1.25fr)_minmax(0,1.35fr)_6.25rem_8.5rem_8rem]";
 
 /* ---------- The page ---------- */
 
-export function ContractGroups({ live, annual }: { live: number; annual: number }) {
+export function Original({ live, annual }: { live: number; annual: number }) {
   const [q, setQ] = useState("");
   const [on, setOn] = useState<string[]>([]);
-  const [tab, setTab] = useState<Group>("needs");
+  const [closed, setClosed] = useState<Group[]>(["soon", "fine", "setup", "ended"]); // only "Needs you" starts open
   const [peek, setPeek] = useState<Row | null>(null);
   const opener = useRef<HTMLElement | null>(null); // the preview has no Radix trigger, so return focus to the row by hand
   const [statusOverride, setStatusOverride] = useState<Record<string, ContractStatus>>({});
@@ -137,6 +144,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
     [statusOverride],
   );
 
+  const narrowing = !!q || on.length > 0;
   const match = rows.filter(
     (r) =>
       on.every((k) => filters.find((f) => f.key === k)!.test(r)) &&
@@ -232,95 +240,83 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
         {match.length} {match.length === 1 ? "contract" : "contracts"}
       </p>
 
-      <Tabs value={tab} onValueChange={(v) => setTab(v as Group)} className="mt-8 gap-4">
-        <div className="-mx-1 overflow-x-auto px-1 pb-1">
-          <TabsList className="h-auto">
-            {groups.map((g) => {
-              const n = match.filter((r) => r.group === g.key).length;
-              return (
-                <TabsTrigger key={g.key} value={g.key} className="gap-2 px-3 py-1.5">
-                  {g.short}
-                  <Badge variant={n ? countBadge(g.key) : "outline"} className="tnum">
-                    {n}
-                  </Badge>
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </div>
+      <div className="mt-8 flex flex-col gap-4">
         {groups.map((g) => {
           const items = match.filter((r) => r.group === g.key);
+          if (!items.length) return null;
+          const isOpen = !closed.includes(g.key) || narrowing; // searching or filtering opens every section with matches
+          const panel = `group-${g.key}`;
+          const t = groupTone[g.key];
           return (
-            <TabsContent key={g.key} value={g.key} tabIndex={-1}>
-              <section aria-labelledby={`group-${g.key}-h`} className="overflow-hidden rounded-xl bg-card shadow-card">
-                <div className="border-b px-5 py-4">
-                  <h2 id={`group-${g.key}-h`} className="text-lg font-medium">
-                    {g.label}
-                  </h2>
-                  <p className="mt-0.5 text-sm text-muted-foreground">{g.hint}</p>
-                </div>
-                {items.length ? (
-                  <>
-                    <div aria-hidden className={cn("hidden gap-x-6 border-b bg-muted/40 px-5 py-2 text-xs text-muted-foreground @4xl:grid", cols)}>
-                      <span>Contract</span>
-                      <span>What happens next</span>
-                      <span>When</span>
-                      <span className="text-right">Value</span>
-                      <span>Owner</span>
-                    </div>
-                    <ul className="divide-y divide-(--brand-line)">
-                      {items.map((r) => (
-                        <li key={r.id}>
-                          <button
-                            type="button"
-                            aria-haspopup="dialog"
-                            onClick={(e) => {
-                              opener.current = e.currentTarget;
-                              setPeek(r);
-                            }}
-                            className={cn("group grid w-full gap-x-6 gap-y-1.5 px-5 py-3.5 text-left transition-colors duration-(--duration-fast) hover:bg-muted/60 @4xl:items-center", cols)}
-                          >
-                            <span className="min-w-0">
-                              <span className="block font-medium text-pretty group-hover:text-primary">{r.title}</span>
-                              <span className="block truncate text-sm text-muted-foreground">{r.supplier ?? "Supplier not recorded"}</span>
-                            </span>
-                            <span className="min-w-0 text-sm text-pretty">{r.next}</span>
-                            <span>
-                              {r.nextDays !== null && g.key !== "ended" && (
-                                <Badge variant={dueBadge(r.nextDays)} className="tnum">
-                                  {when(r.nextDays)}
-                                </Badge>
-                              )}
-                            </span>
-                            <span className="tnum text-sm text-muted-foreground @4xl:text-right">{money(r)}</span>
-                            <span className="flex items-center gap-2 text-sm text-muted-foreground">
-                              <PersonAvatar id={r.owner} className="size-5" decorative />
-                              <span className="truncate">{ownerName(r.owner)}</span>
-                            </span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                ) : match.length ? (
-                  <p className="px-5 py-10 text-center text-sm text-muted-foreground">Nothing here matches. Try another tab, or remove a filter.</p>
-                ) : (
-                  <div className="px-5 py-12 text-center">
-                    <p className="font-medium">Nothing matches</p>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      Remove a filter, or{" "}
-                      <Link href={`/chat?q=${encodeURIComponent(q || "Which contracts need attention?")}`} className="font-medium text-primary underline underline-offset-4">
-                        ask the question instead
-                      </Link>
-                      .
-                    </p>
-                  </div>
-                )}
-              </section>
-            </TabsContent>
+            <section key={g.key} aria-labelledby={`${panel}-h`} className="overflow-hidden rounded-xl bg-card shadow-card">
+              <h2 id={`${panel}-h`}>
+                <button
+                  type="button"
+                  aria-expanded={isOpen}
+                  aria-controls={panel}
+                  onClick={() => setClosed((c) => (c.includes(g.key) ? c.filter((x) => x !== g.key) : [...c, g.key]))}
+                  className={cn("flex w-full items-center gap-3 px-5 py-4 text-left transition-colors duration-(--duration-fast)", t.head)}
+                >
+                  <span className="flex-1">
+                    <span className="flex items-center gap-2 text-base font-medium">
+                      {g.label}
+                      <Badge variant={t.badge} className="tnum">
+                        {items.length}
+                      </Badge>
+                    </span>
+                    <span className="mt-0.5 block text-sm font-normal text-foreground/70">{g.hint}</span>
+                  </span>
+                  <ChevronDown className={cn("size-4 text-muted-foreground transition-transform duration-(--duration-fast)", isOpen && "rotate-180")} aria-hidden />
+                </button>
+              </h2>
+              <ul id={panel} hidden={!isOpen} className="border-t">
+                {items.map((r) => (
+                  <li key={r.id} className="border-b last:border-b-0">
+                    <button
+                      type="button"
+                      aria-haspopup="dialog"
+                      onClick={(e) => {
+                        opener.current = e.currentTarget;
+                        setPeek(r);
+                      }}
+                      className={cn(
+                        "group grid w-full gap-x-6 gap-y-1 px-5 py-4 text-left transition-colors duration-(--duration-fast) md:grid-cols-[minmax(0,1.1fr)_minmax(0,1.4fr)_9rem_8rem] md:items-center",
+                        t.hover,
+                      )}
+                    >
+                      <span className="min-w-0">
+                        <span className="block truncate font-medium group-hover:text-primary">{r.title}</span>
+                        <span className="block truncate text-sm text-muted-foreground">{r.supplier ?? "Supplier not recorded"}</span>
+                      </span>
+                      <span className="min-w-0 text-sm text-pretty">
+                        {r.next}
+                        {r.nextDays !== null && g.key !== "ended" && <span className={cn("tnum ml-1.5 font-medium whitespace-nowrap", tone(r.nextDays))}>{when(r.nextDays)}</span>}
+                      </span>
+                      <span className="tnum text-sm text-muted-foreground md:text-right">{money(r)}</span>
+                      <span className="flex items-center gap-2 text-sm text-muted-foreground">
+                        <PersonAvatar id={r.owner} className="size-5" decorative />
+                        <span className="truncate">{ownerName(r.owner)}</span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </section>
           );
         })}
-      </Tabs>
+        {!match.length && (
+          <div className="rounded-xl bg-card px-5 py-14 text-center shadow-xs">
+            <p className="font-medium">Nothing matches</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Remove a filter, or{" "}
+              <Link href={`/chat?q=${encodeURIComponent(q || "Which contracts need attention?")}`} className="font-medium text-primary underline underline-offset-4">
+                ask the question instead
+              </Link>
+              .
+            </p>
+          </div>
+        )}
+      </div>
 
       <Sheet open={!!peek} onOpenChange={(o) => !o && setPeek(null)}>
         <SheetContent

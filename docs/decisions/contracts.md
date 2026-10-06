@@ -1,6 +1,6 @@
 # Contracts: Grouped + Finder
 
-Decided 2 October 2026 from the Contracts prototype (`/proto/contracts`, now deleted). It's built for a busy employee who opens the page to ask "what do I need to worry about?" or "where's that contract?"
+Decided 2 October 2026 from the first Contracts prototype. The sections became tabs on 6 October; see the update at the end. It's built for a busy employee who opens the page to ask "what do I need to worry about?" or "where's that contract?"
 
 ## Decision
 
@@ -76,3 +76,33 @@ Deleted contracts are hidden.
 - **Semantic section colours** (amber for coming up, green for running smoothly, plus a coloured edge stripe): too colourful. Replaced by the brand tonal ramp.
 - **Brand tonal ramp** (Lilac, light Lilac, Frost, Frost, White headers with a violet count badge): still too purple, and violet said "brand" rather than "urgent". Replaced by white headers with red and amber badges.
 - **Custom filter pills:** replaced by the design system `ToggleGroup`, and the count pills by `Badge`.
+
+## Update, 6 October 2026: Tabs and "when" badges
+
+Decided from `/proto/contracts` (kept, with the earlier options).
+
+- **Tabs replace the accordion sections.** The accordion headers looked like cards, so people didn't see they opened. The page now has one tab per group, opening on **Needs you**:
+  - Needs you
+  - Coming up (ending or renewing within 6 months)
+  - Running
+  - Being set up
+  - Finished
+
+  Each tab shows a count badge: `critical` for Needs you, `warning` for Coming up, `outline` for the rest. The panel repeats the full section name and its one-line explanation, then shows column labels: Contract, What happens next, When, Value, Owner.
+- **"When" is a badge in its own column**, not coloured text after the sentence. Amber text such as "in 7 days" was easy to miss. The badges are:
+
+  | When | Badge |
+  |---|---|
+  | Overdue, or within 7 days | `critical` |
+  | Within 31 days | `warning` |
+  | Later | `outline` |
+
+  The words ("In 7 days", "Tomorrow", "In 3 months") are always shown. Finished contracts and AI checks have no date, so they get no badge.
+- **Filters cut to three:** Mine, Renews automatically and Over £1m a year. "Needs a decision", "Details to check" and "Ending within 6 months" repeated a tab, and "Ending within 6 months" even showed a different count from its tab.
+- **Searching or filtering** updates the tab counts. An empty tab says "Nothing here matches. Try another tab, or remove a filter."
+- **Contract names wrap** instead of being truncated.
+
+**Rejected options, still in `/proto/contracts`:**
+- **Accordions**, the previous page (`original.tsx`): hard to tell they open, and "Needs you" looked the same as everything else.
+- **Clear sections**: Needs you always open, with obvious disclosure rows below it. Clearer, but it's still a long page, and you still have to work out the order inside Needs you.
+- **Worklist**: one numbered action list in due order, grouped by This week, This month and Later, with a progress bar. The most direct answer to "what do I do next", but it moves furthest from a contract register, and a contract with two decisions appears twice. Worth revisiting for Home.
