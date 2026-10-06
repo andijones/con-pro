@@ -94,7 +94,7 @@
   /* Page bar: the sticky strip holding the page title and the page's actions (PageHeader) */
   --page-max: 1180px; /* every page's content width, set once in the app layout so nothing jumps between pages */
   --page-gutter: 1rem; /* main's side and top padding; 2.5rem from md */
-  --page-bar-shadow: 0 1px 0 rgb(3 1 57 / 0.05), 0 8px 16px -12px rgb(3 1 57 / 0.14);
+  --page-bar-shadow: 0 1px 0 rgb(3 1 57 / 0.04), 0 6px 12px -10px rgb(3 1 57 / 0.06);
   --page-bar-offset: 6rem; /* where sticky side panels sit, clear of the bar */
 
   /* Hit areas: visual size can be smaller, the target can't (WCAG 2.5.8 floor is 24px; we aim higher) */

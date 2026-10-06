@@ -32,6 +32,23 @@ Decided 5 October 2026. The concepts were built at `/proto/home` and `/proto/val
 - **Side rail:**
   - **Decide before it commits:** auto-renewals with their notice dates. This is spend you control, so it isn't counted as savings.
   - **Looking for more savings?:** a small box that sells starting a chat, with **Start a new chat** using the AI glow.
+- **Mini calendar** (added 6 October 2026, decided from `/proto/calendar`, now deleted) at the top of the rail: a Monday-first month view that starts on the current month, with arrows to move between months.
+  - **Dots:** each kind of event has its own shape and colour, so colour is never the only signal:
+
+    | Event | Dot |
+    |---|---|
+    | Notice deadline | Amber dot |
+    | Price rise or money deadline | Green square |
+    | FOI reply due | Violet diamond |
+    | Contract ends | Hollow slate ring |
+
+  - **Popover:** only days with events are buttons, and each opens its events in a popover that links to the contract or request. Escape closes it and returns focus to the day.
+  - **Screen readers:** each day button names its date and events in full.
+  - **Today** has an outline.
+  - **Built in:** data in `lib/calendar-events.ts`, component `components/contravo/mini-calendar.tsx`. The rail column is `min-w-0`, so it shrinks on phones.
+  - **Rejected:**
+    - **Day list** (a "Coming up" list under the grid): always useful, but the tallest option, and it repeated the savings list.
+    - **Filter** (the key as toggles, with days tinted by their most urgent event): the most scannable month, but it added the most colour and controls to the rail.
 - **No Ask Contravo tab on Home.** The box above does that job, so the drawer is hidden on `/` (and on `/chat` as before), along with its ⌘J shortcut.
 - **Model:** `src/lib/savings.ts` holds the pipeline:
   - Found: price and money decisions
@@ -40,6 +57,24 @@ Decided 5 October 2026. The concepts were built at `/proto/home` and `/proto/val
   - the coverage figures
 
   The component is `components/contravo/home-value.tsx`.
+
+## Calm pass (6 October 2026)
+
+Decided from `/proto/home-calm`, now deleted, as **Calm + one rail**, without the chat widget. Value was right, but it felt overwhelming.
+
+- **Overview:** the stage filter buttons are gone. The key and the coverage note share one line of plain text, and the bar is thinner.
+- **One row per saving:**
+  - It shows the amount, the title, the contract and owner, and the days left.
+  - Only the most urgent saving is open, showing its next step, clause and buttons. Opening another closes the first.
+  - The per-card step tracker is gone, because the section headings already name the stage.
+- **Secured savings** fold into one green line ("3 savings secured this year · £83,600 confirmed by Finance") with Show and Hide.
+- **Rail:** one sticky card, with the calendar on top and "Decide before it commits" as compact rows under a hairline.
+  - It sits beside the work only from 1280px (`xl`). Below that it stacks under the work, so the main column keeps its width on laptops. Before this, a 320px rail squeezed it to about 460px.
+- **Spacing:** 12px between rows, 48px between sections and 48px between the columns.
+- **The chat widget is gone.** "Looking for more savings? / Start a new chat" was dropped. New chat stays in the sidebar, and the Ask drawer stays hidden on Home.
+- **Rejected:**
+  - **Calm with three separate rail blocks:** spaced better, but still three headings competing.
+  - **Keeping the chat link row in the rail card:** removed at the user's request.
 
 ## Rejected
 

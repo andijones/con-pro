@@ -227,7 +227,7 @@ export function Value() {
             })}
         </div>
 
-        <aside className="flex flex-col gap-8">
+        <aside className="flex min-w-0 flex-col gap-8">
           {/* Spend you control */}
           <section aria-labelledby="commits-h">
             <h2 id="commits-h" className="text-base font-medium">
