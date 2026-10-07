@@ -253,12 +253,13 @@ function CommitRows() {
 function Rail() {
   return (
     <aside className="min-w-0 xl:sticky xl:top-(--page-bar-offset) xl:self-start">
-      <div className="rounded-xl bg-card shadow-card md:max-w-md xl:max-w-none">
-        {/* The calendar's own card is flattened into this one */}
-        <div className="[&>section]:rounded-none [&>section]:bg-transparent [&>section]:shadow-none">
+      {/* A grey tray of white cards (tray / tray-card): sets the rail apart from the main flow */}
+      <div className="tray md:max-w-md xl:max-w-none">
+        {/* The calendar's own card styling gives way to the tray card's */}
+        <div className="tray-card [&>section]:rounded-none [&>section]:bg-transparent [&>section]:shadow-none">
           <MiniCalendar />
         </div>
-        <section aria-labelledby="commits-h" className="border-t border-(--brand-line) px-4 pt-4 pb-3">
+        <section aria-labelledby="commits-h" className="tray-card px-4 pt-4 pb-3">
           <h2 id="commits-h" className="text-sm font-medium">
             Decide before it commits
           </h2>

@@ -39,3 +39,7 @@ Decided 6 October 2026 from `/proto/contract-page`. The other layouts (Current, 
 
 - **Split:** facts, decisions and activity stacked in the left column, all visible.
 - **Merged:** the deadline once, plus each decision's actions inside the clause that drives it.
+
+## Update, 7 October 2026: the left panel is a tray
+
+The Needs you / Details / Activity panel now uses the design system's tray (`tray` / `tray-card`, the same grey well of white cards as the Home rail and contravo.ai). It used to be built by hand: `bg-muted p-3 rounded-xl` with `rounded-lg shadow-card` cards. Now its corners, padding and hairline card shadows match the Home rail exactly. The sticky wrapper uses the tray's 16px radius, so its scroll clipping follows the tray's corners.

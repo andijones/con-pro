@@ -149,6 +149,17 @@
   --radius-inset: calc(var(--radius) - 0.25rem);
   --radius-track: calc(var(--radius) - 3px);
 
+  /*
+   * Tray: a grey well that holds a few white cards (from the contravo.ai site). It sets a side column apart from the
+   * main flow without another heavy card: slate-100 fill, a 1px inset slate-200 ring, and cards with a hairline
+   * shadow. The card corner is derived (tray radius − gap), so the curves nest evenly.
+   */
+  --tray-bg: var(--neutral-100);
+  --tray-ring: inset 0 0 0 1px var(--neutral-200);
+  --tray-radius: calc(var(--radius) * 2); /* 16px */
+  --tray-gap: 0.5rem; /* the tray's padding and the gap between its cards */
+  --shadow-tray-card: 0 0 1px rgb(3 1 57 / 0.25), 0 1px 2px rgb(3 1 57 / 0.1);
+
   /* Scrim behind dialogs, sheets and drawers: a Midnight veil with a light blur, so the layer above clearly lifts off the page */
   --scrim: rgb(3 1 57 / 0.18);
 
@@ -486,6 +497,22 @@
   font-size: var(--page-title-size);
   letter-spacing: var(--page-title-tracking);
   line-height: 1.1;
+}
+
+/* Tray: <div className="tray"> holding <section className="tray-card"> children (see the --tray-* tokens) */
+@utility tray {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tray-gap);
+  padding: var(--tray-gap);
+  border-radius: var(--tray-radius);
+  background-color: var(--tray-bg);
+  box-shadow: var(--tray-ring);
+}
+@utility tray-card {
+  border-radius: calc(var(--tray-radius) - var(--tray-gap)); /* 16 − 8 = 8px */
+  background-color: var(--card);
+  box-shadow: var(--shadow-tray-card);
 }
 
 /* A section's heading on a page: <h2 className="section-title"> */

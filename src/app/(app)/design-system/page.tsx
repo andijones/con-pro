@@ -54,6 +54,7 @@ const interaction: [string, string, string][] = [
   ["--page-intro-gap", "32px", "Between a page’s intro paragraph and its content, on every page (.page-intro)"],
   ["--radius-inset / --radius-track", "4px / 5px (derived)", "Inner corners: menu and select items in a p-1 surface; tab triggers in the 3px track"],
   ["--scrim", "Midnight at 18% + light blur", "The veil behind dialogs, sheets and drawers"],
+  ["--tray-* · .tray / .tray-card", "slate-100 well, inset slate-200 ring, 16px · cards 8px with a hairline shadow", "A grey tray of white cards that sets a side column apart (Home rail), as on contravo.ai"],
   ["--composer-radius · --composer-shadow", "rounded-xl (11px, like cards) · two Midnight layers", "Prompt composer shape and lift"],
   ["--composer-frost / --composer-solid", "Card at 90%→84% / Card", "Composer surface; frost keeps muted text above 4.5:1"],
   ["--composer-rim-1…3 · --composer-aurora-1…2", "Iris, deep Lilac, --halo-mint", "Moving rim and background glow (decorative, aria-hidden)"],

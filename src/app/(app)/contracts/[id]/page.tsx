@@ -81,7 +81,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
 
       {/* Two columns from xl: what needs you on the left, the contract on the right */}
       <div className="mt-8 grid gap-10 xl:grid-cols-[24rem_minmax(0,1fr)]">
-        <div className="scroll-subtle min-w-0 xl:sticky xl:top-(--page-bar-offset) xl:max-h-[calc(100dvh-var(--page-bar-offset)-1.5rem)] xl:self-start xl:overflow-y-auto xl:rounded-xl">
+        <div className="scroll-subtle min-w-0 xl:sticky xl:top-(--page-bar-offset) xl:max-h-[calc(100dvh-var(--page-bar-offset)-1.5rem)] xl:self-start xl:overflow-y-auto xl:rounded-(--tray-radius)">
           <ContractPanel contractId={c.id} live={live} />
         </div>
         <section className="min-w-0">

@@ -134,3 +134,12 @@ All of these live on their own pages (Contracts, FOI requests, Reports) or in th
 - **Briefing** (a memo: one decision open in full, the rest one line each, numbers in words): the calmest of the concepts, but only one decision got full space, and FOI couldn't be filtered.
 - **Agenda** (decisions and FOI deadlines in one dated list with a detail panel): the only concept to merge FOI into the timeline, but the two columns made it the busiest, and strict date order put a small FOI request ahead of the biggest decision.
 - **Tabs without the strip:** clean, but it lost the bird's-eye view of when things fall. Adding the strip back as navigation (markers jump to rows) gave that view without adding a second list.
+
+## Update, 7 October 2026: the rail as a grey tray
+
+The rail on the right (mini calendar, then "Decide before it commits") is now a **tray**: a grey well holding white cards, the same treatment as the panels on contravo.ai/features. It separates the side column from the main flow without adding another heavy card.
+
+- **Design-system level:** the `--tray-*` tokens and the `tray` / `tray-card` utilities in `globals.css`.
+  - **Tray:** slate-100, a 1px inset slate-200 ring, 16px corners, 8px padding and an 8px gap.
+  - **Cards:** white, with corners derived to nest evenly (16 − 8 = 8px) and a hairline two-layer shadow (`--shadow-tray-card`).
+- **Adapted from the site:** the site uses zinc greys. The app uses its slate greys, to stay consistent with the Slate surfaces decision.

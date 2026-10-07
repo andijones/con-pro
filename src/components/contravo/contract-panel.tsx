@@ -1,8 +1,8 @@
 "use client";
 
 /**
- * The contract page's left panel: a muted (slate-100) panel with three tabs, Needs you, Details and Activity, each made of small
- * white cards. Sits beside the contract (ContractReader) from xl, sticky, scrolling on its own if it's taller than
+ * The contract page's left panel: a tray (tray / tray-card, the grey well of white cards also used on Home) with three tabs,
+ * Needs you, Details and Activity, each made of small white cards. Sits beside the contract (ContractReader) from xl, sticky, scrolling on its own if it's taller than
  * the screen; the panel's padding keeps card edges and shadows from being clipped.
  * Decision record: docs/decisions/contract-page.md
  */
@@ -20,7 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const tone = (d: number) => (d <= 7 ? "text-critical" : d <= 31 ? "text-warning" : "text-muted-foreground");
-const cardCls = "rounded-lg bg-card shadow-card";
+const cardCls = "tray-card";
 
 function jumpToClause(id: string) {
   const el = document.getElementById(`clause-${id}`);
@@ -59,7 +59,7 @@ export function ContractPanel({ contractId, live }: { contractId: string; live: 
   }
 
   return (
-    <Tabs value={tab} onValueChange={setTab} className="gap-0 rounded-xl bg-muted p-3">
+    <Tabs value={tab} onValueChange={setTab} className="tray gap-0">
       <TabsList variant="line" className="w-full justify-start px-1">
         <TabsTrigger value="needs">
           Needs you <span className="tnum ml-1 text-muted-foreground">{open.length}</span>
