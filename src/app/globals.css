@@ -80,13 +80,20 @@
   --ring: var(--brand-iris); /* selection rings; keyboard focus uses --focus below */
   --focus: var(--brand-midnight); /* neutral near-black, 19.7:1 on white (WCAG 2.4.7 / 1.4.11); never brand-coloured */
 
-  /* Controls: inputs, selects, textareas, search fields. One recipe, used everywhere. */
-  --control-bg: var(--brand-white);
-  --control-border: var(--input); /* the 3:1 edge WCAG 1.4.11 needs; every side stays at or above it */
-  --control-border-bottom: color-mix(in oklab, var(--input), var(--neutral-600) 30%); /* a touch deeper underneath, as if lit from above */
-  --control-border-hover: color-mix(in oklab, var(--input), var(--neutral-600) 55%);
-  /* Recessed, not raised: a soft inner shadow at the top makes the field a well you type into, not a button */
-  --control-shadow: inset 0 1px 2px rgb(3 1 57 / 0.06);
+  /*
+   * Controls: inputs, selects, textareas, search fields. One recipe, used everywhere.
+   * A soft slate well with one firm edge. WCAG 1.4.11 needs the field to be identifiable at 3:1, not every side:
+   * the bottom edge carries that (the "indicator line" pattern), the other sides are a softer slate outline, and
+   * hover takes every side to 3:1. Every field also has a visible label or a leading icon, so it never relies on the
+   * outline alone. Focus is the 1px Violet edge on every side plus the halo, and the well turns white.
+   */
+  --control-bg: var(--neutral-50); /* slate-50: a faint well, so the field reads as a place to type */
+  --control-bg-focus: var(--brand-white);
+  --control-border: #a3aebe; /* between slate-300 and 400, 2.24:1: close enough to the bottom edge that it reads as a gentle deepening, not an underline */
+  --control-border-bottom: var(--input); /* 3.45:1 on white, 3.15:1 on slate-100: the edge that identifies the field */
+  --control-border-hover: var(--input); /* hover: every side at 3:1 */
+  /* Recessed, not raised: the faintest top shadow makes it a well, not a button */
+  --control-shadow: inset 0 1px 1px rgb(15 23 42 / 0.04);
   --control-focus-edge: var(--brand-violet); /* fields only: one 1px Violet edge, 9:1 on white (WCAG 1.4.11; 2.4.13's 2px is AAA) */
   --control-halo: color-mix(in oklab, var(--brand-iris) 18%, transparent); /* soft focus glow; decoration, not the indicator */
   --control-invalid-halo: color-mix(in oklab, var(--destructive) 13%, transparent);
@@ -406,6 +413,7 @@
   border-radius: var(--control-radius);
   box-shadow: var(--control-shadow);
   transition:
+    background-color var(--duration-fast) var(--ease-out),
     border-color var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
   /* Hover deepens the edge, but never over focus, an open select or an error */
@@ -422,6 +430,7 @@
   box-shadow: none;
 }
 @utility control-focus {
+  background-color: var(--control-bg-focus);
   border-color: var(--control-focus-edge);
   box-shadow:
     var(--control-shadow),

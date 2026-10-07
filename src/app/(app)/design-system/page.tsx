@@ -48,7 +48,7 @@ const interaction: [string, string, string][] = [
   ["--press-scale", "0.96", "Tactile press on buttons and toggles (the press utility)"],
   ["--hit-min", "40px (44px on touch)", "Invisible target size for small controls (hit-area, hit-area-y)"],
   ["--control-height", "36px", "Default height of buttons, inputs and selects"],
-  ["--control-border", "--input · 3.45:1", "Field boundaries (control utility)"],
+  ["--control-bg · --control-border · -bottom", "slate-50 well · 2.24:1 sides · 3.45:1 bottom edge", "Fields (control utility): a soft well; the bottom edge is the 3:1 boundary, every side goes to 3:1 on hover"],
   ["--z-sticky / --z-header / --z-overlay / --z-skip", "10 / 20 / 50 / 60", "The only z-index values allowed"],
   ["--section-title-size · .section-title", "18px · Medium · −1%", "Section headings on a page, one step below the page title"],
   ["--page-intro-gap", "32px", "Between a page’s intro paragraph and its content, on every page (.page-intro)"],

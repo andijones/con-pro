@@ -38,3 +38,21 @@ A GitHub-style trail, where any record name opens that record's full history in 
 - **Feed on its own:** great for "what happened lately", but weak at "what happened to this contract?"
 - **By record** (a list of records with the history beside it): the strongest per-record answer, but you had to know which record you were looking for. It's now the drawer.
 - **Day by day** (a calendar shaded by activity, plus swimlanes of people across the hours of a day, with the day told as a story): the most distinctive, and good for spotting unusual activity. It was the least direct way to find a single event. Worth reviving as an "activity" view for administrators.
+
+## Update, 7 October 2026: "Index" layout
+
+Decided from `/proto/audit`, which is kept. The page felt wide and hard to take in: the trail ran about 1,000px wide with each event's time pinned at the far right, and 43 events sat under 13 day headings.
+
+- **One readable column,** at most 46rem wide. Each event reads time → who → what on one line: the time (`08:42`) sits in a 3rem left gutter, with the full timestamp and "how long ago" on hover, then the trail line and icon node, then the face and sentence. Before → after, staff reasons and folded runs ("Show the 3 changes") sit under the sentence as before.
+- **A sticky rail on the left** (14rem, from `lg`) holds:
+  - search ("Search the trail")
+  - **Show**: Everything, People, Contravo or Changes only. These are a list of toggle buttons with `aria-pressed`, replacing the toggle group.
+  - **Days**: a jump-to-day list with counts, which scrolls on its own if it's long
+- **Day headings stay pinned** under the page bar while you read that day.
+- **Below `lg`,** the rail stacks above the trail: search, then the Show buttons in a row. The Days list is hidden.
+- **The intro is shorter:** "…Select a contract or request to see its whole history. Anything Contravo staff do shows the reason they gave."
+- **Unchanged:** the history drawer, focus returning to the name you clicked, Export for auditors, and the event model (`audit-trail.ts`).
+
+**Rejected, still in `/proto/audit`:**
+- **Column:** the same reading column without the rail. Easier to read, but it left the right of wide screens empty and gave no way to get to a day.
+- **Digest:** week cards with one-line rows and details behind a toggle. Fastest to scan and about 25% shorter, but before → after and staff reasons were hidden until opened, and it read less like a story.
