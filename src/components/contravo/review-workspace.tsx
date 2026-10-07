@@ -110,7 +110,7 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
           <div tabIndex={0} role="region" aria-label="Extracted fields" className="min-h-0 flex-1 overflow-y-auto px-4 pb-4">
             {byGroup.map(({ g, items }) => (
               <section key={g}>
-                <h2 className="sticky top-0 z-(--z-sticky) border-b bg-card pt-4 pb-2 text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">
+                <h2 className="sticky top-0 z-(--z-sticky) border-b bg-card pt-4 pb-2 eyebrow text-muted-foreground">
                   {g}
                 </h2>
                 <ul className="divide-y">
@@ -129,7 +129,7 @@ export function ReviewWorkspace({ contract, fields, pages }: { contract: Contrac
                         )}
                       >
                         <div className="flex items-center gap-2">
-                          <span className={cn("min-w-0 flex-1 text-[13px]", done ? "text-muted-foreground" : "text-foreground")}>
+                          <span className={cn("min-w-0 flex-1 text-caption", done ? "text-muted-foreground" : "text-foreground")}>
                             {f.label}
                             {f.required && <span className="text-critical"> *</span>}
                           </span>

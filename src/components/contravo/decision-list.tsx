@@ -46,28 +46,28 @@ export function DecisionList({ items }: { items: Decision[] }) {
                 </div>
 
                 <div className="min-w-0">
-                  <div className="mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-muted-foreground">
+                  <div className="mb-1.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-caption text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5 font-medium text-foreground">
                       <k.icon className="size-3.5 text-primary" aria-hidden />
                       {k.label}
                     </span>
                     <span aria-hidden>·</span>
-                    <Link href={`/contracts/${c.id}`} className="truncate underline decoration-muted-foreground/40 underline-offset-2 hover:text-primary hover:decoration-primary">
+                    <Link href={`/contracts/${c.id}`} className="truncate underline decoration-muted-foreground/40 hover:text-primary hover:decoration-primary">
                       {c.title}
                     </Link>
                   </div>
 
-                  <h3 className="text-lg leading-snug font-medium tracking-[-0.01em] text-balance">{d.title}</h3>
-                  <p className="mt-1.5 max-w-[68ch] text-[15px] leading-relaxed text-pretty text-muted-foreground">{d.detail}</p>
+                  <h3 className="text-lg leading-snug font-medium text-balance">{d.title}</h3>
+                  <p className="mt-1.5 max-w-[68ch] text-reading leading-relaxed text-pretty text-muted-foreground">{d.detail}</p>
 
                   <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3">
                     {d.clauseId && <ClauseLink contractId={c.id} clause={d.clauseId} />}
                     {d.impact && (
-                      <span className="text-[13px] text-muted-foreground">
+                      <span className="text-caption text-muted-foreground">
                         <span className="tnum font-medium text-foreground">{gbp(d.impact.amount)}</span> {d.impact.label}
                       </span>
                     )}
-                    <span className="inline-flex items-center gap-1.5 text-[13px] text-muted-foreground">
+                    <span className="inline-flex items-center gap-1.5 text-caption text-muted-foreground">
                       <PersonAvatar id={d.owner} className="size-5" decorative />
                       {people[d.owner].name.replace(/^Dr /, "")}
                     </span>

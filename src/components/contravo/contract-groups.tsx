@@ -309,7 +309,7 @@ export function ContractGroups({ live, annual }: { live: number; annual: number 
                     <p className="font-medium">Nothing matches</p>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Remove a filter, or{" "}
-                      <Link href={`/chat?q=${encodeURIComponent(q || "Which contracts need attention?")}`} className="font-medium text-primary underline underline-offset-4">
+                      <Link href={`/chat?q=${encodeURIComponent(q || "Which contracts need attention?")}`} className="font-medium text-primary underline">
                         ask the question instead
                       </Link>
                       .
@@ -386,8 +386,8 @@ function Preview({ r, onArchive, onDelete }: { r: Row; onArchive: () => void; on
       </SheetHeader>
       <div className="flex flex-col gap-6 px-4 pb-6">
         <div className="rounded-lg bg-highlight/70 px-4 py-3">
-          <p className="text-xs font-medium tracking-[0.04em] text-foreground/70 uppercase">What happens next</p>
-          <p className="mt-1 text-[15px] text-pretty">{r.next}</p>
+          <p className="eyebrow text-foreground/70">What happens next</p>
+          <p className="mt-1 text-reading text-pretty">{r.next}</p>
         </div>
         <dl className="grid grid-cols-[6rem_minmax(0,1fr)] gap-y-3 text-sm">
           {facts.map(([k, v]) => (

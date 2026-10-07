@@ -54,12 +54,12 @@ export function TimelineView() {
             <div className="px-5 py-3 text-xs text-muted-foreground">Contract</div>
             <div className="relative h-11">
               {ticks.map((m) => (
-                <span key={m} className="absolute top-0 h-full border-l border-(--brand-line) pt-2 pl-1.5 text-[11px] text-muted-foreground" style={{ left: `${s.pct(m)}%` }}>
+                <span key={m} className="absolute top-0 h-full border-l border-(--brand-line) pt-2 pl-1.5 text-micro text-muted-foreground" style={{ left: `${s.pct(m)}%` }}>
                   {m.slice(5, 7) === "01" && <span className="block font-medium text-foreground">{m.slice(0, 4)}</span>}
                   {monthLabel(m)}
                 </span>
               ))}
-              <span className="absolute top-1 z-10 -translate-x-1/2 rounded-full bg-foreground px-2 py-0.5 text-[11px] font-medium text-background" style={{ left: `${today}%` }}>
+              <span className="absolute top-1 z-10 -translate-x-1/2 rounded-full bg-foreground px-2 py-0.5 text-micro font-medium text-background" style={{ left: `${today}%` }}>
                 Today
               </span>
             </div>
@@ -124,7 +124,7 @@ function GanttRow({ r, s, open, onToggle }: { r: Row; s: ReturnType<typeof scale
         <span className="flex min-w-0 items-center gap-2 px-5 py-3">
           <ChevronRight className={cn("size-4 shrink-0 text-muted-foreground transition-transform duration-(--duration-fast)", open && "rotate-90")} aria-hidden />
           <span className="min-w-0">
-            <span className="block truncate text-[13px] font-medium">{r.title}</span>
+            <span className="block truncate text-caption font-medium">{r.title}</span>
             <span className={cn("tnum block truncate text-xs", r.state === "now" ? "text-critical" : r.state === "missed" ? "text-critical" : "text-muted-foreground")}>
               {ended ? `Ended ${formatDate(r.end)}` : r.state === "missed" ? `Too late for notice · ends ${formatDate(r.end)}` : `Notice by ${formatDate(r.nb)} · ${daysLeft(r.dn).toLowerCase()}`}
             </span>
@@ -146,7 +146,7 @@ function GanttRow({ r, s, open, onToggle }: { r: Row; s: ReturnType<typeof scale
               {r.state !== "missed" && !ended && s.raw(r.nb) >= 0 && s.raw(r.nb) <= 100 && (
                 <span className={cn("absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 ring-2 ring-card", r.dn <= 31 ? "bg-critical" : "bg-foreground")} style={{ left: `${nb}%` }} />
               )}
-              {beyond && <span className="absolute top-1/2 right-2 -translate-y-1/2 rounded bg-card/90 px-1 text-[11px] text-muted-foreground">ends {formatDate(r.end, { year: true })} →</span>}
+              {beyond && <span className="absolute top-1/2 right-2 -translate-y-1/2 rounded bg-card/90 px-1 text-micro text-muted-foreground">ends {formatDate(r.end, { year: true })} →</span>}
             </>
           )}
         </span>

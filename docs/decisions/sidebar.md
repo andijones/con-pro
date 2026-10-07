@@ -41,3 +41,7 @@ A dense, keyboard-first sidebar that doubles as a working set.
 - The open or closed state lasts while you move between pages. It isn't saved between visits, so each visit starts calm.
 - **Needs you shows urgent contracts only**: a decision due within 7 days, or overdue. Everything else waits on Contracts and Home. The badge counts these contracts, and every row is red. When nothing is urgent, the section is hidden.
 - **Chats is now "Recent chats"**, with a chat icon (`MessageSquare`) before the label. Needs you has an alert icon (`CircleAlert`) to match.
+
+## Update: Needs you names the action
+- Each row shows the contract's soonest decision ("Object to Corvel's 9.4% price rise"), not the contract title, so it reads the same as the Home card it points to. The contract name is in the tooltip and the accessible name.
+- Rejected: contract titles. Home names the action, so the two didn't look like the same item.

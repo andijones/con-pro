@@ -29,7 +29,7 @@ function Block({ b, quote }: { b: DocBlock; quote?: string }) {
       return <p className="mb-2 text-center font-sans text-xs tracking-[0.14em] text-muted-foreground uppercase">{b.text}</p>;
     case "h":
       return (
-        <h3 className="mt-6 mb-3 text-center font-sans text-[15px] font-semibold first:mt-0">
+        <h3 className="mt-6 mb-3 text-center font-sans text-reading font-semibold first:mt-0">
           <Highlight text={b.text} quote={quote} />
         </h3>
       );
@@ -41,7 +41,7 @@ function Block({ b, quote }: { b: DocBlock; quote?: string }) {
       );
     case "table":
       return (
-        <table className="my-4 w-full border-collapse font-document text-[13px]">
+        <table className="my-4 w-full border-collapse font-document text-caption">
           <thead>
             <tr>
               {b.head.map((h) => (
@@ -168,11 +168,11 @@ export function DocumentViewer({
               data-page={p.number}
               aria-label={`Page ${p.number}`}
               className={cn(
-                "relative min-h-[420px] rounded-sm bg-background px-8 py-10 font-document text-[14px] leading-[1.65] text-foreground shadow-sm sm:px-14",
+                "relative min-h-[420px] rounded-sm bg-background px-8 py-10 font-document text-sm leading-[1.65] text-foreground shadow-sm sm:px-14",
                 focus?.page === p.number && "ring-2 ring-ring/50",
               )}
             >
-              <span className="absolute top-4 right-6 font-sans text-[11px] font-semibold tracking-wide text-muted-foreground uppercase">
+              <span className="absolute top-4 right-6 font-sans text-micro font-semibold tracking-wide text-muted-foreground uppercase">
                 Page {p.number}
                 {p.label ? ` · ${p.label}` : ""}
               </span>

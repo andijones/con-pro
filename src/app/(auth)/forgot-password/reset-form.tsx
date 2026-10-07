@@ -44,7 +44,7 @@ export function ResetForm() {
   const back = (
     <Link
       href="/sign-in"
-      className="hit-area-y mt-6 inline-flex items-center gap-1.5 self-start text-sm font-medium text-primary underline-offset-4 hover:underline"
+      className="hit-area-y mt-6 inline-flex items-center gap-1.5 self-start text-sm font-medium text-primary hover:underline"
     >
       <ArrowLeft className="size-4" aria-hidden /> Back to sign in
     </Link>
@@ -68,7 +68,7 @@ export function ResetForm() {
           <button
             type="button"
             onClick={() => toast("Reset link sent again", { description: `Check ${email.trim()}, including your junk folder.` })}
-            className="font-medium text-primary underline underline-offset-4"
+            className="font-medium text-primary underline"
           >
             send it again
           </button>

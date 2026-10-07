@@ -143,3 +143,7 @@ The rail on the right (mini calendar, then "Decide before it commits") is now a 
   - **Tray:** slate-100, a 1px inset slate-200 ring, 16px corners, 8px padding and an 8px gap.
   - **Cards:** white, with corners derived to nest evenly (16 − 8 = 8px) and a hairline two-layer shadow (`--shadow-tray-card`).
 - **Adapted from the site:** the site uses zinc greys. The app uses its slate greys, to stay consistent with the Slate surfaces decision.
+
+## Update: due this week
+- Savings due within 7 days (the same rule as Needs you in the sidebar) sort first, carry the sidebar's red dot and a critical "Due this week · N days left" badge.
+- Rejected: a separate Urgent section, which would show the same item twice on one page.

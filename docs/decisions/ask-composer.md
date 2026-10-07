@@ -90,3 +90,16 @@ Decided from `/proto/chat` (kept, with Aurora stage and Midnight). On a white pa
 **Rejected, still in `/proto/chat`:**
 - **Aurora stage:** a slate-50 panel with Iris, Mint and Lilac colour pools behind the composer. Beautiful, but it adds a decorative layer that the rest of the calm app doesn't have.
 - **Midnight:** a dark brand panel with deep-glass suggestions. The glow looks its best there, but it's a heavy dark block in a light-only app.
+
+## Quiet list (7 October 2026)
+
+Decided from `/proto/chat` round 2 (kept: Focus, Aurora stage, Midnight, Quiet list, Chips). Focus put a glowing composer above five glowing suggestion cards, so everything competed.
+
+- **The composer is the one AI moment.** It is solid white at rest (no `blobTranslucent`) and goes frosted only while it answers. Only its 1px rim moves.
+- **A shadow on top of the glow.** `--composer-shadow` = hairline ring, then a tight contact shadow, then a soft lift (`0 10px 28px -10px` at 18%).
+- **Softer underglow.** The `.ai-underglow` defaults are now 24px blur at 35%, tucked further in. The thread uses the same defaults.
+- **`PromptSuggestion` is a quiet list.** Rows are divided by `--brand-line`, with an optional Violet topic `icon` and optional trailing `meta`. Hover tints the row and shows an arrow.
+  - It's used for Try asking, the "Ask next" follow-ups, the Ask drawer and Recent chats.
+  - On `/chat`, Try asking and Recent chats sit side by side from md.
+- The old glowing pill is now `HaloSuggestion` (`halo-suggestion.tsx`), kept only for the prototypes along with its `.prompt-suggestion` CSS and `--suggestion-*` tokens.
+- **Rejected: Chips** (short white chips under a glow-free composer, which filled the box rather than sending). It was calmer still, but it lost the AI feel, and every suggestion took an extra step.

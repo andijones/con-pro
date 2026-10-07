@@ -9,7 +9,7 @@ import { daysLeft, daysUntil, formatDate, gbp } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { ClauseLink, PageHeader } from "@/components/contravo/primitives";
 import { PromptComposer } from "@/components/ui/prompt-composer";
-import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
+import { HaloSuggestion, HaloSuggestions } from "@/components/ui/halo-suggestion";
 import { Spinner } from "@/components/ui/spinner";
 import { committing, foi, recoverable, toReview } from "./shared";
 
@@ -55,13 +55,13 @@ export function Ask() {
           rows={2}
           onSend={() => ask(draft.trim())}
         />
-        <PromptSuggestions aria-label="Suggested questions">
+        <HaloSuggestions aria-label="Suggested questions">
           {estateSuggestions.map((s) => (
-            <PromptSuggestion key={s} onClick={() => ask(s)}>
+            <HaloSuggestion key={s} onClick={() => ask(s)}>
               {s}
-            </PromptSuggestion>
+            </HaloSuggestion>
           ))}
-        </PromptSuggestions>
+        </HaloSuggestions>
       </div>
 
       {q && (

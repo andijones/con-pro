@@ -220,7 +220,7 @@ export function ContractReader({
               {parts.map((p, pi) => (
                 <section key={p.number || pi} aria-label={p.title ? `${p.number}. ${p.title}` : undefined}>
                   {p.title && (
-                    <h3 className="mb-3 text-[13px] font-medium text-muted-foreground">
+                    <h3 className="mb-3 text-caption font-medium text-muted-foreground">
                       <span className="tnum mr-2">{p.number}</span>
                       {p.title}
                     </h3>
@@ -248,11 +248,11 @@ export function ContractReader({
                               <span className="text-xs text-muted-foreground">Clause {c.number}</span>
                             </div>
                             <p className="mt-2 text-base font-medium text-pretty">{c.plain}</p>
-                            <p className="mt-3 font-document text-[14px] leading-[1.7] text-foreground/80">{c.text}</p>
+                            <p className="mt-3 font-document text-sm leading-[1.7] text-foreground/80">{c.text}</p>
                             {d && (
                               <Link
                                 href={`#${d.id}`}
-                                className="hit-area-y mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline"
+                                className="hit-area-y mt-3 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
                               >
                                 Needs a decision: {d.title} <ArrowRight className="size-3.5" aria-hidden />
                               </Link>
@@ -266,12 +266,12 @@ export function ContractReader({
                           id={`clause-${c.id}`}
                           tabIndex={-1}
                           className={cn(
-                            "scroll-mt-28 rounded-md px-4 py-1 font-document text-[14px] leading-[1.7] text-foreground/80",
+                            "scroll-mt-28 rounded-md px-4 py-1 font-document text-sm leading-[1.7] text-foreground/80",
                             isActive && "shadow-[0_0_0_2px_var(--control-focus-edge)]",
                           )}
                         >
                           <span className="mr-2 font-sans text-xs font-medium text-muted-foreground">{c.number}</span>
-                          <span className="font-sans text-[13px] font-medium text-foreground">{c.heading}.</span> {c.text}
+                          <span className="font-sans text-caption font-medium text-foreground">{c.heading}.</span> {c.text}
                         </p>
                       );
                     })}
@@ -313,7 +313,7 @@ function NavigatorRail({ steps, current, onJump }: { steps: Flag[]; current: str
         <Button variant="ghost" size="icon" className="rounded-full" aria-label="Previous risk" disabled={first} onClick={() => go(-1)}>
           <ChevronUp />
         </Button>
-        <p className="tnum text-center text-[11px] leading-tight text-muted-foreground" aria-live="polite">
+        <p className="tnum text-center text-micro leading-tight text-muted-foreground" aria-live="polite">
           {here ? (
             <>
               <span className="block text-sm font-medium text-foreground">{at + 1}</span>of {steps.length}

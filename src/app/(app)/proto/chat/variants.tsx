@@ -11,7 +11,7 @@ import { formatDate } from "@/lib/dates";
 import { PageHeader } from "@/components/contravo/primitives";
 import { Item, ItemContent, ItemDescription, ItemGroup, ItemMedia, ItemTitle } from "@/components/ui/item";
 import { PromptComposer } from "@/components/ui/prompt-composer";
-import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
+import { HaloSuggestion, HaloSuggestions } from "@/components/ui/halo-suggestion";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const intro = "Answers come from the documents in your workspace, not from general knowledge. Every answer shows the passages it came from and says what it couldn’t check.";
@@ -89,13 +89,13 @@ export function Aurora() {
           {composer}
           <section>
             <h2 className="mb-3 text-sm font-medium">Try asking</h2>
-            <PromptSuggestions aria-label="Suggested questions">
+            <HaloSuggestions aria-label="Suggested questions">
               {suggestions.map((s) => (
-                <PromptSuggestion key={s} onClick={() => ask(s)}>
+                <HaloSuggestion key={s} onClick={() => ask(s)}>
                   {s}
-                </PromptSuggestion>
+                </HaloSuggestion>
               ))}
-            </PromptSuggestions>
+            </HaloSuggestions>
           </section>
         </div>
       </div>
@@ -136,13 +136,13 @@ export function Midnight() {
           {composer}
           <section>
             <h2 className="mb-3 text-sm font-medium text-white">Try asking</h2>
-            <PromptSuggestions aria-label="Suggested questions">
+            <HaloSuggestions aria-label="Suggested questions">
               {suggestions.map((s) => (
-                <PromptSuggestion key={s} onClick={() => ask(s)}>
+                <HaloSuggestion key={s} onClick={() => ask(s)}>
                   {s}
-                </PromptSuggestion>
+                </HaloSuggestion>
               ))}
-            </PromptSuggestions>
+            </HaloSuggestions>
           </section>
         </div>
       </div>

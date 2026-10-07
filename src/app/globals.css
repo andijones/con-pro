@@ -200,7 +200,8 @@
 
   /* Prompt composer (the one way to ask Contravo: /chat and the Ask drawer). components/ui/prompt-composer.tsx */
   --composer-radius: calc(var(--radius) * 1.4); /* rounded-xl: the same corner as every card */
-  --composer-shadow: 0 1px 2px rgb(3 1 57 / 0.04), 0 6px 18px rgb(3 1 57 / 0.05);
+  /* Lifted above its glow (Quiet list): a hairline ring, a tight contact shadow and a soft lift */
+  --composer-shadow: 0 0 0 1px rgb(3 1 57 / 0.06), 0 1px 2px rgb(3 1 57 / 0.06), 0 10px 28px -10px rgb(3 1 57 / 0.18);
   /* Frost stays 84–90% white with no dark Violet underneath, so muted text keeps 4.5:1 over the moving colour */
   --composer-frost: linear-gradient(to bottom, color-mix(in oklch, var(--card) 90%, transparent), color-mix(in oklch, var(--card) 84%, transparent));
   --composer-solid: var(--card);
@@ -217,7 +218,7 @@
   --composer-avatar-4: var(--brand-iris);
   --composer-avatar-5: var(--brand-lilac);
 
-  /* Prompt suggestions (components/ui/prompt-suggestion.tsx): the composer's rim on a pill */
+  /* Halo suggestions (components/ui/halo-suggestion.tsx): retired 7 October 2026 for the quiet list; prototypes only */
   --suggestion-radius: var(--radius); /* rounded-lg: the same corner as buttons and controls */
   --suggestion-radius-stacked: var(--radius);
   --suggestion-surface: var(--composer-frost);
@@ -261,6 +262,27 @@
   --font-sans: "Instrument Sans", "Instrument Sans Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-sans);
   --font-document: Georgia, "Times New Roman", serif;
+
+  /* Type scale. Every size is a role with its own leading and tracking: tracking tightens as size grows,
+     so text-lg and up need no tracking-[…] of their own. Tailwind's xs (12), sm (14) and base (16) keep their defaults.
+     Named steps between them replace one-off px sizes:
+       micro    11px  counts, chart axes, kbd hints, uppercase labels. Never for a sentence (12px is the floor for reading)
+       caption  13px  meta lines, small controls, sidebar items
+       reading  15px  dense reading copy: decision details, chat bubbles, audit entries */
+  --text-micro: 0.6875rem;
+  --text-micro--line-height: 1rem;
+  --text-micro--letter-spacing: 0.01em;
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.25rem;
+  --text-reading: 0.9375rem;
+  --text-reading--line-height: 1.5rem;
+  --text-lg--letter-spacing: -0.01em;
+  --text-xl--letter-spacing: -0.015em;
+  --text-2xl--letter-spacing: -0.02em;
+  --text-3xl--letter-spacing: -0.025em;
+  --text-4xl--letter-spacing: -0.03em;
+  --text-5xl--letter-spacing: -0.04em;
+  --text-5xl--line-height: 1.04;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -380,6 +402,14 @@
   body {
     @apply bg-background text-foreground;
   }
+  /* Underlines sit clear of descenders at one offset everywhere, drawn at the font's own stroke weight */
+  html {
+    text-underline-offset: 0.2em;
+    text-decoration-skip-ink: auto;
+  }
+  :where(a, button, .underline) {
+    text-decoration-thickness: from-font;
+  }
   ::selection {
     background: var(--highlight); /* subtle lilac tint, text stays Midnight */
   }
@@ -488,6 +518,40 @@
 @utility tnum {
   font-variant-numeric: tabular-nums;
 }
+
+/*
+ * Figures: a standalone number set large (money, counts, dates in a stat). Proportional digits, because Instrument
+ * Sans' tabular digits run 18% wider (a "1" takes 60% more room) and read gappy at size. Tracking tightens with size.
+ * tnum stays for figures that sit in columns or tick (tables, countdown lists, pills).
+ *   figure-xl 44px  the one headline number on a page
+ *   figure-lg 32px  stat tiles
+ *   figure-md 24px  secondary stats, key dates
+ *   figure-sm 18px  amounts leading a row or card
+ */
+@utility figure-xl {
+  font-size: 2.75rem;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-variant-numeric: proportional-nums;
+}
+@utility figure-lg {
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: proportional-nums;
+}
+@utility figure-md {
+  font-size: 1.5rem;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  font-variant-numeric: proportional-nums;
+}
+@utility figure-sm {
+  font-size: 1.125rem;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  font-variant-numeric: proportional-nums;
+}
 @utility heading {
   letter-spacing: -0.03em;
   line-height: 1.1;
@@ -513,6 +577,15 @@
   border-radius: calc(var(--tray-radius) - var(--tray-gap)); /* 16 − 8 = 8px */
   background-color: var(--card);
   box-shadow: var(--shadow-tray-card);
+}
+
+/* Small uppercase label above a group (sidebar groups, form sections, sticky list headers). Caps open up at small sizes. */
+@utility eyebrow {
+  font-size: 0.6875rem; /* micro: @theme inline values are not emitted as variables */
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
 }
 
 /* A section's heading on a page: <h2 className="section-title"> */
@@ -652,17 +725,17 @@
  */
 .ai-underglow {
   position: absolute;
-  inset: var(--ai-underglow-inset, 2.5rem 2rem -1.25rem);
+  inset: var(--ai-underglow-inset, 3rem 3.5rem -0.75rem);
   z-index: -1;
   border-radius: 2rem;
   background: linear-gradient(90deg in oklab, var(--brand-iris), var(--halo-mint), var(--brand-lilac-deep), var(--brand-iris));
-  filter: blur(var(--ai-underglow-blur, 28px));
-  opacity: var(--ai-underglow-opacity, 0.6);
+  filter: blur(var(--ai-underglow-blur, 24px));
+  opacity: var(--ai-underglow-opacity, 0.35); /* a hint of colour under a lifted composer, not a pool */
   pointer-events: none;
 }
 
 /*
- * Prompt suggestion: the Halo Button rim. Two brand gradient blobs drift along the bottom of a 1px rim and glow
+ * Halo suggestion (retired; /proto only): the Halo Button rim. Two brand gradient blobs drift along the bottom of a 1px rim and glow
  * through the frosted fill; hover and keyboard focus brighten the rim. Decorative only (aria-hidden layer);
  * the label is Midnight on 84%+ white. Keyboard focus is the global Midnight outline. Reduced motion holds still.
  */

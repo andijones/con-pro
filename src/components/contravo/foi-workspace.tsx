@@ -100,7 +100,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
     <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
       <div className="min-w-0">
         {/* Step indicator */}
-        <ol className="mb-6 flex flex-wrap items-center gap-2 text-[13px]">
+        <ol className="mb-6 flex flex-wrap items-center gap-2 text-caption">
           {steps.map((s, i) => {
             const done = i < at || (stage === "draft" && i === 3);
             const current = i === at;
@@ -108,7 +108,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
               <li key={s.key} className="flex items-center gap-2">
                 <span
                   className={clsx(
-                    "tnum grid size-6 place-items-center rounded-full text-[11px] font-medium",
+                    "tnum grid size-6 place-items-center rounded-full text-micro font-medium",
                     done ? "bg-primary text-white" : current ? "bg-highlight text-primary ring-1 ring-ring" : "bg-card text-muted-foreground ring-1 ring-border",
                   )}
                 >
@@ -130,7 +130,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
               {req.received !== seed.received && <> · clock restarted {formatDate(req.received)}</>}
             </span>
           </div>
-          <blockquote className="mt-3 border-l-2 border-ring pl-4 text-[16px] leading-relaxed text-pretty">{req.text}</blockquote>
+          <blockquote className="mt-3 border-l-2 border-ring pl-4 text-base leading-relaxed text-pretty">{req.text}</blockquote>
           {stage === "request" && (
             <div className="mt-5 flex items-center gap-3">
               <Button onClick={runSearch}>
@@ -159,7 +159,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
                     ) : (
                       <Loader2 size={14} className="shrink-0 animate-spin text-primary" aria-hidden />
                     )}
-                    <span className="flex shrink-0 items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-[11px] text-muted-foreground">
+                    <span className="flex shrink-0 items-center gap-1 rounded bg-muted px-1.5 py-0.5 text-micro text-muted-foreground">
                       {s.where === "Register" ? <Database size={11} aria-hidden /> : <FileText size={11} aria-hidden />}
                       {s.where}
                     </span>
@@ -234,7 +234,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
         {/* 4. Draft */}
         {stage === "draft" && (
           <div className="mt-4 overflow-hidden rounded-lg bg-card shadow-card">
-            <div className="flex items-center gap-2 border-b border-warning/25 bg-warning-muted px-5 py-2.5 text-[13px] font-medium text-warning">
+            <div className="flex items-center gap-2 border-b border-warning/25 bg-warning-muted px-5 py-2.5 text-caption font-medium text-warning">
               <CircleAlert size={14} aria-hidden /> Draft only. Not a decision of the authority.
             </div>
             <article className="px-5 py-6 sm:px-8">
@@ -242,7 +242,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
                 {req.ref} · {organisation.name}
               </p>
               <h2 className="heading mt-1 text-2xl">Response to your request</h2>
-              <p className="mt-3 max-w-[65ch] text-[15px] leading-relaxed text-muted-foreground">
+              <p className="mt-3 max-w-[65ch] text-reading leading-relaxed text-muted-foreground">
                 Thank you for your request of {formatDate(seed.received)} under the Freedom of Information Act 2000. We have set out
                 below what we hold, what we can disclose and what we have withheld.
               </p>
@@ -364,7 +364,7 @@ export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCa
                   <li
                     key={i}
                     className={clsx(
-                      "rounded-lg p-3 text-[13px] leading-relaxed transition-opacity",
+                      "rounded-lg p-3 text-caption leading-relaxed transition-opacity",
                       n.severity === "block" ? "bg-critical-muted/60 shadow-[inset_0_0_0_1px_color-mix(in_oklab,var(--critical)_22%,transparent)]" : "bg-muted/60",
                       done && "opacity-55",
                     )}
@@ -432,7 +432,7 @@ function DraftSection({ n, title, children }: { n: number; title: string; childr
         <span className="tnum text-sm text-muted-foreground">{n}.</span>
         {title}
       </h3>
-      <div className="mt-2 max-w-[70ch] text-[15px] leading-relaxed">{children}</div>
+      <div className="mt-2 max-w-[70ch] text-reading leading-relaxed">{children}</div>
     </section>
   );
 }
@@ -448,7 +448,7 @@ function Clock({ req, v, kase, before, onReplied }: { req: FoiRequest; v: V; kas
         <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
           <CirclePause className="size-3.5" aria-hidden /> Clock stopped
         </p>
-        <p className="mt-1 text-xl tracking-[-0.01em]">Waiting for the requester</p>
+        <p className="mt-1 text-xl">Waiting for the requester</p>
         <p className="mt-2 text-sm text-pretty text-muted-foreground">
           Asked to clarify on {formatDate(req.clarifyAsked!)}, at working day {v.elapsed} of 20. The 20 working days start again from the day after
           they reply.
@@ -462,7 +462,7 @@ function Clock({ req, v, kase, before, onReplied }: { req: FoiRequest; v: V; kas
     return (
       <Card className="gap-0 p-5">
         <p className="text-xs text-muted-foreground">Sent</p>
-        <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(sent)}</p>
+        <p className="figure-md mt-1">{formatDate(sent)}</p>
         <p className="tnum mt-1.5 text-xs text-pretty text-muted-foreground">
           Working day {v.elapsed} of 20{v.elapsed > 20 ? ", after the legal deadline" : ""}. The requester can ask for an internal review until{" "}
           {formatDate(addWorkingDays(sent, 40))}.
@@ -473,7 +473,7 @@ function Clock({ req, v, kase, before, onReplied }: { req: FoiRequest; v: V; kas
   return (
     <Card className="gap-0 p-5">
       <p className="text-xs text-muted-foreground">Response due</p>
-      <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(v.due)}</p>
+      <p className="figure-md mt-1">{formatDate(v.due)}</p>
       <div className="mt-3 flex gap-[2px]" aria-hidden>
         {Array.from({ length: 20 }).map((_, i) => (
           <span

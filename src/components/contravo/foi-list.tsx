@@ -166,7 +166,7 @@ function PaceBar({ v }: { v: FoiView }) {
           <span key={m.day} className="absolute -top-1 -bottom-1 w-0.5 bg-foreground" style={{ left: `calc(${(m.day / 20) * 100}% - 1px)` }} />
         ))}
       </div>
-      <div className="relative mt-1.5 h-4 text-[11px] text-muted-foreground" aria-hidden>
+      <div className="relative mt-1.5 h-4 text-micro text-muted-foreground" aria-hidden>
         {milestones.map((m) => (
           <span key={m.day} className="absolute -translate-x-1/2 whitespace-nowrap last:-translate-x-full" style={{ left: `${(m.day / 20) * 100}%` }}>
             {m.label}

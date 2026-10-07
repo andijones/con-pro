@@ -14,7 +14,7 @@ export function AuthHeading({ children, lede }: { children: ReactNode; lede?: Re
   }, []);
   return (
     <>
-      <h1 ref={ref} tabIndex={-1} className="heading text-[2rem]">
+      <h1 ref={ref} tabIndex={-1} className="page-title text-balance">
         {children}
       </h1>
       {lede && <p className="mt-2 text-base text-muted-foreground">{lede}</p>}

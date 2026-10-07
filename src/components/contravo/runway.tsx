@@ -45,12 +45,12 @@ export function Runway({ items, onSelect, span = 90 }: { items: Decision[]; onSe
         {months.map((m) => (
           <div key={m.label} className="pointer-events-none absolute inset-y-0 select-none" style={{ left: `${m.pct}%` }} aria-hidden>
             <div className="h-full w-px bg-border" />
-            <span className="absolute -bottom-5 -translate-x-1/2 text-[11px] text-muted-foreground">{m.label}</span>
+            <span className="absolute -bottom-5 -translate-x-1/2 text-micro text-muted-foreground">{m.label}</span>
           </div>
         ))}
         <div className="pointer-events-none absolute inset-y-0 left-0 select-none" aria-hidden>
           <div className="h-full w-0.5 bg-foreground" />
-          <span className="absolute -bottom-5 text-[11px] font-medium">Today</span>
+          <span className="absolute -bottom-5 text-micro font-medium">Today</span>
         </div>
         <ul>
           {inRange.map((item, i) => {
@@ -66,7 +66,7 @@ export function Runway({ items, onSelect, span = 90 }: { items: Decision[]; onSe
                 >
                   <span
                     className={cn(
-                      "tnum grid h-6 min-w-6 place-items-center px-1.5 text-[11px] font-medium text-white ring-2 ring-card transition-transform duration-(--duration-fast) ease-(--ease-out) group-hover:scale-110",
+                      "tnum grid h-6 min-w-6 place-items-center px-1.5 text-micro font-medium text-white ring-2 ring-card transition-transform duration-(--duration-fast) ease-(--ease-out) group-hover:scale-110",
                       // Shape as well as colour (WCAG 1.4.1): money = square, deadlines = round
                       item.kind === "money" ? "rounded-[3px]" : "rounded-full",
                       days <= 7 ? "bg-critical" : item.kind === "money" ? "bg-success" : "bg-primary",

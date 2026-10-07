@@ -57,12 +57,12 @@ export default async function FoiCasePage(props: PageProps<"/foi/[id]">) {
         title={req.subject}
         leading={<BackLink href="/foi" label="FOI requests" />}
         actions={
-          <span className="flex items-center gap-2 text-[13px] text-muted-foreground">
+          <span className="flex items-center gap-2 text-caption text-muted-foreground">
             Officer <Person id={req.assignee} />
           </span>
         }
       />
-      <p className="tnum mb-6 text-[13px] font-medium text-muted-foreground">{req.ref}</p>
+      <p className="tnum mb-6 text-caption font-medium text-muted-foreground">{req.ref}</p>
       <FoiWorkspace req={req} kase={kase} />
     </div>
   );

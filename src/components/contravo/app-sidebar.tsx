@@ -75,12 +75,13 @@ const nav = [
 
 const NEW_CHAT = { href: "/chat", key: "N" };
 
-/** Urgent only: contracts with a decision due within a week (or overdue), soonest first. The rest wait on Contracts and Home. */
+/** Urgent only: a contract's soonest decision when it's due within a week (or overdue), soonest first.
+ *  Named by the action, as Home names it, so the two read as the same thing. The rest wait on Contracts and Home. */
 const URGENT_DAYS = 7;
 const needsYou = Array.from(new Set([...decisions].sort((a, b) => a.due.localeCompare(b.due)).map((d) => d.contractId)))
   .map((id) => {
-    const due = decisions.filter((d) => d.contractId === id).sort((a, b) => a.due.localeCompare(b.due))[0].due;
-    return { c: contracts.find((x) => x.id === id)!, days: daysUntil(due) };
+    const d = decisions.filter((x) => x.contractId === id).sort((a, b) => a.due.localeCompare(b.due))[0];
+    return { c: contracts.find((x) => x.id === id)!, d, days: daysUntil(d.due) };
   })
   .filter((n) => n.days <= URGENT_DAYS);
 
@@ -147,7 +148,7 @@ export function AppSidebar() {
             <SidebarMenu className="gap-0.5">
               {nav.map((n) => (
                 <SidebarMenuItem key={n.href}>
-                  <SidebarMenuButton asChild isActive={isActive(n.href)} tooltip={`${n.label} (G then ${n.key})`} className="h-9 text-[13px]">
+                  <SidebarMenuButton asChild isActive={isActive(n.href)} tooltip={`${n.label} (G then ${n.key})`} className="h-9 text-caption">
                     <Link href={n.href} aria-keyshortcuts={`g ${n.key.toLowerCase()}`} aria-current={path === n.href ? "page" : undefined}>
                       <n.icon />
                       <span className="flex-1">{n.label}</span>
@@ -174,22 +175,25 @@ export function AppSidebar() {
           <FoldLabel>
             <CircleAlert aria-hidden className="size-3.5" />
             Needs you
-            <Badge variant="critical" className="tnum h-4.5 px-1.5 text-[11px] tracking-normal normal-case">
+            <Badge variant="critical" className="tnum h-4.5 px-1.5 text-micro tracking-normal normal-case">
               {needsYou.length}
               <span className="sr-only"> urgent {needsYou.length === 1 ? "contract" : "contracts"}</span>
             </Badge>
           </FoldLabel>
           <CollapsibleContent>
           <SidebarMenu className="gap-0.5">
-            {needsYou.map(({ c, days }) => (
+            {needsYou.map(({ c, d, days }) => (
               <SidebarMenuItem key={c.id}>
-                <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-9 text-[13px]">
-                  <Link href={`/contracts/${c.id}`} title={c.title} aria-current={path === `/contracts/${c.id}` ? "page" : undefined}>
+                <SidebarMenuButton asChild isActive={path === `/contracts/${c.id}`} className="h-9 text-caption">
+                  <Link href={`/contracts/${c.id}`} title={`${d.title} · ${c.title}`} aria-current={path === `/contracts/${c.id}` ? "page" : undefined}>
                     <span className="grid size-4 shrink-0 place-items-center" aria-hidden>
                       <span className="size-1.5 rounded-full bg-critical" />
                     </span>
-                    <span className="flex-1 truncate">{c.title}</span>
-                    <span className="tnum shrink-0 text-[11px] font-medium text-critical">
+                    <span className="flex-1 truncate">
+                      {d.title}
+                      <span className="sr-only">, {c.title}</span>
+                    </span>
+                    <span className="tnum shrink-0 text-micro font-medium text-critical">
                       {days}d<span className="sr-only"> to the next deadline</span>
                     </span>
                   </Link>
@@ -211,7 +215,7 @@ export function AppSidebar() {
           <SidebarGroupAction asChild title="View all chats">
             <Link
               href="/chat"
-              className="hit-area-y top-0.5! aspect-auto! h-6 w-auto! px-1.5 text-[11px] font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
+              className="hit-area-y top-0.5! aspect-auto! h-6 w-auto! px-1.5 text-micro font-medium whitespace-nowrap text-muted-foreground hover:text-foreground"
             >
               View all
             </Link>
@@ -220,7 +224,7 @@ export function AppSidebar() {
           <SidebarMenu className="gap-0.5">
             {conversations.map((c) => (
               <SidebarMenuItem key={c.id}>
-                <SidebarMenuButton asChild className="h-9 pl-8 text-[13px] text-muted-foreground hover:text-foreground">
+                <SidebarMenuButton asChild className="h-9 pl-8 text-caption text-muted-foreground hover:text-foreground">
                   <Link href={`/chat?q=${encodeURIComponent(c.q)}`} title={c.title}>
                     <span className="truncate">{c.title}</span>
                   </Link>
@@ -300,7 +304,7 @@ function UserMenu() {
 /** A section label that folds its section: the whole label is the button, with a chevron that turns when open */
 function FoldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarGroupLabel asChild className="mb-1 h-7 px-2 text-[11px] font-medium tracking-[0.06em] text-muted-foreground uppercase">
+    <SidebarGroupLabel asChild className="mb-1 h-7 px-2 eyebrow text-muted-foreground">
       <CollapsibleTrigger className="group/fold w-full gap-2 text-left transition-colors duration-(--duration-fast) hover:text-foreground [&>svg]:size-3.5">
         <span className="flex items-center gap-2">{children}</span>
         <ChevronRight aria-hidden className="transition-transform duration-(--duration-fast) ease-(--ease-out) group-data-[state=open]/fold:rotate-90" />
@@ -311,7 +315,7 @@ function FoldLabel({ children }: { children: React.ReactNode }) {
 
 function Count({ children }: { children: React.ReactNode }) {
   return (
-    <span className="tnum min-w-5 shrink-0 rounded-md bg-sidebar-hover px-1 text-center text-[11px] font-medium text-sidebar-foreground group-hover/menu-button:bg-card group-data-[active=true]/menu-button:bg-card group-data-[collapsible=icon]:hidden">
+    <span className="tnum min-w-5 shrink-0 rounded-md bg-sidebar-hover px-1 text-center text-micro font-medium text-sidebar-foreground group-hover/menu-button:bg-card group-data-[active=true]/menu-button:bg-card group-data-[collapsible=icon]:hidden">
       {children}
     </span>
   );
@@ -319,7 +323,7 @@ function Count({ children }: { children: React.ReactNode }) {
 
 function Keys({ k }: { k: string }) {
   return (
-    <kbd aria-hidden className="flex shrink-0 gap-0.5 font-sans text-[10px] text-muted-foreground group-data-[collapsible=icon]:hidden">
+    <kbd aria-hidden className="flex shrink-0 gap-0.5 font-sans text-micro text-muted-foreground group-data-[collapsible=icon]:hidden">
       <span className="grid h-4 min-w-4 place-items-center rounded border bg-background px-1">G</span>
       <span className="grid h-4 min-w-4 place-items-center rounded border bg-background px-1">{k}</span>
     </kbd>

@@ -132,7 +132,7 @@ export function DetailsForm({ contract, pages, counterpartyRead }: { contract: C
       <div className="grid min-h-0 flex-1 gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
         <Card className="min-h-0 overflow-y-auto">
           <CardHeader>
-            <CardTitle className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground uppercase">Contract details</CardTitle>
+            <CardTitle className="eyebrow text-muted-foreground">Contract details</CardTitle>
           </CardHeader>
           <CardContent>
             <form

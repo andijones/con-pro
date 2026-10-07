@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Accordion as AccordionPrimitive } from "radix-ui"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
@@ -67,7 +67,7 @@ function AccordionContent({
     >
       <div
         className={cn(
-          "h-(--radix-accordion-content-height) pt-0 pb-2.5 [&_a]:underline [&_a]:underline-offset-3 [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
+          "h-(--radix-accordion-content-height) pt-0 pb-2.5 [&_a]:underline [&_a]:hover:text-foreground [&_p:not(:last-child)]:mb-4",
           className
         )}
       >

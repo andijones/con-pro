@@ -136,7 +136,7 @@ export function AskDrawer() {
             ) : (
               <Sparkles className="size-4 text-muted-foreground" aria-hidden />
             )}
-            <span className="rotate-180 text-[13px] font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
+            <span className="rotate-180 text-caption font-medium tracking-[0.01em] [writing-mode:vertical-rl]" aria-hidden>
               Ask Contravo
             </span>
           </button>
@@ -186,7 +186,7 @@ export function AskDrawer() {
                     Answers come from the contract text, with the clause each one is based on. Click a citation to open the clause.
                   </p>
                 </div>
-                <PromptSuggestions stacked aria-label="Suggested questions">
+                <PromptSuggestions aria-label="Suggested questions">
                   {suggestions.map((s) => (
                     <PromptSuggestion key={s} onClick={() => ask(s)}>
                       {s}
@@ -218,14 +218,13 @@ export function AskDrawer() {
               placeholder={contract ? "Ask about this contract…" : "Ask about any contract…"}
               isLoading={turns.some((t) => t.a === null)}
               loadingText="Reading your contracts…"
-              blobTranslucent
               maxAutoGrowPx={160}
               onSend={() => {
                 ask(draft.trim());
                 setDraft("");
               }}
             />
-            <p className="mt-2 text-[11px] text-muted-foreground">Drafted from your contracts. Check the clause before you act.</p>
+            <p className="mt-2 text-micro text-muted-foreground">Drafted from your contracts. Check the clause before you act.</p>
           </footer>
         </aside>
       </div>
@@ -261,7 +260,7 @@ function AnswerBody({ turn }: { turn: Turn }) {
                   href={h}
                   scroll={false}
                   aria-label={`Source ${m[1]}`}
-                  className="tnum mx-0.5 inline-grid h-[18px] min-w-[18px] -translate-y-px place-items-center rounded bg-secondary px-1 align-middle text-[11px] font-medium text-secondary-foreground hover:bg-primary hover:text-primary-foreground"
+                  className="tnum mx-0.5 inline-grid h-[18px] min-w-[18px] -translate-y-px place-items-center rounded bg-secondary px-1 align-middle text-micro font-medium text-secondary-foreground hover:bg-primary hover:text-primary-foreground"
                 >
                   {m[1]}
                 </Link>
@@ -284,7 +283,7 @@ function AnswerBody({ turn }: { turn: Turn }) {
                   scroll={false}
                   className="flex items-start gap-2 rounded-lg bg-card px-2.5 py-2 text-xs shadow-xs transition-shadow duration-(--duration-fast) hover:shadow-card"
                 >
-                  <span className="tnum mt-px grid size-[18px] shrink-0 place-items-center rounded bg-secondary text-[11px] font-medium text-secondary-foreground">
+                  <span className="tnum mt-px grid size-[18px] shrink-0 place-items-center rounded bg-secondary text-micro font-medium text-secondary-foreground">
                     {i + 1}
                   </span>
                   <span className="min-w-0">

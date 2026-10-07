@@ -14,6 +14,7 @@ import { TODAY, daysLeft, daysUntil, formatDate, gbp } from "@/lib/dates";
 import { cn } from "@/lib/utils";
 import { MiniCalendar } from "./mini-calendar";
 import { ClauseLink, PageHeader, PersonAvatar } from "./primitives";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
 export const stageMeta: Record<Stage, { label: string; bar: string }> = {
@@ -24,6 +25,12 @@ export const stageMeta: Record<Stage, { label: string; bar: string }> = {
 
 const order: Stage[] = ["secured", "progress", "found"];
 const tone = (d: number) => (d <= 7 ? "text-critical" : d <= 31 ? "text-warning" : "text-muted-foreground");
+/** Due within a week: the same rule as the sidebar's Needs you, so both point at the same items */
+const URGENT_DAYS = 7;
+const isUrgent = (o: Opp) => o.stage === "found" && o.due != null && daysUntil(o.due) <= URGENT_DAYS;
+/** Urgent first, soonest first; everything else keeps its order */
+const urgentFirst = (items: Opp[]) =>
+  [...items].sort((a, b) => Number(isUrgent(b)) - Number(isUrgent(a)) || (isUrgent(a) && isUrgent(b) ? a.due!.localeCompare(b.due!) : 0));
 
 function useSavings() {
   const [opps, setOpps] = useState<Opp[]>([...found, ...history]);
@@ -56,17 +63,17 @@ function Overview({ totals }: { totals: Record<Stage, number> }) {
       </h2>
       <div className="flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
         <div>
-          <p className="tnum text-[2.75rem] leading-none tracking-[-0.03em] text-success">{gbp(totals.secured)}</p>
+          <p className="figure-xl text-success">{gbp(totals.secured)}</p>
           <p className="mt-2 text-base">secured this financial year, confirmed by Finance</p>
         </div>
         <dl className="flex flex-wrap gap-x-10 gap-y-3">
           <div>
             <dt className="text-sm text-muted-foreground">Being worked on</dt>
-            <dd className="tnum text-2xl">{gbp(totals.progress)}</dd>
+            <dd className="figure-md mt-0.5">{gbp(totals.progress)}</dd>
           </div>
           <div>
             <dt className="text-sm text-muted-foreground">Found, waiting on you</dt>
-            <dd className="tnum text-2xl">{gbp(totals.found)}</dd>
+            <dd className="figure-md mt-0.5">{gbp(totals.found)}</dd>
           </div>
         </dl>
       </div>
@@ -95,19 +102,30 @@ function Overview({ totals }: { totals: Record<Stage, number> }) {
 /** A saving that needs a person. Only the first is open; the rest show one line until asked. */
 function Saving({ o, open, onToggle, move }: { o: Opp; open: boolean; onToggle: () => void; move: ReturnType<typeof useSavings>["move"] }) {
   const d = o.due ? daysUntil(o.due) : null;
+  const urgent = isUrgent(o);
   const panelId = `next-${o.id}`;
   return (
     <li className="rounded-xl bg-card shadow-card">
       <button type="button" aria-expanded={open} aria-controls={panelId} onClick={onToggle} className="grid w-full gap-x-4 gap-y-1 rounded-xl p-4 text-left sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] sm:items-center">
-        <span className="tnum text-lg">{gbp(o.amount)}</span>
+        <span className="figure-sm">{gbp(o.amount)}</span>
         <span className="min-w-0">
-          <span className="block font-medium text-pretty">{o.title}</span>
+          {/* Same red dot as Needs you in the sidebar, hung in the gutter so the title and contract line stay aligned */}
+          <span className="relative block font-medium text-pretty">
+            {urgent && <span className="absolute top-[0.6em] -left-3 size-1.5 rounded-full bg-critical max-sm:hidden" aria-hidden />}
+            {o.title}
+          </span>
           <span className="block truncate text-xs text-muted-foreground">
             {title(o.contractId)} · {o.owner === "priya" ? "with you" : `with ${people[o.owner]?.name ?? "someone"}`}
           </span>
         </span>
         <span className="flex items-center gap-3">
-          {d != null && <span className={cn("tnum text-xs font-medium", tone(d))}>{daysLeft(d)}</span>}
+          {urgent ? (
+            <Badge variant="critical" className="tnum">
+              Due this week · {daysLeft(d!).toLowerCase()}
+            </Badge>
+          ) : (
+            d != null && <span className={cn("tnum text-xs font-medium", tone(d))}>{daysLeft(d)}</span>
+          )}
           <ChevronDown className={cn("size-4 text-muted-foreground transition-transform duration-(--duration-fast)", open && "rotate-180")} aria-hidden />
         </span>
       </button>
@@ -194,14 +212,14 @@ function Secured({ items, total }: { items: Opp[]; total: number }) {
 }
 
 function Main({ s }: { s: ReturnType<typeof useSavings> }) {
-  const work = [...s.of("found"), ...s.of("progress")];
+  const work = [...urgentFirst(s.of("found")), ...s.of("progress")];
   const [openId, setOpenId] = useState<string | null>(work[0]?.id ?? null);
   return (
     <div className="flex min-w-0 flex-col gap-12">
       {sections
         .filter((sec) => sec.stage !== "secured")
         .map((sec) => {
-          const items = s.of(sec.stage);
+          const items = urgentFirst(s.of(sec.stage));
           return (
             <section key={sec.stage} aria-labelledby={`sec-${sec.stage}`}>
               <h2 id={`sec-${sec.stage}`} className="section-title flex items-center gap-2">

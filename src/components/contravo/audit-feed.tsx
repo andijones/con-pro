@@ -196,7 +196,7 @@ function RecordName({ e, onRecord }: { e: Ev; onRecord?: OpenRecord }) {
   if (!e.object) return null;
   if (onRecord && e.object.href)
     return (
-      <button type="button" aria-haspopup="dialog" onClick={() => onRecord(e.object!.key)} className="text-left font-medium underline decoration-input underline-offset-4 hover:decoration-primary">
+      <button type="button" aria-haspopup="dialog" onClick={() => onRecord(e.object!.key)} className="text-left font-medium underline decoration-input hover:decoration-primary">
         {e.object.label}
       </button>
     );
@@ -282,7 +282,7 @@ function Entry({ it, onRecord }: { it: Item; onRecord: OpenRecord }) {
       </time>
       <div className="relative border-l pb-6 pl-7">
         <Node e={e} />
-        <p className="flex items-start gap-2 text-[15px] leading-6">
+        <p className="flex items-start gap-2 text-reading leading-6">
           <Actor who={e.who} className="mt-0.5 size-5 shrink-0" />
           {it.type === "one" ? (
             <Sentence e={e} onRecord={onRecord} />
@@ -358,7 +358,7 @@ function History({ r }: { r: AuditRecord }) {
         {r.events.map((e) => (
           <li key={e.id} className="relative pb-6 pl-8 last:pb-0">
             <Node e={e} ring="ring-popover" />
-            <p className="text-[15px] leading-6">
+            <p className="text-reading leading-6">
               <Sentence e={e} withObject={false} />
             </p>
             <time dateTime={e.at} className="tnum text-xs text-muted-foreground">

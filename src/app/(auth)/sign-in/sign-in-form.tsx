@@ -60,7 +60,7 @@ export function SignInForm({ from }: { from: string }) {
           <Link
             href="/forgot-password"
             onClick={rememberEmail}
-            className="hit-area-y text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="hit-area-y text-sm font-medium text-primary hover:underline"
           >
             Forgot password?
           </Link>

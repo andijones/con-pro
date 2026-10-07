@@ -24,10 +24,10 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
           Data stored in the UK · Cyber Essentials Plus · DSPT compliant
         </span>
         <span className="flex gap-4">
-          <a href="https://contravo.ai/privacy" className="underline-offset-4 hover:underline">
+          <a href="https://contravo.ai/privacy" className="hover:underline">
             Privacy
           </a>
-          <a href="mailto:hello@contravo.ai" className="underline-offset-4 hover:underline">
+          <a href="mailto:hello@contravo.ai" className="hover:underline">
             Get help
           </a>
         </span>

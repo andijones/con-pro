@@ -10,14 +10,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 export const metadata = { title: "Design system" };
 
 const type = [
-  { name: "Display", spec: "48–72px · Regular · −4% tracking · campaigns and greetings", className: "text-5xl tracking-[-0.04em] leading-[1.02]", sample: "Every agreement. Clearer decisions." },
+  { name: "Display", spec: "48px · Regular · −4% tracking · text-5xl (tracking and leading built in) · campaigns and greetings", className: "text-5xl", sample: "Every agreement. Clearer decisions." },
   { name: "Page title", spec: "24px · Regular · −2% tracking · .page-title (in the page bar)", className: "page-title", sample: "Know what needs attention." },
   { name: "Section", spec: "18px · Medium · −1% tracking · .section-title (h2 on a page)", className: "section-title", sample: "Give notice on the imaging contract" },
   { name: "Body", spec: "16px · Regular · 155% leading · up to 65 characters", className: "max-w-[65ch] text-base leading-[1.55]", sample: "Review contract details, track renewal dates and keep the evidence close to every decision." },
-  { name: "UI", spec: "14px · Regular · component default", className: "text-sm", sample: "Ask about any contract" },
-  { name: "Label", spec: "13–14px · Medium · tabular figures for values, dates and totals", className: "tnum text-[13px] font-medium", sample: "Contract overview £124,800.00 · 17 Oct 2026" },
-  { name: "Caption", spec: "12px · Regular · muted", className: "text-xs text-muted-foreground", sample: "Estimates. Finance confirms each one before it counts." },
-  { name: "Document", spec: "Georgia 14px · 170% leading · contract text only · font-document", className: "font-document text-[14px] leading-[1.7]", sample: "3.2 Extension. Upon expiry of the Initial Term this Agreement shall automatically extend for successive periods of twelve (12) months." },
+  { name: "Reading", spec: "15px · 24px leading · text-reading · dense reading copy: decision details, chat, audit entries", className: "max-w-[65ch] text-reading", sample: "Corvel has asked for a 9.4% rise from 1 November. Clause 11.4 caps rises at CPI, which is 3.8%." },
+  { name: "UI", spec: "14px · Regular · text-sm · component default", className: "text-sm", sample: "Ask about any contract" },
+  { name: "Label", spec: "13px · Medium · text-caption · tnum for values in columns", className: "tnum text-caption font-medium", sample: "Contract overview £124,800.00 · 17 Oct 2026" },
+  { name: "Caption", spec: "12px · Regular · text-xs · muted · the floor for any sentence", className: "text-xs text-muted-foreground", sample: "Estimates. Finance confirms each one before it counts." },
+  { name: "Micro", spec: "11px · text-micro · counts, axes and kbd hints only, never a sentence", className: "tnum text-micro font-medium text-muted-foreground", sample: "Oct Nov Dec · 12 · G then H" },
+  { name: "Eyebrow", spec: "11px · Medium · uppercase · +7% tracking · .eyebrow (group labels)", className: "eyebrow text-muted-foreground", sample: "Needs you" },
+  { name: "Figure XL", spec: "44px · −4% · proportional digits · .figure-xl (the one headline number on a page)", className: "figure-xl text-success", sample: "£83,600" },
+  { name: "Figure LG", spec: "32px · −3.5% · .figure-lg (stat tiles)", className: "figure-lg", sample: "£1.2m · 14 days" },
+  { name: "Figure MD", spec: "24px · −2.5% · .figure-md (secondary stats, key dates)", className: "figure-md", sample: "£247,600 · 17 Oct 2026" },
+  { name: "Figure SM", spec: "18px · −1.5% · .figure-sm (amounts leading a row)", className: "figure-sm", sample: "£61,600" },
+  { name: "Document", spec: "Georgia 14px · 170% leading · contract text only · font-document", className: "font-document text-sm leading-[1.7]", sample: "3.2 Extension. Upon expiry of the Initial Term this Agreement shall automatically extend for successive periods of twelve (12) months." },
 ];
 
 const a11y: [string, string, string][] = [
@@ -55,14 +62,13 @@ const interaction: [string, string, string][] = [
   ["--radius-inset / --radius-track", "4px / 5px (derived)", "Inner corners: menu and select items in a p-1 surface; tab triggers in the 3px track"],
   ["--scrim", "Midnight at 18% + light blur", "The veil behind dialogs, sheets and drawers"],
   ["--tray-* · .tray / .tray-card", "slate-100 well, inset slate-200 ring, 16px · cards 8px with a hairline shadow", "A grey tray of white cards that sets a side column apart (Home rail), as on contravo.ai"],
-  ["--composer-radius · --composer-shadow", "rounded-xl (11px, like cards) · two Midnight layers", "Prompt composer shape and lift"],
+  ["--composer-radius · --composer-shadow", "rounded-xl (11px, like cards) · hairline ring + contact + soft lift", "Prompt composer shape, lifted above its glow. Solid white at rest; frosted only while answering"],
+  [".ai-underglow", "rim colours · 24px blur · 35%", "A hint of colour under the composer, not a pool"],
   ["--composer-frost / --composer-solid", "Card at 90%→84% / Card", "Composer surface; frost keeps muted text above 4.5:1"],
   ["--composer-rim-1…3 · --composer-aurora-1…2", "Iris, deep Lilac, --halo-mint", "Moving rim and background glow (decorative, aria-hidden)"],
   ["--composer-avatar-1…5", "deep Lilac, Violet, Mint, Iris, Lilac", "Colours for the avatar’s WebGL shader, read at runtime"],
   ["--composer-divider", "--brand-line", "Rule above the composer’s actions"],
-  ["--suggestion-radius · -stacked", "rounded-lg (8px, like buttons)", "Prompt suggestion shape (wrapped / stacked in the drawer)"],
-  ["--suggestion-surface · -hover", "--composer-frost · 94%→88% Card", "Suggestion fill; the label stays Midnight on 84%+ white"],
-  ["--suggestion-rim-rest / -active", "0.55 / 1", "Rim glow at rest, and on hover or keyboard focus"],
+  ["PromptSuggestion", "quiet list · --brand-line dividers · Violet icon", "Suggestions, follow-ups, the drawer and Recent chats: plain rows, no rim or glow. (--suggestion-* now only serve HaloSuggestion in the prototypes)"],
 ];
 
 const nav = [
@@ -82,7 +88,7 @@ export default function DesignSystemPage() {
         <ul className="sticky top-8 flex flex-col gap-0.5 text-sm">
           {nav.map((n, i) => (
             <li key={n.id}>
-              {i === 6 && <p className="mt-4 mb-1 px-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">Components</p>}
+              {i === 6 && <p className="mt-4 mb-1 px-2 eyebrow text-muted-foreground">Components</p>}
               <a href={`#${n.id}`} className="block rounded-md px-2 py-1 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground">
                 {n.label}
               </a>
@@ -93,7 +99,7 @@ export default function DesignSystemPage() {
 
       <div className="flex min-w-0 flex-col gap-14">
         <header id="principles" className="scroll-mt-20">
-          <p className="mb-2 text-[13px] font-medium text-muted-foreground">Contravo × shadcn/ui</p>
+          <p className="mb-2 text-caption font-medium text-muted-foreground">Contravo × shadcn/ui</p>
           <h1 className="page-title">Design system</h1>
           <p className="mt-3 max-w-[68ch] text-base text-muted-foreground">
             Every screen is built from stock shadcn/ui components, themed with Contravo’s brand tokens. There is one source of truth:
@@ -156,7 +162,7 @@ export default function DesignSystemPage() {
         <section id="typography" className="scroll-mt-20">
           <h2 className="heading mb-1 text-2xl">Typography</h2>
           <p className="mb-6 text-sm text-muted-foreground">
-            Instrument Sans in Regular and Medium (600 only for document headings). Sentence case, left-aligned, no artificial bold.
+            Instrument Sans in Regular and Medium (600 only for document headings). Sentence case, left-aligned, no artificial bold. Every size is a named step with its leading and tracking built in, tightening as type grows, so pages never set tracking by hand. Big standalone numbers use .figure-* (proportional digits); tnum is for columns and anything that ticks.
           </p>
           <Card className="py-0">
             {type.map((t, i) => (

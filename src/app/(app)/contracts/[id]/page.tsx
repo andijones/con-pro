@@ -48,7 +48,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
         }
       />
       {/* One status line: supplier included, and the extraction review as a quiet link */}
-      <div className="flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 text-caption text-muted-foreground">
         <StatusBadge status={c.status} />
         <ExtractionBadge state={c.extraction} />
         <span className="text-foreground">{c.supplier ?? <span className="text-warning">No counterparty recorded</span>}</span>
@@ -62,7 +62,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
         )}
         <span aria-hidden>·</span>
         <span>{c.route}</span>
-        <Link href={`/contracts/${c.id}/review`} className="hit-area-y ml-auto inline-flex items-center gap-1 underline-offset-4 hover:text-foreground hover:underline">
+        <Link href={`/contracts/${c.id}/review`} className="hit-area-y ml-auto inline-flex items-center gap-1 hover:text-foreground hover:underline">
           <ListChecks className="size-3.5" aria-hidden /> Review extraction
         </Link>
       </div>
@@ -72,7 +72,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
           <FileSearch />
           <AlertTitle>The AI has read this contract. Check what it found before it goes live.</AlertTitle>
           <AlertDescription>
-            <Link href={`/contracts/${c.id}/review`} className="font-medium text-primary underline underline-offset-4">
+            <Link href={`/contracts/${c.id}/review`} className="font-medium text-primary underline">
               Review what the AI read
             </Link>
           </AlertDescription>

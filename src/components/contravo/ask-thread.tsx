@@ -3,7 +3,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CalendarX2, Copy, Info, MessageSquare, RefreshCw, Thermometer, TrendingUp, type LucideIcon } from "lucide-react";
+import { CalendarX2, Copy, Info, MessageSquare, RefreshCw, Thermometer, TrendingUp, type LucideIcon } from "lucide-react";
 import { answer, suggestions, type Answer } from "@/lib/answers";
 import { contracts, conversations, currentUser } from "@/lib/data";
 import { formatDate } from "@/lib/dates";
@@ -172,7 +172,6 @@ export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: bool
         placeholder={turns.length ? "Ask a follow-up" : "Ask about your contracts: dates, obligations, parties, values."}
         isLoading={busy}
         loadingText="Reading your contracts…"
-        blobTranslucent
         rows={turns.length ? 2 : 4}
         maxLength={MAX}
         onSend={() => {
@@ -184,8 +183,9 @@ export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: bool
     </div>
   );
 
-  // Empty state ("Focus", docs/decisions/ask-composer.md): one centred column on white. The composer's rim colours
-  // pool beneath it (.ai-underglow), so the AI moment reads without a coloured backdrop.
+  // Empty state ("Focus" with the "Quiet list", docs/decisions/ask-composer.md): the composer is the one object on the
+  // page, solid and lifted, with its rim colours pooled faintly beneath (.ai-underglow). Everything else is words:
+  // Try asking and Recent chats as plain lists, side by side from md.
   if (!turns.length) {
     return (
       <div className="mx-auto flex max-w-3xl flex-col">
@@ -194,44 +194,32 @@ export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: bool
           {composer}
         </div>
 
-        <section className="mt-10">
-          <h2 className="mb-3 text-center text-sm font-medium">Try asking</h2>
-          <ul aria-label="Suggested questions" className="grid gap-2.5 [--suggestion-rim-rest:0.9] sm:grid-cols-2">
-            {suggestions.map((s, i) => {
-              const I = suggestionIcon[s] ?? MessageSquare;
-              return (
-                <li key={s} className={cn(i === suggestions.length - 1 && suggestions.length % 2 === 1 && "sm:col-span-2")}>
-                  <PromptSuggestion index={i} stacked onClick={() => ask(s)} className="min-h-14 gap-3 px-4 py-3">
-                    <span className="grid size-8 shrink-0 place-items-center rounded-md bg-highlight text-primary">
-                      <I className="size-4" aria-hidden />
-                    </span>
-                    <span className="flex-1 text-pretty">{s}</span>
-                    <ArrowRight className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  </PromptSuggestion>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-
-        <section className="mt-12">
-          <h2 className="mb-2 text-sm font-medium">Recent chats</h2>
-          <ul className="divide-y divide-(--brand-line)">
-            {conversations.map((c) => (
-              <li key={c.id}>
-                <button
-                  type="button"
-                  onClick={() => ask(c.q)}
-                  className="group flex w-full items-center gap-3 rounded-md px-2 py-2.5 text-left text-sm transition-colors duration-(--duration-fast) hover:bg-muted"
-                >
-                  <MessageSquare className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-                  <span className="min-w-0 flex-1 truncate group-hover:text-primary">{c.title}</span>
-                  <span className="tnum shrink-0 text-xs text-muted-foreground">{formatDate(c.at, { year: false })}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </section>
+        <div className="mt-12 grid gap-10 md:grid-cols-2 md:gap-12">
+          <section aria-labelledby="try-h">
+            <h2 id="try-h" className="mb-2 text-sm font-medium">
+              Try asking
+            </h2>
+            <PromptSuggestions>
+              {suggestions.map((s) => (
+                <PromptSuggestion key={s} icon={suggestionIcon[s] ?? MessageSquare} onClick={() => ask(s)}>
+                  {s}
+                </PromptSuggestion>
+              ))}
+            </PromptSuggestions>
+          </section>
+          <section aria-labelledby="recent-h">
+            <h2 id="recent-h" className="mb-2 text-sm font-medium">
+              Recent chats
+            </h2>
+            <PromptSuggestions>
+              {conversations.map((c) => (
+                <PromptSuggestion key={c.id} icon={MessageSquare} meta={formatDate(c.at, { year: false })} onClick={() => ask(c.q)} className="[&_svg]:text-muted-foreground">
+                  {c.title}
+                </PromptSuggestion>
+              ))}
+            </PromptSuggestions>
+          </section>
+        </div>
       </div>
     );
   }
@@ -276,13 +264,16 @@ export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: bool
                   ) : null}
 
                   {t.a.followUps?.length ? (
-                    <PromptSuggestions aria-label="Suggested follow-ups" className="mt-5">
-                      {t.a.followUps.map((f) => (
-                        <PromptSuggestion key={f} onClick={() => ask(f)}>
-                          {f}
-                        </PromptSuggestion>
-                      ))}
-                    </PromptSuggestions>
+                    <section aria-label="Suggested follow-ups" className="mt-6">
+                      <p className="mb-1 text-xs font-medium text-muted-foreground">Ask next</p>
+                      <PromptSuggestions>
+                        {t.a.followUps.map((f) => (
+                          <PromptSuggestion key={f} icon={suggestionIcon[f]} onClick={() => ask(f)}>
+                            {f}
+                          </PromptSuggestion>
+                        ))}
+                      </PromptSuggestions>
+                    </section>
                   ) : null}
                 </div>
 
@@ -329,7 +320,7 @@ export function AskThread({ onThreadChange }: { onThreadChange?: (inThread: bool
       </div>
       <div ref={bottom} className="h-4" />
       <div className="sticky bottom-4 isolate mt-6">
-        <div aria-hidden className="ai-underglow [--ai-underglow-opacity:0.45]" />
+        <div aria-hidden className="ai-underglow" />
         {composer}
       </div>
       <p className="mt-2 text-center text-xs text-muted-foreground">Answers are drafted from your contracts. Check the clause before you act on one.</p>

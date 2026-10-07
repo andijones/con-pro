@@ -13,7 +13,7 @@ import { ClauseLink, PageHeader, PersonAvatar } from "@/components/contravo/prim
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { PromptSuggestion, PromptSuggestions } from "@/components/ui/prompt-suggestion";
+import { HaloSuggestion, HaloSuggestions } from "@/components/ui/halo-suggestion";
 import { gaps, reviewed } from "./shared";
 
 export type Stage = "found" | "progress" | "secured";
@@ -256,13 +256,13 @@ export function Value() {
             <h2 id="askv-h" className="mb-3 text-base font-medium">
               Find more
             </h2>
-            <PromptSuggestions stacked aria-label="Ask about savings">
+            <HaloSuggestions stacked aria-label="Ask about savings">
               {askAbout.map((q) => (
-                <PromptSuggestion key={q} onClick={() => router.push(`/chat?q=${encodeURIComponent(q)}`)}>
+                <HaloSuggestion key={q} onClick={() => router.push(`/chat?q=${encodeURIComponent(q)}`)}>
                   {q}
-                </PromptSuggestion>
+                </HaloSuggestion>
               ))}
-            </PromptSuggestions>
+            </HaloSuggestions>
           </section>
         </aside>
       </div>

@@ -75,7 +75,7 @@ function Grid({
   const cells = monthGrid(y, m);
   return (
     <div className="mt-3">
-      <div className="grid grid-cols-7 text-center text-[11px] text-muted-foreground" aria-hidden>
+      <div className="grid grid-cols-7 text-center text-micro text-muted-foreground" aria-hidden>
         {["M", "T", "W", "T", "F", "S", "S"].map((d, i) => (
           <span key={i} className="py-1">
             {d}
@@ -92,7 +92,7 @@ function Grid({
           const past = iso < today;
           const face = (
             <>
-              <span className={cn("tnum text-[13px] leading-none", isToday && "font-semibold", past && "text-muted-foreground")}>{n}</span>
+              <span className={cn("tnum text-caption leading-none", isToday && "font-semibold", past && "text-muted-foreground")}>{n}</span>
               <span className="mt-1 flex h-1.5 items-center gap-0.5">
                 {kindsHere.slice(0, 3).map((k) => (
                   <Dot key={k} kind={k} />

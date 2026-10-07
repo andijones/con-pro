@@ -1,6 +1,6 @@
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
+import { cn } from "@/lib/utils"
 import { Slot } from "radix-ui"
 
 const badgeVariants = cva(
@@ -17,7 +17,7 @@ const badgeVariants = cva(
           "shadow-hairline text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
         ghost:
           "hover:bg-muted hover:text-muted-foreground dark:hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-primary hover:underline",
         // Contravo status variants: always pair with a label or icon
         success: "bg-success-muted text-success [a]:hover:bg-success-muted/80",
         warning: "bg-warning-muted text-warning [a]:hover:bg-warning-muted/80",

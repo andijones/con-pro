@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { AlertTriangle, Bold, Calendar as CalendarIcon, Check, ChevronDown, FileText, Info, Italic, Mail, Plus, Search, Underline, Upload } from "lucide-react";
+import { AlertTriangle, Bold, Calendar as CalendarIcon, Check, ChevronDown, FileText, Info, Italic, Mail, MessageSquare, Plus, RefreshCw, Search, Thermometer, Underline, Upload } from "lucide-react";
 import { toast } from "sonner";
 import { decisions } from "@/lib/data";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -642,7 +642,6 @@ export function ComponentGallery() {
             placeholder="Ask about your contracts: dates, obligations, parties, values."
             isLoading={promptBusy}
             loadingText="Reading your contracts…"
-            blobTranslucent
             onSend={() => {
               setPrompt("");
               setPromptBusy(true);
@@ -650,19 +649,26 @@ export function ComponentGallery() {
             }}
             onAttach={() => toast("Attach a file (concept only)")}
           />
-          <PromptComposer size="compact" aria-label="Ask about any contract (compact example)" placeholder="Ask about any contract…" blobTranslucent />
+          <PromptComposer size="compact" aria-label="Ask about any contract (compact example)" placeholder="Ask about any contract…" />
         </Specimen>
-        <Specimen label="Prompt suggestions: AI-suggested questions, asked in one click. Wrap on wide pages; stacked in the drawer" className="grid gap-4 md:grid-cols-[minmax(0,1fr)_20rem] md:items-start">
+        <Specimen label="Prompt suggestions: a quiet list, asked in one click. Optional topic icon; optional trailing meta (Recent chats)" className="grid gap-8 md:grid-cols-2 md:items-start">
           <PromptSuggestions aria-label="Suggested questions (example)">
-            {["Which contracts renew automatically?", "Who pays if the vaccine fridge fails?", "Are we paying for anything twice?"].map((q) => (
-              <PromptSuggestion key={q} onClick={() => toast(q)}>
-                {q}
+            {[
+              ["Which contracts renew automatically?", RefreshCw],
+              ["Who pays if the vaccine fridge fails?", Thermometer],
+              ["When does it renew, and what happens if we miss the notice date?", undefined],
+            ].map(([q, I]) => (
+              <PromptSuggestion key={q as string} icon={I as typeof RefreshCw | undefined} onClick={() => toast(q as string)}>
+                {q as string}
               </PromptSuggestion>
             ))}
           </PromptSuggestions>
-          <PromptSuggestions stacked aria-label="Suggested questions (stacked example)">
-            {["Can we end this contract early?", "When does it renew, and what happens if we miss the notice date?"].map((q) => (
-              <PromptSuggestion key={q} onClick={() => toast(q)}>
+          <PromptSuggestions aria-label="Recent chats (example)">
+            {[
+              ["Who pays if the vaccine fridge fails?", "28 Sept"],
+              ["Theatre linen overlap", "19 Sept"],
+            ].map(([q, d]) => (
+              <PromptSuggestion key={q} icon={MessageSquare} meta={d} onClick={() => toast(q)} className="[&_svg]:text-muted-foreground">
                 {q}
               </PromptSuggestion>
             ))}

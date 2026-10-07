@@ -114,7 +114,7 @@ export function Countdown({ date, label, size = "md" }: { date: string; label?: 
   }
   return (
     <div className="flex flex-col">
-      <span className={cn("tnum text-[2rem] leading-none tracking-[-0.03em]", color)}>
+      <span className={cn("figure-lg", color)}>
         {d < 0 ? -d : d}
         <span className="ml-1 text-sm tracking-normal">{d < 0 ? "days late" : d === 1 ? "day" : "days"}</span>
       </span>
@@ -128,15 +128,16 @@ export function Countdown({ date, label, size = "md" }: { date: string; label?: 
 
 /* ---------- Evidence: every insight links back to its clause ---------- */
 
+/** A jump to the clause, built as a white outline button (white, raised, press and hover) so it reads as clickable on any surface, tinted alerts included */
 export function ClauseLink({ contractId, clause, contractTitle }: { contractId: string; clause: string; contractTitle?: string }) {
   return (
-    <Badge variant="outline" asChild className="h-6 max-w-full gap-1.5 rounded-md px-2 font-normal text-muted-foreground">
+    <Button variant="outline" size="xs" asChild className="max-w-full min-w-0 shrink justify-start gap-1.5 text-caption font-normal">
       <Link href={`/contracts/${contractId}?clause=${encodeURIComponent(clause)}`}>
-        <FileText data-icon="inline-start" />
-        <span className="font-medium text-foreground">Clause {clause}</span>
-        {contractTitle && <span className="truncate">· {contractTitle}</span>}
+        <FileText data-icon="inline-start" className="text-muted-foreground" />
+        <span className="font-medium">Clause {clause}</span>
+        {contractTitle && <span className="truncate text-muted-foreground">· {contractTitle}</span>}
       </Link>
-    </Badge>
+    </Button>
   );
 }
 
@@ -197,7 +198,7 @@ export function Stat({
     <>
       <span
         className={cn(
-          "tnum block text-2xl tracking-[-0.02em]",
+          "figure-md block",
           tone === "critical" && "text-critical",
           tone === "warning" && "text-warning",
           tone === "success" && "text-success",
@@ -205,7 +206,7 @@ export function Stat({
       >
         {value}
       </span>
-      <span className="mt-1 block text-[13px] text-muted-foreground">{label}</span>
+      <span className="mt-1 block text-caption text-muted-foreground">{label}</span>
     </>
   );
   const cls = "block rounded-lg bg-card px-4 py-3.5 shadow-card transition-[background-color,box-shadow] duration-(--duration-fast)";

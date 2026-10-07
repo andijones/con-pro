@@ -95,7 +95,7 @@ export function HomeTabs() {
       <Tabs value={tab} onValueChange={setTab} className="mt-10 gap-0">
         <TabsList variant="line" className="h-auto w-full justify-start gap-6 overflow-x-auto overflow-y-hidden border-b px-0 pb-0 [scrollbar-width:none]">
           {tabs.map((t) => (
-            <TabsTrigger key={t.id} value={t.id} className="h-11 flex-none px-0 text-[15px] group-data-horizontal/tabs:after:bottom-0">
+            <TabsTrigger key={t.id} value={t.id} className="h-11 flex-none px-0 text-reading group-data-horizontal/tabs:after:bottom-0">
               {t.label}
               <span className="tnum ml-1 rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">{t.items.length}</span>
             </TabsTrigger>
@@ -127,7 +127,7 @@ function Tile({ tint, value, label, valueClass }: { tint: string; value: string;
   return (
     <div className={cn("flex flex-col-reverse rounded-xl px-5 py-4", tint)}>
       <dt className="mt-1 text-sm text-pretty text-foreground/75">{label}</dt>
-      <dd className={cn("tnum text-[2rem] leading-none tracking-[-0.03em]", valueClass)}>{value}</dd>
+      <dd className={cn("figure-lg", valueClass)}>{value}</dd>
     </div>
   );
 }
@@ -152,10 +152,10 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
         >
           <span className="flex flex-col items-center rounded-lg bg-muted py-1.5 leading-none">
             <span className="tnum text-lg font-medium">{day}</span>
-            <span className="mt-0.5 text-[11px] text-muted-foreground uppercase">{month}</span>
+            <span className="mt-0.5 text-micro text-muted-foreground uppercase">{month}</span>
           </span>
           <span className="min-w-0">
-            <span className="block text-[15px] font-medium text-pretty group-hover:text-primary">{title}</span>
+            <span className="block text-reading font-medium text-pretty group-hover:text-primary">{title}</span>
             <span className="mt-0.5 flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
               <Icon className="size-3.5" aria-hidden />
               {meta}
@@ -164,7 +164,7 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
             </span>
           </span>
           <span className="flex items-center gap-3">
-            {isD && i.d.impact && <span className="tnum hidden text-[15px] font-medium sm:block">{gbp(i.d.impact.amount, { compact: true })}</span>}
+            {isD && i.d.impact && <span className="tnum hidden text-reading font-medium sm:block">{gbp(i.d.impact.amount, { compact: true })}</span>}
             <ChevronDown className={cn("size-4 text-muted-foreground transition-transform duration-(--duration-fast)", open && "rotate-180")} aria-hidden />
           </span>
         </button>
@@ -172,7 +172,7 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
       <div id={panel} role="region" aria-label={title} hidden={!open} className="pb-6 sm:pl-[4.25rem]">
         {isD ? (
           <>
-            <p className="max-w-[62ch] text-[15px] leading-relaxed text-pretty text-muted-foreground">{i.d.detail}</p>
+            <p className="max-w-[62ch] text-reading leading-relaxed text-pretty text-muted-foreground">{i.d.detail}</p>
             <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
               {i.d.impact && (
                 <span>
@@ -182,7 +182,7 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
               {i.d.clauseId && (
                 <Link
                   href={`/contracts/${i.contract.id}?clause=${encodeURIComponent(i.d.clauseId)}`}
-                  className="inline-flex min-h-6 items-center gap-1.5 font-medium text-foreground underline decoration-input underline-offset-4 hover:decoration-primary"
+                  className="inline-flex min-h-6 items-center gap-1.5 font-medium text-foreground underline decoration-input hover:decoration-primary"
                 >
                   <FileText className="size-3.5" aria-hidden /> Clause {i.d.clauseId}, {i.contract.title}
                 </Link>
@@ -204,7 +204,7 @@ function Row({ item: i, open, onToggle, onDone }: { item: Item; open: boolean; o
         ) : (
           <>
             <Progress value={Math.max((i.elapsed / 20) * 100, 3)} aria-label={`Working day ${i.elapsed} of 20`} className="h-1.5 max-w-sm" />
-            <p className="mt-3 text-[15px] text-muted-foreground">
+            <p className="mt-3 text-reading text-muted-foreground">
               The law gives 20 working days to reply. This one is due {formatDate(i.due)}, and {people[i.f.assignee]?.name ?? "nobody"} is handling it.
             </p>
             <Button asChild className="mt-4">

@@ -205,7 +205,7 @@ export function TokenEditor() {
         <div className="flex flex-col gap-6">
           {semanticGroups.map((g) => (
             <div key={g.title}>
-              <p className="mb-2 text-xs font-medium tracking-[0.08em] text-muted-foreground uppercase">{g.title}</p>
+              <p className="mb-2 eyebrow text-muted-foreground">{g.title}</p>
               <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
                 {g.tokens.map((t) => (
                   <Swatch key={t} token={t} value={values[t]} edited={t in overrides} onChange={set} onReset={reset} compact />
