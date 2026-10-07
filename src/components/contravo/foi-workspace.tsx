@@ -5,8 +5,11 @@ import Link from "next/link";
 import { cn as clsx } from "@/lib/utils";
 import {
   AlertOctagon,
+  CalendarIcon,
   Check,
   CircleAlert,
+  CirclePause,
+  MailCheck,
   Database,
   Download,
   FileSpreadsheet,
@@ -15,24 +18,56 @@ import {
   Quote,
   Search,
 } from "lucide-react";
+import { toast } from "sonner";
 import type { FoiRequest } from "@/lib/data";
 import { contracts, organisation, people } from "@/lib/data";
 import type { FoiCase } from "@/lib/foi-cases";
-import { formatDate, gbp } from "@/lib/dates";
+import { addWorkingDays, formatDate, gbp, parse, TODAY } from "@/lib/dates";
+import { canSignOff, dueText, foiView } from "@/lib/foi-lifecycle";
+import { restoreFoi, updateFoi, useFoiPatches, withPatch, type FoiPatch } from "@/lib/foi-store";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Field, FieldDescription, FieldLabel } from "@/components/ui/field";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { StatusBadge } from "./primitives";
 
 type Stage = "request" | "searching" | "scope" | "draft";
 
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const todayIso = iso(TODAY);
+
 function initialStage(status: FoiRequest["status"]): Stage {
-  if (status === "New") return "request";
+  if (status === "New" || status === "Awaiting clarification") return "request";
   if (status === "Searching" || status === "Confirm scope") return "scope";
   return "draft";
 }
 
-export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kase: FoiCase; due: string; elapsed: number }) {
+/** Change a request, with an Undo that puts it back exactly as it was (WCAG 2.2.1: no time limit) */
+function change(id: string, patch: FoiPatch, before: FoiPatch | undefined, message: string, description?: string) {
+  updateFoi(id, patch);
+  toast(message, { description, action: { label: "Undo", onClick: () => restoreFoi(id, before) }, duration: Infinity });
+}
+
+export function FoiWorkspace({ req: seed, kase }: { req: FoiRequest; kase: FoiCase }) {
+  // This session's changes (clarify, sign-off, sent) applied on top of the stored request
+  const patches = useFoiPatches();
+  const req = withPatch(seed, patches);
+  const v = foiView(req);
+  const before = patches[seed.id];
   const [stage, setStage] = useState<Stage>(initialStage(req.status));
   const [shown, setShown] = useState(stage === "request" ? 0 : kase.searches.length);
   const [scope, setScope] = useState<string[]>(kase.proposed);
@@ -91,7 +126,8 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <h2 className="text-sm font-medium">Request</h2>
             <span className="tnum text-xs text-muted-foreground">
-              {req.requester} · received {formatDate(req.received)}
+              {req.requester} · received {formatDate(seed.received)}
+              {req.received !== seed.received && <> · clock restarted {formatDate(req.received)}</>}
             </span>
           </div>
           <blockquote className="mt-3 border-l-2 border-ring pl-4 text-[16px] leading-relaxed text-pretty">{req.text}</blockquote>
@@ -207,7 +243,7 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
               </p>
               <h2 className="heading mt-1 text-2xl">Response to your request</h2>
               <p className="mt-3 max-w-[65ch] text-[15px] leading-relaxed text-muted-foreground">
-                Thank you for your request of {formatDate(req.received)} under the Freedom of Information Act 2000. We have set out
+                Thank you for your request of {formatDate(seed.received)} under the Freedom of Information Act 2000. We have set out
                 below what we hold, what we can disclose and what we have withheld.
               </p>
 
@@ -309,18 +345,7 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
 
       {/* Right rail: the clock, what blocks sending, outputs */}
       <aside className="order-first flex flex-col gap-4 lg:sticky lg:top-(--page-bar-offset) lg:order-none lg:self-start">
-        <Card className="gap-0 p-5">
-          <p className="text-xs text-muted-foreground">Response due</p>
-          <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(due)}</p>
-          <div className="mt-3 flex gap-[2px]" aria-hidden>
-            {Array.from({ length: 20 }).map((_, i) => (
-              <span key={i} className={clsx("h-2 flex-1 rounded-[1px]", i < elapsed ? (20 - elapsed <= 2 ? "bg-critical" : "bg-ring") : "bg-muted ring-1 ring-border ring-inset")} />
-            ))}
-          </div>
-          <p className="tnum mt-1.5 text-xs text-muted-foreground">
-            Working day {elapsed} of 20 · {Math.max(0, 20 - elapsed)} left
-          </p>
-        </Card>
+        <Clock req={req} v={v} kase={kase} before={before} onReplied={() => setStage(kase.searches.length ? "scope" : "request")} />
 
         {stage === "draft" && kase.officerNotes.length > 0 && (
           <Card className="gap-0 p-5">
@@ -392,12 +417,7 @@ export function FoiWorkspace({ req, kase, due, elapsed }: { req: FoiRequest; kas
                 </li>
               ))}
             </ul>
-            <Button className="mt-4 w-full" disabled={blocking > 0}>
-              Approve for sending
-            </Button>
-            <p className="mt-2 text-center text-xs text-muted-foreground">
-              {blocking > 0 ? "Resolve the blocking notes first." : `Approved as ${people[req.assignee].name}. You send it from your own mailbox.`}
-            </p>
+            <SignOff req={req} blocking={blocking} before={before} />
           </Card>
         )}
       </aside>
@@ -416,3 +436,229 @@ function DraftSection({ n, title, children }: { n: number; title: string; childr
     </section>
   );
 }
+
+/* ---------- The clock: running, stopped for clarification, or stopped because the reply was sent ---------- */
+
+type V = ReturnType<typeof foiView>;
+
+function Clock({ req, v, kase, before, onReplied }: { req: FoiRequest; v: V; kase: FoiCase; before: FoiPatch | undefined; onReplied: () => void }) {
+  if (v.stage === "clarify") {
+    return (
+      <Card className="gap-0 p-5">
+        <p className="flex items-center gap-1.5 text-xs text-muted-foreground">
+          <CirclePause className="size-3.5" aria-hidden /> Clock stopped
+        </p>
+        <p className="mt-1 text-xl tracking-[-0.01em]">Waiting for the requester</p>
+        <p className="mt-2 text-sm text-pretty text-muted-foreground">
+          Asked to clarify on {formatDate(req.clarifyAsked!)}, at working day {v.elapsed} of 20. The 20 working days start again from the day after
+          they reply.
+        </p>
+        <RecordReply req={req} before={before} onReplied={onReplied} />
+      </Card>
+    );
+  }
+  if (v.stage === "sent") {
+    const sent = req.sentOn ?? todayIso;
+    return (
+      <Card className="gap-0 p-5">
+        <p className="text-xs text-muted-foreground">Sent</p>
+        <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(sent)}</p>
+        <p className="tnum mt-1.5 text-xs text-pretty text-muted-foreground">
+          Working day {v.elapsed} of 20{v.elapsed > 20 ? ", after the legal deadline" : ""}. The requester can ask for an internal review until{" "}
+          {formatDate(addWorkingDays(sent, 40))}.
+        </p>
+      </Card>
+    );
+  }
+  return (
+    <Card className="gap-0 p-5">
+      <p className="text-xs text-muted-foreground">Response due</p>
+      <p className="tnum mt-1 text-2xl tracking-[-0.02em]">{formatDate(v.due)}</p>
+      <div className="mt-3 flex gap-[2px]" aria-hidden>
+        {Array.from({ length: 20 }).map((_, i) => (
+          <span
+            key={i}
+            className={clsx("h-2 flex-1 rounded-[1px]", i < v.elapsed ? (v.workingLeft <= 2 ? "bg-critical" : "bg-ring") : "bg-muted ring-1 ring-border ring-inset")}
+          />
+        ))}
+      </div>
+      <p className="tnum mt-1.5 text-xs text-muted-foreground">
+        {v.elapsed === 0 ? "Day 1 is the next working day" : `Working day ${Math.min(v.elapsed, 20)} of 20`} · {dueText(v).replace(/^Due today$/, "due today")}
+      </p>
+      {v.stage !== "signoff" && <AskToClarify req={req} kase={kase} before={before} />}
+    </Card>
+  );
+}
+
+/** FOI Act s.1(3): an unclear request can be clarified; the clock stops, and restarts from the day after they reply */
+function AskToClarify({ req, kase, before }: { req: FoiRequest; kase: FoiCase; before: FoiPatch | undefined }) {
+  // A real question, with the agent's advice as the reason for asking
+  const [question, setQuestion] = useState(
+    `Thank you for your request. So that we can answer it fully, could you clarify exactly what information you are looking for?${kase.advice[0] ? `\n\nFor context: ${kase.advice[0]}` : ""}`,
+  );
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="ghost" size="sm" className="mt-3 -ml-2.5 self-start text-muted-foreground">
+          <CirclePause data-icon="inline-start" /> Ask the requester to clarify
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Ask the requester to clarify</DialogTitle>
+          <DialogDescription>
+            If you can’t tell what they’re asking for, you can ask. The clock stops while you wait, and the 20 working days start again from the day
+            after they reply (FOI Act, section 1(3)).
+          </DialogDescription>
+        </DialogHeader>
+        <Field>
+          <FieldLabel htmlFor="clarify-question">Your question</FieldLabel>
+          <Textarea id="clarify-question" rows={5} value={question} onChange={(e) => setQuestion(e.target.value)} />
+          <FieldDescription>Drafted from the advice in the reply. Send it from your own mailbox, then confirm here.</FieldDescription>
+        </Field>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => {
+              navigator.clipboard?.writeText(question).then(
+                () => toast.success("Question copied"),
+                () => toast.error("Couldn’t copy. Select the text and copy it instead."),
+              );
+            }}
+          >
+            Copy question
+          </Button>
+          <DialogClose asChild>
+            <Button
+              disabled={!question.trim()}
+              onClick={() =>
+                change(req.id, { status: "Awaiting clarification", clarifyAsked: todayIso }, before, "Clock stopped", "Waiting for the requester to clarify.")
+              }
+            >
+              I’ve sent it. Stop the clock
+            </Button>
+          </DialogClose>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Their reply restarts the clock: day 1 is the working day after it arrived */
+function RecordReply({ req, before, onReplied }: { req: FoiRequest; before: FoiPatch | undefined; onReplied: () => void }) {
+  const [on, setOn] = useState<Date>(TODAY);
+  return (
+    <div className="mt-4 flex flex-col gap-2">
+      <DatePick id="reply-date" label="Their reply arrived" value={on} onChange={setOn} from={parse(req.clarifyAsked ?? req.received)} />
+      <Button
+        className="w-full"
+        onClick={() => {
+          change(req.id, { status: "Confirm scope", received: iso(on), clarifyAsked: undefined }, before, "Clock restarted", `Day 1 is the working day after ${formatDate(iso(on))}.`);
+          onReplied();
+        }}
+      >
+        Record their reply
+      </Button>
+    </div>
+  );
+}
+
+/* ---------- Sign-off: a named reviewer who isn't the drafter, then the date it went out ---------- */
+
+function SignOff({ req, blocking, before }: { req: FoiRequest; blocking: number; before: FoiPatch | undefined }) {
+  const [sentOn, setSentOn] = useState<Date>(TODAY);
+  const reviewer = people[req.reviewer];
+  const officer = people[req.assignee];
+
+  if (req.status === "Sent") {
+    return (
+      <p className="mt-4 flex items-start gap-2 rounded-lg bg-success-muted px-3 py-2.5 text-sm text-success">
+        <MailCheck className="mt-0.5 size-4 shrink-0" aria-hidden />
+        <span>
+          Sent on {formatDate(req.sentOn ?? todayIso)}.{req.approvedBy && <> Approved by {people[req.approvedBy].name}.</>}
+        </span>
+      </p>
+    );
+  }
+
+  if (req.approvedBy) {
+    return (
+      <div className="mt-4 flex flex-col gap-2">
+        <p className="flex items-center gap-1.5 text-sm text-success">
+          <Check className="size-4" aria-hidden /> Approved by {people[req.approvedBy].name}
+        </p>
+        <DatePick id="sent-date" label="Date sent" value={sentOn} onChange={setSentOn} from={parse(req.received)} />
+        <Button
+          className="w-full"
+          onClick={() => change(req.id, { status: "Sent", sentOn: iso(sentOn) }, before, "Marked as sent", "The clock has stopped and the request has moved to Sent.")}
+        >
+          <MailCheck data-icon="inline-start" /> Mark as sent
+        </Button>
+        <p className="text-center text-xs text-pretty text-muted-foreground">Send it from your own mailbox first. This records the date and stops the clock.</p>
+      </div>
+    );
+  }
+
+  if (req.status === "With reviewer") {
+    return (
+      <div className="mt-4 flex flex-col gap-2">
+        <p className="text-sm text-muted-foreground">
+          With <span className="font-medium text-foreground">{reviewer.name}</span> for sign-off.
+        </p>
+        <Button className="w-full" disabled={blocking > 0 || !canSignOff(req, req.reviewer)} onClick={() => change(req.id, { approvedBy: req.reviewer }, before, "Approved for sending")}>
+          Approve as {reviewer.name}
+        </Button>
+        <p className="text-center text-xs text-pretty text-muted-foreground">
+          {blocking > 0 ? "Resolve the blocking notes first." : `${officer.name} drafted it, so only ${reviewer.name} can approve it.`}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-4 flex flex-col gap-2">
+      <Field>
+        <FieldLabel htmlFor="foi-reviewer">Signs it off</FieldLabel>
+        <Select value={req.reviewer} onValueChange={(id) => updateFoi(req.id, { reviewer: id })}>
+          <SelectTrigger id="foi-reviewer" className="w-full">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.values(people)
+              .filter((p) => canSignOff(req, p.id))
+              .map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name} · {p.role}
+                </SelectItem>
+              ))}
+          </SelectContent>
+        </Select>
+        <FieldDescription>Not {officer.name}: whoever drafts a reply can’t approve it.</FieldDescription>
+      </Field>
+      <Button className="mt-1 w-full" disabled={blocking > 0} onClick={() => change(req.id, { status: "With reviewer" }, before, `Sent to ${reviewer.name} for sign-off`)}>
+        Send for sign-off
+      </Button>
+      {blocking > 0 && <p className="text-center text-xs text-muted-foreground">Resolve the blocking notes first.</p>}
+    </div>
+  );
+}
+
+/** A labelled date button with a calendar; no dates before `from` or after today */
+function DatePick({ id, label, value, onChange, from }: { id: string; label: string; value: Date; onChange: (d: Date) => void; from: Date }) {
+  return (
+    <Field>
+      <FieldLabel htmlFor={id}>{label}</FieldLabel>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button id={id} variant="outline" className="w-full justify-start font-normal">
+            <CalendarIcon data-icon="inline-start" /> {formatDate(iso(value))}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0" align="start">
+          <Calendar mode="single" selected={value} onSelect={(d) => d && onChange(d)} disabled={{ before: from, after: TODAY }} />
+        </PopoverContent>
+      </Popover>
+    </Field>
+  );
+}
+

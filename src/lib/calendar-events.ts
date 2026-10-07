@@ -29,7 +29,7 @@ export const events: CalendarEvent[] = [
     .filter((d) => d.kind === "price" || d.kind === "money")
     .map((d) => ({ id: `m-${d.id}`, date: d.due, kind: "money" as const, title: d.title, context: title(d.contractId), href: `/contracts/${d.contractId}` })),
   ...foiRequests
-    .filter((f) => f.status !== "Sent")
+    .filter((f) => f.status !== "Sent" && f.status !== "Awaiting clarification") // no due date while the clock is stopped
     .map((f) => ({ id: `f-${f.id}`, date: foiDue(f), kind: "foi" as const, title: "FOI reply due", context: `${f.subject} · ${f.ref}`, href: `/foi/${f.id}` })),
 ]
   .filter((e) => daysUntil(e.date) >= -1)

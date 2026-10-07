@@ -49,3 +49,18 @@ A request is **Behind** when its stage is earlier than the target for today's wo
 The prototype added four sample requests: one being searched, one waiting on the requester with the clock paused, one overdue in sign-off, and one sent. They have no full case behind them, so the live page shows the real requests only.
 
 `FoiStatus` has no state for clarification yet. When it's added, show the clock as paused (the requester has been asked to clarify, so the 20 days stop) and put it under "Waiting on someone else".
+
+## Update, 7 October 2026: working days, a separate reviewer, clarification, sent
+
+- **Working days everywhere.** Each card now gives the time left in working days, for example "10 working days left", "Due today" or "2 working days overdue". The list used to count calendar days ("14 days left") while the case page counted working days, so the same request showed two different numbers. The Act counts working days. `FoiView.workingLeft` replaces `daysLeft`.
+- **A separate reviewer.** Each request has its own `reviewer`, and the seed data uses Helen Price, Senior Information Risk Owner. The "Signs it off" picker leaves out the officer who drafted the reply (`canSignOff`). The flow is: **Send for sign-off**, then **Approve as {reviewer}**, then **Mark as sent**. "Approve" is blocked while any blocking note is open. This replaces the hard-coded Information Governance lead, who was also the drafting officer, so they had been signing off their own work.
+- **Ask the requester to clarify** (FOI Act s.1(3)).
+  - Available from the clock card at any stage before sign-off.
+  - Contravo drafts the question from its advice. The officer sends it from their own mailbox, copies it if needed, then confirms with "I've sent it. Stop the clock".
+  - The request moves to "Waiting on someone else", where it shows "Clock stopped", an outline "Waiting for requester" badge and the date it was asked. It sorts last.
+  - **Record their reply** restarts the clock: day 1 is the working day after the reply arrived. The original date received is kept and shown, with "clock restarted {date}".
+  - New status: `Awaiting clarification`. There's no due date while the clock is stopped, so it's left out of the calendar and Home.
+- **Mark as sent** records the date it went out, with a date picker. That stops the clock: the working day count is fixed at the send date. The request moves to Sent, and the case page shows the last date the requester can ask for an internal review (40 working days).
+- Every change offers Undo, with no time limit.
+
+**How state is kept.** The concept has no back end. Changes made on a case page go into `sessionStorage` through `src/lib/foi-store.ts`, and both the list and the case page read from it, so they stay in step. The server renders the seed data, and the browser applies the session's changes straight after loading.

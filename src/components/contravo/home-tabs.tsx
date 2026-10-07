@@ -34,7 +34,7 @@ const decisionItems: DecisionItem[] = sorted.map((d) => ({
   contract: contracts.find((c) => c.id === d.contractId)!,
 }));
 const foiItems: Item[] = foiRequests
-  .filter((f) => f.status !== "Sent")
+  .filter((f) => f.status !== "Sent" && f.status !== "Awaiting clarification")
   .map((f) => ({ type: "foi" as const, id: f.id, due: foiDue(f), days: daysUntil(foiDue(f)), f, elapsed: foiElapsed(f) }))
   .sort((a, b) => a.due.localeCompare(b.due));
 

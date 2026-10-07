@@ -38,3 +38,22 @@ One scroll through the whole agreement (`components/contravo/contract-reader.tsx
 - **Annotated:** contents with a risk dot per part, plus the document with notes in the margin and Previous risk and Next risk buttons. The best for reading properly or auditing.
 
 The prototype's topics, per-clause actions and 24 filler clauses exist only in `/proto/reader/doc.ts`. Building Brief or Annotated for real would need topics added to the clause data.
+
+## Update, 7 October 2026: the full contract and the navigator rail
+
+Decided from `/proto/risk-map`, which is kept.
+
+- **The whole agreement, where we hold it.** The reader shows every clause in order, part by part, with small part headings ("7 Charges and payment"). Flagged clauses sit in place among the unflagged ones. The full text comes from `src/lib/contract-documents.ts` (`documentFor`). The concept holds the imaging contract in full (32 clauses, 6 flagged). Other contracts still show their extracted clauses, and the summary stays honest ("Contravo read all 3 clauses", or "the clauses on the 12 pages it holds" when pages are missing).
+  - **Why:** "Read all 3 clauses" for a 41-page PDF undersold the reading. The map is only useful when risks are spread through a long document.
+- **Navigator rail replaces the capsule map.** It's a slim, sticky, rounded rail to the right of the contract, from `md` up:
+  - **Arrows:** up and down step to the previous or next highlighted risk.
+  - **Counter:** "3 of 6". Screen readers hear the level, heading and clause number, announced politely.
+  - **Stops:** one per risk, in document order, on a thin track. The one you're reading grows into a pill with a Violet focus-edge ring. Stops are sized by level (high largest) as well as coloured, so colour is never the only signal, and each is a 28px target with a text label.
+- **"Current" follows your reading.** It's the flagged clause across the middle of the screen, otherwise the nearest one in view. After a jump, the target stays current until the smooth scroll settles, so the counter never names the wrong clause.
+- **Phones:** the rail hides, and a compact sticky bar under the contract does the same job: "‹ › 3/6 · Medium risk · VAT".
+- **Highlight chips stay** (All risks, High, Medium, Low). They highlight clauses rather than hide them, and they also decide which risks the navigator steps through.
+
+**Rejected, still in `/proto/risk-map`:**
+- **Minimap:** a document-length strip with marks at their real positions and a "you are here" window. It shows best where risks cluster, but the marks have no labels without hovering, and it can't step through risks in order.
+- **Index:** a labelled list of the flagged clauses. Best for finding a clause by name, but it needs a wide screen (only from `xl`), so there was no map on laptop or phone widths.
+- **Navigator (horizontal):** a sticky bar under the document. It's clear, but it sits over the text and takes the bottom of the screen. It's kept as the phone fallback.

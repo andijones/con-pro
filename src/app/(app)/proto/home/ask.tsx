@@ -133,7 +133,7 @@ export function Ask() {
             Coming up
           </h2>
           <ol className="flex flex-col divide-y rounded-xl bg-card shadow-card">
-            {[...top.slice(0, 4).map((d) => ({ id: d.id, t: d.title, ctx: title(d.contractId), days: daysUntil(d.due), href: `/contracts/${d.contractId}` })), ...foi.slice(0, 2).map((v) => ({ id: v.id, t: v.next, ctx: v.ref, days: v.daysLeft, href: `/foi/${v.id}` }))]
+            {[...top.slice(0, 4).map((d) => ({ id: d.id, t: d.title, ctx: title(d.contractId), days: daysUntil(d.due), href: `/contracts/${d.contractId}` })), ...foi.slice(0, 2).map((v) => ({ id: v.id, t: v.next, ctx: v.ref, days: daysUntil(v.due), href: `/foi/${v.id}` }))]
               .sort((x, y) => x.days - y.days)
               .map((r) => (
                 <li key={r.id}>

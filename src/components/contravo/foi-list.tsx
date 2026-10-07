@@ -1,37 +1,58 @@
+"use client";
+
 /**
  * FOI requests as the next thing to do, grouped by whose move it is,
  * each with its 20-working-day clock and the target pace marked.
  * Decision record: docs/decisions/foi.md
  */
 import Link from "next/link";
-import { AlertTriangle, ArrowRight, Bot } from "lucide-react";
+import { AlertTriangle, ArrowRight, Bot, Plus, UserRound } from "lucide-react";
+import type { FoiRequest } from "@/lib/data";
 import { formatDate } from "@/lib/dates";
-import { dueText, milestones, targetDate, type FoiView } from "@/lib/foi-lifecycle";
+import { dueText, foiView, milestones, targetDate, timeLeft, type FoiView } from "@/lib/foi-lifecycle";
+import { useFoiPatches, withPatch } from "@/lib/foi-store";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PersonAvatar } from "./primitives";
+import { PageHeader, PersonAvatar } from "./primitives";
 
 const sections: { title: string; hint: string; test: (v: FoiView) => boolean; quiet?: boolean }[] = [
   { title: "Your move", hint: "An officer needs to do something before these can go further.", test: (v) => v.owner.kind === "officer" },
   {
     title: "Waiting on someone else",
-    hint: "Contravo or the reviewer has it. Nothing for you to do yet.",
-    test: (v) => v.owner.kind === "contravo" || v.owner.kind === "reviewer",
+    hint: "The requester, Contravo or the reviewer has it. Nothing for you to do yet.",
+    test: (v) => v.owner.kind === "contravo" || v.owner.kind === "reviewer" || v.owner.kind === "requester",
     quiet: true,
   },
   { title: "Sent", hint: "Finished. The requester can ask for an internal review within 40 working days.", test: (v) => v.stage === "sent", quiet: true },
 ];
 
-const paceLabel = { "on-track": "On track", behind: "Behind", overdue: "Overdue", done: "Sent" } as const;
-const paceBadge = { "on-track": "success", behind: "warning", overdue: "critical", done: "secondary" } as const;
+const paceLabel = { "on-track": "On track", behind: "Behind", overdue: "Overdue", paused: "Waiting for requester", done: "Sent" } as const;
+const paceBadge = { "on-track": "success", behind: "warning", overdue: "critical", paused: "outline", done: "secondary" } as const;
 const paceText = (v: FoiView) => (v.pace === "overdue" ? "text-critical" : v.pace === "behind" ? "text-warning" : "");
 
-export function FoiList({ requests }: { requests: FoiView[] }) {
+/** The FOI page: header and sections, with this session's changes (clarify, sign-off, sent) applied */
+export function FoiList({ seed }: { seed: FoiRequest[] }) {
+  const patches = useFoiPatches();
+  const requests = seed.map((f) => foiView(withPatch(f, patches)));
+  const yours = requests.filter((v) => v.owner.kind === "officer").length;
   return (
     <>
+      <PageHeader
+        title="FOI requests"
+        actions={
+          <Button asChild>
+            <Link href="/chat?tab=foi">
+              <Plus data-icon="inline-start" /> New request
+            </Link>
+          </Button>
+        }
+      >
+        {yours === 0 ? "Nothing needs you right now." : yours === 1 ? "One request needs you to act." : `${yours} requests need you to act.`} Every reply is due
+        within 20 working days, and the marks show where each one should have got to.
+      </PageHeader>
       {sections.map((s) => {
-        const items = requests.filter(s.test).sort((a, b) => a.daysLeft - b.daysLeft);
+        const items = requests.filter(s.test).sort((a, b) => timeLeft(a) - timeLeft(b));
         if (!items.length) return null;
         const id = `foi-${s.title.toLowerCase().replace(/\W+/g, "-")}`;
         return (
@@ -69,7 +90,11 @@ function Card({ v, quiet }: { v: FoiView; quiet: boolean }) {
       {/* Time */}
       <div className="flex flex-col items-start gap-2 sm:border-r sm:pr-6">
         <p className={cn("tnum text-xl leading-tight font-medium", paceText(v))}>{dueText(v)}</p>
-        {v.stage !== "sent" && <p className="tnum text-xs text-muted-foreground">Due {formatDate(v.due, { year: false })}</p>}
+        {v.stage === "clarify" ? (
+          <p className="tnum text-xs text-muted-foreground">Asked {formatDate(v.clarifyAsked!, { year: false })}</p>
+        ) : (
+          v.stage !== "sent" && <p className="tnum text-xs text-muted-foreground">Due {formatDate(v.due, { year: false })}</p>
+        )}
         <Badge variant={paceBadge[v.pace]}>{paceLabel[v.pace]}</Badge>
       </div>
 
@@ -114,7 +139,18 @@ function Card({ v, quiet }: { v: FoiView; quiet: boolean }) {
 
 /** The 20 working days: used so far, the target marks, and the next target in words */
 function PaceBar({ v }: { v: FoiView }) {
-  if (v.stage === "sent") return <p className="mt-4 text-sm text-muted-foreground">Sent on working day {v.elapsed} of 20.</p>;
+  if (v.stage === "sent")
+    return (
+      <p className="mt-4 text-sm text-muted-foreground">
+        Sent {v.sentOn ? `on ${formatDate(v.sentOn)}, ` : ""}working day {v.elapsed} of 20.
+      </p>
+    );
+  if (v.stage === "clarify")
+    return (
+      <p className="mt-4 text-sm text-muted-foreground">
+        Stopped on day {v.elapsed} of 20 while the requester clarifies. The 20 working days start again from the day after they reply.
+      </p>
+    );
   const next = milestones.find((m) => m.day > v.elapsed) ?? milestones[milestones.length - 1];
   const fill = v.pace === "overdue" ? "bg-critical" : v.pace === "behind" ? "bg-warning" : "bg-ring";
   return (
@@ -138,7 +174,7 @@ function PaceBar({ v }: { v: FoiView }) {
         ))}
       </div>
       <p className={cn("mt-2 text-sm", paceText(v) || "text-muted-foreground")}>
-        <span className="tnum font-medium">Day {v.elapsed} of 20</span>
+        <span className="tnum font-medium">{v.elapsed === 0 ? "Day 1 is the next working day" : `Day ${v.elapsed} of 20`}</span>
         {v.pace === "overdue"
           ? ". Past the legal deadline."
           : v.pace === "behind"
@@ -154,6 +190,10 @@ function Owner({ v }: { v: FoiView }) {
     <span className="inline-flex min-w-0 items-center gap-1.5 text-foreground">
       {v.owner.id ? (
         <PersonAvatar id={v.owner.id} className="size-5" decorative />
+      ) : v.owner.kind === "requester" ? (
+        <span className="grid size-5 place-items-center rounded-full bg-muted text-muted-foreground" aria-hidden>
+          <UserRound className="size-3" />
+        </span>
       ) : (
         <span className="grid size-5 place-items-center rounded-full bg-secondary text-secondary-foreground" aria-hidden>
           <Bot className="size-3" />

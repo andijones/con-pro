@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { FileSearch, ListChecks, MessageSquare, Pencil } from "lucide-react";
 import { getContract, workspace } from "@/lib/data";
 import { ContractPanel } from "@/components/contravo/contract-panel";
+import { documentFor } from "@/lib/contract-documents";
 import { ContractReader } from "@/components/contravo/contract-reader";
 import { BackLink, ExtractionBadge, PageHeader, StatusBadge } from "@/components/contravo/primitives";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -84,7 +85,7 @@ export default async function ContractPage(props: PageProps<"/contracts/[id]">) 
           <ContractPanel contractId={c.id} live={live} />
         </div>
         <section className="min-w-0">
-          <ContractReader key={clause ?? "default"} contractId={c.id} clauses={c.clauses} initial={clause} title={c.title} pages={c.pages} />
+          <ContractReader key={clause ?? "default"} contractId={c.id} clauses={c.clauses} document={documentFor(c.id)} initial={clause} title={c.title} pages={c.pages} />
         </section>
       </div>
     </div>

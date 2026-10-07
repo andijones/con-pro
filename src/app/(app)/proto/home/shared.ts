@@ -57,7 +57,7 @@ const foiTasks: Task[] = foi.map((v) => ({
   title: v.next,
   context: `${v.subject} · ${v.ref}`,
   due: v.due,
-  days: v.daysLeft,
+  days: daysUntil(v.due),
   owner: v.owner.kind === "contravo" ? null : (v.owner.id ?? null),
   action: v.action,
   href: `/foi/${v.id}`,

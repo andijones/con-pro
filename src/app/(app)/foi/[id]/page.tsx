@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { foiRequests, getFoi, type FoiRequest } from "@/lib/data";
 import { foiCases } from "@/lib/foi-cases";
 import { TODAY } from "@/lib/dates";
-import { foiDue, foiElapsed } from "@/lib/derive";
 import { FoiWorkspace } from "@/components/contravo/foi-workspace";
 import { BackLink, PageHeader, Person } from "@/components/contravo/primitives";
 
@@ -44,6 +43,7 @@ export default async function FoiCasePage(props: PageProps<"/foi/[id]">) {
       text,
       status: "New",
       assignee: "sam",
+      reviewer: "helen",
     };
   } else {
     req = getFoi(id);
@@ -63,7 +63,7 @@ export default async function FoiCasePage(props: PageProps<"/foi/[id]">) {
         }
       />
       <p className="tnum mb-6 text-[13px] font-medium text-muted-foreground">{req.ref}</p>
-      <FoiWorkspace req={req} kase={kase} due={foiDue(req)} elapsed={foiElapsed(req)} />
+      <FoiWorkspace req={req} kase={kase} />
     </div>
   );
 }

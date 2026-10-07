@@ -7,6 +7,7 @@ export const people: Record<string, Person> = {
   tom: { id: "tom", name: "Tom Reilly", role: "Finance Business Partner", initials: "TR" },
   amara: { id: "amara", name: "Dr Amara Okafor", role: "Clinical Director, Diagnostics", initials: "AO" },
   sam: { id: "sam", name: "Sam Whitfield", role: "Information Governance Lead", initials: "SW" },
+  helen: { id: "helen", name: "Helen Price", role: "Senior Information Risk Owner", initials: "HP" },
   leon: { id: "leon", name: "Leon Barker", role: "Estates Contract Manager", initials: "LB" },
 };
 
@@ -811,7 +812,7 @@ export const decisions: Decision[] = [
 
 /* ---------- FOI ---------- */
 
-export type FoiStatus = "New" | "Searching" | "Confirm scope" | "Draft ready" | "With reviewer" | "Sent";
+export type FoiStatus = "New" | "Searching" | "Awaiting clarification" | "Confirm scope" | "Draft ready" | "With reviewer" | "Sent";
 
 export type FoiRequest = {
   id: string;
@@ -821,7 +822,16 @@ export type FoiRequest = {
   subject: string;
   text: string;
   status: FoiStatus;
+  /** The officer who handles it and drafts the reply */
   assignee: string;
+  /** Who signs the reply off. Never the officer who drafted it (separation of duties). */
+  reviewer: string;
+  /** Asked the requester to clarify on this date: the clock stops (FOI Act s.1(3)) */
+  clarifyAsked?: string;
+  /** Who approved the reply, once signed off */
+  approvedBy?: string;
+  /** The date the reply went out: stops the clock */
+  sentOn?: string;
 };
 
 export const foiRequests: FoiRequest[] = [
@@ -834,6 +844,7 @@ export const foiRequests: FoiRequest[] = [
     text: "Please send copies of all current contracts for IT support and service desk services, including any schedules setting out prices.",
     status: "With reviewer",
     assignee: "sam",
+    reviewer: "helen",
   },
   {
     id: "foi-0412",
@@ -844,6 +855,7 @@ export const foiRequests: FoiRequest[] = [
     text: "Please provide the total annual value of all Clinical contracts currently held by the Trust, broken down by supplier, together with the end date of each contract.",
     status: "Draft ready",
     assignee: "sam",
+    reviewer: "helen",
   },
   {
     id: "foi-0419",
@@ -854,6 +866,7 @@ export const foiRequests: FoiRequest[] = [
     text: "Could you tell me who currently provides cleaning services to the Trust, when that contract ends, and whether you intend to re-tender it?",
     status: "Confirm scope",
     assignee: "sam",
+    reviewer: "helen",
   },
   {
     id: "foi-0425",
@@ -864,6 +877,7 @@ export const foiRequests: FoiRequest[] = [
     text: "How much has the Trust spent on non-emergency patient transport in each of the last three financial years, and who is the provider?",
     status: "New",
     assignee: "sam",
+    reviewer: "helen",
   },
 ];
 
