@@ -377,7 +377,7 @@ const baseContracts: Contract[] = [
     autoRenew: null,
     annualValue: 1_900_000,
     totalValue: 9_500_000,
-    route: "Open procedure (Procurement Act 2023)",
+    route: "Open tender (PCR 2015)",
     pages: { held: 58, total: 58 },
     clauses: [],
   },
